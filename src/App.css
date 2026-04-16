@@ -153,12 +153,7 @@ body {
   letter-spacing: 1px;
 }
 
-.hero-img {
-  width: 100%;
-  max-width: 900px;
-  border-radius: 12px;
-   margin-top: -30px;
-}
+
 
 /* WHAT IS QUICKWORK */
 .what-section {
@@ -376,4 +371,60 @@ body {
   color: white;
   font-weight: 600;
   text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .hero-inner {
+    flex-direction: column;
+  }
+
+  .hero-heading {
+    font-size: 36px;
+  }
+
+  .hero-platform-title {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-grid {
+    gap: 12px;
+  }
+
+  .category-card {
+    width: 110px;
+    padding: 16px 12px;
+  }
+
+  .what-inner {
+    padding: 0 20px;
+  }
+
+  .hero-section {
+    padding: 40px 20px;
+  }
+
+  .how-section {
+    padding: 40px 20px;
+  }
+
+  .categories-section {
+    padding: 40px 20px;
+  }
+
+  .what-section {
+    padding: 40px 20px;
+  }
+
+  .cta-section {
+    padding: 60px 20px;
+  }
+
+  .cta-section h2 {
+    font-size: 28px;
+  }
 }
