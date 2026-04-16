@@ -157,6 +157,7 @@
   color: #E8470F;
   cursor: pointer;
   margin-top: 4px;
+  display: block;
 }
 
 .forgot-password:hover {
