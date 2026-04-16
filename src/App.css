@@ -24,7 +24,6 @@ body {
   padding: 0 40px;
 }
 
-
 .navbar-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -52,6 +51,46 @@ body {
   font-weight: 700;
   color: #E8470F;
   letter-spacing: 0.5px;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-nav-login {
+  background: white;
+  color: #1A2744;
+  border: 2px solid #1A2744;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-nav-login:hover {
+  background: #1A2744;
+  color: white;
+}
+
+.btn-nav-primary {
+  background: #E8470F;
+  color: white;
+  border: 2px solid #E8470F;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-nav-primary:hover {
+  background: #c93a0a;
+  border-color: #c93a0a;
 }
 
 /* HERO */
@@ -152,8 +191,6 @@ body {
   margin-bottom: 20px;
   letter-spacing: 1px;
 }
-
-
 
 /* WHAT IS QUICKWORK */
 .what-section {
@@ -373,6 +410,7 @@ body {
   text-decoration: underline;
 }
 
+/* MEDIA QUERIES */
 @media (max-width: 768px) {
   .qw-app {
     overflow-x: hidden;
@@ -382,7 +420,7 @@ body {
   .nav-buttons {
     display: none;
   }
-  
+
   .hero-section {
     padding: 40px 20px;
     position: relative;
@@ -474,44 +512,4 @@ body {
   .cta-section h2 {
     font-size: 28px;
   }
-}
-
-.nav-buttons {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.btn-nav-login {
-  background: white;
-  color: #1A2744;
-  border: 2px solid #1A2744;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-nav-login:hover {
-  background: #1A2744;
-  color: white;
-}
-
-.btn-nav-primary {
-  background: #E8470F;
-  color: white;
-  border: 2px solid #E8470F;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-nav-primary:hover {
-  background: #c93a0a;
-  border-color: #c93a0a;
 }
