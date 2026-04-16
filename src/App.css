@@ -379,26 +379,55 @@ body {
     width: 100%;
   }
 
+  .hero-section {
+    padding: 40px 20px;
+    position: relative;
+  }
+
   .hero-inner {
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+    min-height: 320px;
   }
 
   .hero-left {
     flex: none;
-    width: 100%;
+    width: 65%;
+    position: relative;
+    z-index: 2;
   }
 
   .hero-right {
-    width: 100%;
+    position: absolute;
+    right: -20px;
+    top: 0;
+    width: 65%;
+    z-index: 1;
+    opacity: 0.5;
   }
 
-  .hero-heading {
-    font-size: 36px;
+  .hero-img {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
   }
 
   .hero-platform-title {
-    font-size: 20px;
-    text-align: center;
+    display: none;
+  }
+
+  .hero-heading {
+    font-size: 28px;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+  }
+
+  .btn-primary {
+    font-size: 13px;
+    padding: 11px 18px;
   }
 
   .steps-grid {
@@ -420,10 +449,6 @@ body {
 
   .section-inner {
     padding: 0 20px;
-  }
-
-  .hero-section {
-    padding: 40px 20px;
   }
 
   .how-section {
