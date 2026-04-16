@@ -109,3 +109,41 @@
 .role-btn:hover {
   background: #c93a0a;
 }
+
+
+@media (max-width: 768px) {
+  .role-cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .role-card {
+    padding: 24px 16px;
+  }
+
+  .role-icon {
+    font-size: 36px;
+  }
+
+  .role-card h2 {
+    font-size: 20px;
+  }
+
+  .role-card p {
+    font-size: 13px;
+  }
+
+  .role-btn {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .role-container {
+    padding: 0 20px;
+    margin: 40px auto;
+  }
+
+  .role-title {
+    font-size: 28px;
+  }
+}
