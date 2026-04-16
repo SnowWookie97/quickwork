@@ -379,6 +379,10 @@ body {
     width: 100%;
   }
 
+  .nav-buttons {
+    display: none;
+  }
+  
   .hero-section {
     padding: 40px 20px;
     position: relative;
