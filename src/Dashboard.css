@@ -1,0 +1,216 @@
+.dashboard-page {
+  min-height: 100vh;
+  background: #FFF8F3;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dash-navbar {
+  padding: 0 40px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFF8F3;
+  border-bottom: 1px solid #f0e8e0;
+}
+
+.dash-navbar .nav-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.dash-navbar .logo-img {
+  height: 44px;
+  mix-blend-mode: multiply;
+}
+
+.dash-navbar .logo-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E8470F;
+}
+
+.dash-logout {
+  background: transparent;
+  border: 2px solid #1A2744;
+  color: #1A2744;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dash-logout:hover {
+  background: #1A2744;
+  color: white;
+}
+
+.dash-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+}
+
+.dash-card {
+  background: white;
+  border-radius: 28px;
+  padding: 52px 48px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+}
+
+.dash-emoji {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.dash-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1A2744;
+  line-height: 1.25;
+  margin-bottom: 16px;
+}
+
+.dash-sub {
+  font-size: 16px;
+  color: #888;
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Construction scene */
+.construction-scene {
+  background: linear-gradient(to bottom, #d6eaf8 0%, #aed6f1 40%, #85c1e9 100%);
+  border-radius: 16px;
+  padding: 24px 20px 0;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  height: 180px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+}
+
+.building {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 2;
+}
+
+.floor {
+  width: 80px;
+  height: 18px;
+  border-radius: 3px;
+  background: #BDC3C7;
+  border: 1px solid #AAB7B8;
+}
+
+.floor.done {
+  background: #E8470F;
+  border-color: #c93a0a;
+}
+
+.floor.active {
+  background: #F39C12;
+  border-color: #d68910;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.ground {
+  width: 100px;
+  height: 12px;
+  background: #7D6608;
+  border-radius: 3px;
+}
+
+.crane {
+  position: absolute;
+  top: 10px;
+  right: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crane-arm {
+  width: 80px;
+  height: 6px;
+  background: #F39C12;
+  border-radius: 3px;
+  transform: rotate(-10deg);
+}
+
+.crane-rope {
+  width: 2px;
+  height: 40px;
+  background: #888;
+  margin-left: 20px;
+}
+
+.crane-hook {
+  font-size: 20px;
+  margin-left: 20px;
+  animation: swing 2s ease-in-out infinite;
+}
+
+@keyframes swing {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+
+.workers {
+  display: flex;
+  gap: 12px;
+  z-index: 2;
+  padding-bottom: 8px;
+}
+
+.worker {
+  font-size: 28px;
+  animation: bob 1.5s ease-in-out infinite;
+}
+
+.w2 { animation-delay: 0.3s; }
+.w3 { animation-delay: 0.6s; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Badge */
+.dash-badge {
+  display: inline-block;
+  background: #FDEBD8;
+  color: #E8470F;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.business-scene {
+  background: linear-gradient(to bottom, #FDEBD8 0%, #FAD7A0 50%, #F0B27A 100%);
+}
