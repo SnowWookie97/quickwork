@@ -563,11 +563,10 @@
 }
 
 .category-select {
-  border-color: #E8470F;
-  color: #E8470F;
-  font-weight: 600;
+  border-color: #eee;
+  color: #1A2744;
+  font-weight: 500;
 }
-
 /* EMPTY STATE */
 .wd-empty-state {
   display: flex;
