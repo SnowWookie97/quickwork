@@ -69,16 +69,12 @@ function Login() {
             <button className="auth-btn" onClick={handleLogin} disabled={loading}>
               {loading ? 'Logging in...' : 'Log In →'}
             </button>
-            <p className="forgot-password" onClick={() => navigate('/forgot-password')}>
-              Forgot your password?
-            </p>
-          </div><button className="auth-btn" onClick={handleLogin} disabled={loading}>
-              {loading ? 'Logging in...' : 'Log In →'}
-            </button>
           </div>
+
           <p className="forgot-password" onClick={() => navigate('/forgot-password')}>
             Forgot your password?
           </p>
+
           <p className="auth-switch">
             Don't have an account?{' '}
             <span onClick={() => navigate('/role', { state: { mode: 'signup' } })}>Sign up</span>
