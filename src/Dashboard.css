@@ -371,7 +371,7 @@
   color: #E8470F;
 }
 
-/* CALENDAR */
+/* CALENDAR - Desktop */
 .wd-calendar {
   background: white;
   border-radius: 16px;
@@ -487,6 +487,11 @@
   text-align: center;
 }
 
+/* MOBILE DATE STRIP - hidden on desktop */
+.wd-date-strip {
+  display: none;
+}
+
 /* DIVIDER */
 .wd-divider {
   width: 1px;
@@ -567,6 +572,7 @@
   color: #1A2744;
   font-weight: 500;
 }
+
 /* EMPTY STATE */
 .wd-empty-state {
   display: flex;
@@ -600,12 +606,40 @@
   max-width: 400px;
 }
 
-/* RESPONSIVE */
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
 @media (max-width: 768px) {
+
+  /* Navbar */
   .wd-navbar {
-    padding: 0 20px;
+    padding: 0 16px;
+    height: 60px;
   }
 
+  .wd-logo-text {
+    font-size: 14px;
+  }
+
+  .wd-logo-img {
+    height: 32px;
+  }
+
+  .wd-nav-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  .wd-avatar {
+    display: none;
+  }
+
+  .wd-nav-right {
+    gap: 8px;
+  }
+
+  /* Layout stacks vertically */
   .wd-main {
     flex-direction: column;
   }
@@ -614,7 +648,127 @@
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #f0e8e0;
-    padding: 24px 20px;
+    padding: 20px 16px;
+  }
+
+  .wd-greeting {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  /* Hide full calendar on mobile */
+  .wd-calendar {
+    display: none;
+  }
+
+  /* Show date strip on mobile */
+  .wd-date-strip {
+    display: block;
+  }
+
+  .wd-strip-month {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .wd-strip-month-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1A2744;
+  }
+
+  .wd-strip-nav {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    line-height: 1;
+  }
+
+  .wd-strip-nav:hover {
+    color: #E8470F;
+  }
+
+  .wd-strip-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+
+  .wd-strip-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wd-strip-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 64px;
+    border-radius: 12px;
+    border: 2px solid #eee;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .wd-strip-day:hover {
+    border-color: #E8470F;
+  }
+
+  .wd-strip-day.today {
+    background: #1A2744;
+    border-color: #1A2744;
+  }
+
+  .wd-strip-day.selected {
+    background: #E8470F;
+    border-color: #E8470F;
+  }
+
+  .wd-strip-dow {
+    font-size: 10px;
+    font-weight: 700;
+    color: #aaa;
+    text-transform: uppercase;
+  }
+
+  .wd-strip-day.today .wd-strip-dow,
+  .wd-strip-day.selected .wd-strip-dow {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .wd-strip-num {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1A2744;
+    margin-top: 2px;
+  }
+
+  .wd-strip-day.today .wd-strip-num,
+  .wd-strip-day.selected .wd-strip-num {
+    color: white;
+  }
+
+  .wd-strip-selected-info {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+    background: #FFF8F3;
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .wd-divider {
@@ -622,15 +776,36 @@
   }
 
   .wd-right {
-    padding: 24px 20px;
+    padding: 20px 16px;
+  }
+
+  .wd-section-title {
+    font-size: 18px;
+    margin-bottom: 16px;
   }
 
   .wd-filters {
     flex-direction: column;
+    gap: 10px;
   }
 
-  .wd-nav-btn {
-    font-size: 12px;
-    padding: 7px 12px;
+  .wd-search-wrap {
+    min-width: unset;
+  }
+
+  .wd-empty-state {
+    padding: 40px 20px;
+  }
+
+  .wd-empty-icon {
+    font-size: 40px;
+  }
+
+  .wd-empty-title {
+    font-size: 17px;
+  }
+
+  .wd-empty-sub {
+    font-size: 14px;
   }
 }

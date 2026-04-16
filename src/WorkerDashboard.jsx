@@ -14,6 +14,8 @@ const CATEGORIES = [
   'Office', 'Events', 'Delivery', 'Warehouse'
 ]
 
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
 function WorkerDashboard() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
@@ -60,13 +62,13 @@ function WorkerDashboard() {
     const month = date.getMonth()
     const firstDay = new Date(year, month, 1).getDay()
     const daysInMonth = new Date(year, month + 1, 0).getDate()
-    // Adjust so week starts Monday
     const startOffset = (firstDay === 0 ? 6 : firstDay - 1)
     return { daysInMonth, startOffset }
   }
 
   const { daysInMonth, startOffset } = getDaysInMonth(currentMonth)
   const today = new Date()
+
   const isToday = (day) =>
     day === today.getDate() &&
     currentMonth.getMonth() === today.getMonth() &&
@@ -95,6 +97,12 @@ function WorkerDashboard() {
   const formatSelectedDate = () => {
     if (!selectedDate) return null
     return selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+  }
+
+  // Get day of week label for strip (0=Sun, 1=Mon etc.)
+  const getDayLabel = (day) => {
+    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).getDay()
+    return DAYS[d === 0 ? 6 : d - 1]
   }
 
   const dashMenuItems = ['My Shifts', 'Payments', 'Ratings']
@@ -158,10 +166,11 @@ function WorkerDashboard() {
       {/* MAIN CONTENT */}
       <div className="wd-main">
 
-        {/* LEFT PANEL - Calendar */}
+        {/* LEFT PANEL */}
         <div className="wd-left">
           <h2 className="wd-greeting">Hello, <span className="wd-name">{firstName || 'Worker'}</span>! 👋</h2>
 
+          {/* DESKTOP CALENDAR */}
           <div className="wd-calendar">
             <div className="wd-cal-header">
               <button className="wd-cal-nav" onClick={prevMonth}>‹</button>
@@ -173,11 +182,9 @@ function WorkerDashboard() {
               {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                 <div key={i} className="wd-cal-dow">{d}</div>
               ))}
-              {/* Empty cells for offset */}
               {Array.from({ length: startOffset }).map((_, i) => (
                 <div key={`empty-${i}`} className="wd-cal-day empty" />
               ))}
-              {/* Day cells */}
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1
                 return (
@@ -192,15 +199,45 @@ function WorkerDashboard() {
               })}
             </div>
 
-            {selectedDate && (
+            {selectedDate ? (
               <div className="wd-cal-selected-info">
                 📅 Showing shifts for <strong>{formatSelectedDate()}</strong>
                 <button className="wd-clear-date" onClick={() => setSelectedDate(null)}>✕ Clear</button>
               </div>
-            )}
-
-            {!selectedDate && (
+            ) : (
               <p className="wd-cal-hint">Tap a date to filter shifts</p>
+            )}
+          </div>
+
+          {/* MOBILE DATE STRIP */}
+          <div className="wd-date-strip">
+            <div className="wd-strip-month">
+              <button className="wd-strip-nav" onClick={prevMonth}>‹</button>
+              <span className="wd-strip-month-name">{monthName}</span>
+              <button className="wd-strip-nav" onClick={nextMonth}>›</button>
+            </div>
+
+            <div className="wd-strip-scroll">
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const day = i + 1
+                return (
+                  <div
+                    key={day}
+                    className={`wd-strip-day ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`}
+                    onClick={() => handleDayClick(day)}
+                  >
+                    <span className="wd-strip-dow">{getDayLabel(day)}</span>
+                    <span className="wd-strip-num">{day}</span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {selectedDate && (
+              <div className="wd-strip-selected-info">
+                <span>📅 {formatSelectedDate()}</span>
+                <button className="wd-clear-date" onClick={() => setSelectedDate(null)}>✕ Clear</button>
+              </div>
             )}
           </div>
         </div>
@@ -208,7 +245,7 @@ function WorkerDashboard() {
         {/* DIVIDER */}
         <div className="wd-divider" />
 
-        {/* RIGHT PANEL - Shifts */}
+        {/* RIGHT PANEL */}
         <div className="wd-right">
           <h2 className="wd-section-title">What would you like to do today?</h2>
 
