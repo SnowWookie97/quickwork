@@ -12,12 +12,20 @@ function App() {
       {/* NAVBAR */}
       <nav className="navbar">
         <div className="navbar-inner">
-          <div className="nav-logo">
-            <img src={logoImg} alt="QuickWork" className="logo-img" />
-            <span className="logo-text">QuickWork</span>
-          </div>
-          
-        </div>
+          <div className="nav-logo" onClick={() => navigate('/')}>
+  <img src={logoImg} alt="QuickWork" className="logo-img" />
+  <span className="logo-text">QuickWork</span>
+</div>
+
+<div className="nav-buttons">
+  <button className="btn-nav-login" onClick={() => navigate('/login')}>
+    Log In
+  </button>
+  <button className="btn-nav-primary" onClick={() => navigate('/role', { state: { mode: 'signup' } })}>
+    Get Started Free →
+  </button>
+</div>
+</div>
       </nav>
 
       {/* HERO SECTION */}
