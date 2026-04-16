@@ -374,8 +374,22 @@ body {
 }
 
 @media (max-width: 768px) {
+  .qw-app {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
   .hero-inner {
     flex-direction: column;
+  }
+
+  .hero-left {
+    flex: none;
+    width: 100%;
+  }
+
+  .hero-right {
+    width: 100%;
   }
 
   .hero-heading {
@@ -401,6 +415,10 @@ body {
   }
 
   .what-inner {
+    padding: 0 20px;
+  }
+
+  .section-inner {
     padding: 0 20px;
   }
 
