@@ -24,7 +24,6 @@ function Login() {
       return
     }
 
-    // Read role from user metadata and redirect accordingly
     const role = data.user?.user_metadata?.role
     if (role === 'business') {
       navigate('/business/dashboard')
@@ -70,6 +69,9 @@ function Login() {
             <button className="auth-btn" onClick={handleLogin} disabled={loading}>
               {loading ? 'Logging in...' : 'Log In →'}
             </button>
+            <p className="forgot-password" onClick={() => navigate('/forgot-password')}>
+              Forgot your password?
+            </p>
           </div>
 
           <p className="auth-switch">

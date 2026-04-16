@@ -5,6 +5,8 @@ import App from './App.jsx'
 import RoleSelect from './RoleSelect.jsx'
 import Login from './Login.jsx'
 import Signup from './Signup.jsx'
+import ForgotPassword from './ForgotPassword.jsx'
+import ResetPassword from './ResetPassword.jsx'
 import WorkerDashboard from './WorkerDashboard.jsx'
 import BusinessDashboard from './BusinessDashboard.jsx'
 import './index.css'
@@ -17,6 +19,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/role" element={<RoleSelect />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/worker/dashboard" element={<WorkerDashboard />} />
         <Route path="/business/dashboard" element={<BusinessDashboard />} />
       </Routes>

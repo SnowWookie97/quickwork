@@ -136,3 +136,72 @@
   font-size: 15px;
   line-height: 1.6;
 }
+
+.phone-input {
+  display: flex;
+  align-items: center;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.phone-input:focus-within {
+  border-color: #E8470F;
+}
+
+.phone-prefix {
+  background: #f5f5f5;
+  padding: 12px 12px;
+  font-size: 14px;
+  color: #444;
+  border-right: 1px solid #eee;
+  white-space: nowrap;
+}
+
+.phone-input input {
+  border: none;
+  border-radius: 0;
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 15px;
+  outline: none;
+}
+
+.phone-input input:focus {
+  border-color: transparent;
+}
+
+.form-select {
+  padding: 12px 16px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+  background: white;
+  color: #1A2744;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  border-color: #E8470F;
+}
+
+.forgot-password {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.forgot-password:hover {
+  color: #E8470F;
+}
+
+.auth-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
