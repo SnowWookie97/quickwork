@@ -1,3 +1,7 @@
+/* ============================================
+   EXISTING DASHBOARD STYLES (Business + shared)
+   ============================================ */
+
 .dashboard-page {
   min-height: 100vh;
   background: #FFF8F3;
@@ -91,7 +95,6 @@
   margin-right: auto;
 }
 
-/* Construction scene */
 .construction-scene {
   background: linear-gradient(to bottom, #d6eaf8 0%, #aed6f1 40%, #85c1e9 100%);
   border-radius: 16px;
@@ -200,7 +203,6 @@
   50% { transform: translateY(-6px); }
 }
 
-/* Badge */
 .dash-badge {
   display: inline-block;
   background: #FDEBD8;
@@ -213,4 +215,423 @@
 
 .business-scene {
   background: linear-gradient(to bottom, #FDEBD8 0%, #FAD7A0 50%, #F0B27A 100%);
+}
+
+
+/* ============================================
+   WORKER DASHBOARD STYLES
+   ============================================ */
+
+.wd-page {
+  min-height: 100vh;
+  background: #FFF8F3;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* NAVBAR */
+.wd-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 70px;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFF8F3;
+  border-bottom: 1px solid #f0e8e0;
+}
+
+.wd-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.wd-logo-img {
+  height: 40px;
+  width: auto;
+}
+
+.wd-logo-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #E8470F;
+}
+
+.wd-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wd-nav-item {
+  position: relative;
+}
+
+.wd-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 2px solid #1A2744;
+  color: #1A2744;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wd-nav-btn:hover {
+  background: #1A2744;
+  color: white;
+}
+
+.profile-btn {
+  border-color: #E8470F;
+  color: #E8470F;
+}
+
+.profile-btn:hover {
+  background: #E8470F;
+  color: white;
+}
+
+.wd-avatar {
+  font-size: 18px;
+}
+
+.wd-chevron {
+  font-size: 10px;
+}
+
+.wd-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  min-width: 180px;
+  overflow: hidden;
+  z-index: 200;
+}
+
+.wd-dropdown-item {
+  padding: 12px 18px;
+  font-size: 14px;
+  color: #1A2744;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-weight: 500;
+}
+
+.wd-dropdown-item:hover {
+  background: #FFF8F3;
+  color: #E8470F;
+}
+
+.logout-item {
+  color: #e53e3e;
+  border-top: 1px solid #eee;
+  font-weight: 600;
+}
+
+.logout-item:hover {
+  background: #fff5f5;
+  color: #e53e3e;
+}
+
+/* MAIN LAYOUT */
+.wd-main {
+  display: flex;
+  min-height: calc(100vh - 70px);
+}
+
+/* LEFT PANEL */
+.wd-left {
+  width: 340px;
+  flex-shrink: 0;
+  padding: 32px 28px;
+  border-right: 1px solid #f0e8e0;
+}
+
+.wd-greeting {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1A2744;
+  margin-bottom: 28px;
+}
+
+.wd-name {
+  color: #E8470F;
+}
+
+/* CALENDAR */
+.wd-calendar {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+.wd-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.wd-cal-month {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A2744;
+}
+
+.wd-cal-nav {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.wd-cal-nav:hover {
+  background: #FFF8F3;
+  color: #E8470F;
+}
+
+.wd-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.wd-cal-dow {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #aaa;
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+
+.wd-cal-day {
+  text-align: center;
+  padding: 7px 0;
+  font-size: 13px;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.wd-cal-day:hover:not(.empty) {
+  background: #FFF8F3;
+  color: #E8470F;
+}
+
+.wd-cal-day.empty {
+  cursor: default;
+}
+
+.wd-cal-day.today {
+  background: #1A2744;
+  color: white;
+  font-weight: 700;
+}
+
+.wd-cal-day.selected {
+  background: #E8470F;
+  color: white;
+  font-weight: 700;
+}
+
+.wd-cal-selected-info {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #666;
+  background: #FFF8F3;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wd-clear-date {
+  background: none;
+  border: none;
+  color: #E8470F;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.wd-cal-hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #bbb;
+  text-align: center;
+}
+
+/* DIVIDER */
+.wd-divider {
+  width: 1px;
+  background: #f0e8e0;
+  flex-shrink: 0;
+}
+
+/* RIGHT PANEL */
+.wd-right {
+  flex: 1;
+  padding: 32px 36px;
+}
+
+.wd-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1A2744;
+  margin-bottom: 24px;
+}
+
+/* FILTERS */
+.wd-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.wd-search-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.wd-search-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 14px;
+}
+
+.wd-search {
+  width: 100%;
+  padding: 11px 16px 11px 38px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: white;
+  color: #1A2744;
+}
+
+.wd-search:focus {
+  border-color: #E8470F;
+}
+
+.wd-select {
+  padding: 11px 16px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+  color: #1A2744;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-weight: 500;
+}
+
+.wd-select:focus {
+  border-color: #E8470F;
+}
+
+.category-select {
+  border-color: #E8470F;
+  color: #E8470F;
+  font-weight: 600;
+}
+
+/* EMPTY STATE */
+.wd-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  border: 2px dashed #f0e8e0;
+}
+
+.wd-empty-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.wd-empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1A2744;
+  margin-bottom: 10px;
+}
+
+.wd-empty-sub {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.7;
+  max-width: 400px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .wd-navbar {
+    padding: 0 20px;
+  }
+
+  .wd-main {
+    flex-direction: column;
+  }
+
+  .wd-left {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #f0e8e0;
+    padding: 24px 20px;
+  }
+
+  .wd-divider {
+    display: none;
+  }
+
+  .wd-right {
+    padding: 24px 20px;
+  }
+
+  .wd-filters {
+    flex-direction: column;
+  }
+
+  .wd-nav-btn {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
 }

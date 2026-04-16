@@ -9,6 +9,7 @@ import ForgotPassword from './ForgotPassword.jsx'
 import ResetPassword from './ResetPassword.jsx'
 import WorkerDashboard from './WorkerDashboard.jsx'
 import BusinessDashboard from './BusinessDashboard.jsx'
+import UnderConstruction from './UnderConstruction.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/worker/dashboard" element={<WorkerDashboard />} />
         <Route path="/business/dashboard" element={<BusinessDashboard />} />
+        <Route path="/under-construction" element={<UnderConstruction />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
