@@ -64,25 +64,27 @@ function ContactUs() {
 
         </div>
 
-        {/* MAP */}
+        {/* MAP BUTTON SECTION */}
         <div className="contact-map-section">
-          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="contact-map-link">
-            <div className="contact-map-container">
-              <iframe
-                title="QuickWork Location"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA3jv2ryZrA2AerDsHIxaXoexyzYCGbwl0&q=Ashwin+Nagar+Nashik+Maharashtra+422009"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-              <div className="contact-map-overlay">
-                <span className="contact-map-overlay-text">🗺️ Open in Google Maps →</span>
+          <div className="contact-map-card">
+            <div className="contact-map-left">
+              <div className="contact-map-pin">📍</div>
+              <div>
+                <h3 className="contact-map-title">Find Us in Nashik</h3>
+                <p className="contact-map-address">
+                  Flat No.4, Vastupark-B, Ashwin Nagar,<br />
+                  Near Mahindra Guest House,<br />
+                  Nashik, Maharashtra – 422009
+                </p>
+                <div className="contact-map-hours">
+                  <span>🕘 Mon – Fri &nbsp;|&nbsp; 9:00 AM – 2:00 PM</span>
+                </div>
               </div>
             </div>
-          </a>
+            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="contact-map-btn">
+              🗺️ Open in Google Maps →
+            </a>
+          </div>
         </div>
 
       </div>
