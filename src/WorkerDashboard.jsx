@@ -167,7 +167,7 @@ function WorkerDashboard() {
 
       {/* NAVBAR */}
       <nav className="wd-navbar">
-        <div className="wd-nav-logo" onClick={() => navigate('/')}>
+        <div className="wd-nav-logo">
           <img src={logoImg} alt="QuickWork" className="wd-logo-img" />
           <span className="wd-logo-text">QuickWork</span>
         </div>
