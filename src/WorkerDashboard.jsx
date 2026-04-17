@@ -57,6 +57,10 @@ function WorkerDashboard() {
   const today = new Date()
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
 
+  const isCurrentMonth =
+    currentMonth.getMonth() === today.getMonth() &&
+    currentMonth.getFullYear() === today.getFullYear()
+
   const isPastDay = (day) => {
     const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
     return d < todayMidnight
@@ -94,7 +98,11 @@ function WorkerDashboard() {
     }
   }
 
-  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+  const prevMonth = () => {
+    if (isCurrentMonth) return
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+  }
+
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
 
   const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
@@ -111,6 +119,11 @@ function WorkerDashboard() {
 
   const dashMenuItems = ['My Shifts', 'Payments', 'Ratings']
   const profileMenuItems = ['Update Profile', 'Settings', 'Validation', 'Contact Us', 'Feedback', 'Log Out']
+
+  const prevBtnStyle = {
+    opacity: isCurrentMonth ? 0.2 : 1,
+    cursor: isCurrentMonth ? 'default' : 'pointer'
+  }
 
   return (
     <div className="wd-page">
@@ -175,7 +188,7 @@ function WorkerDashboard() {
           {/* DESKTOP CALENDAR */}
           <div className="wd-calendar">
             <div className="wd-cal-header">
-              <button className="wd-cal-nav" onClick={prevMonth}>‹</button>
+              <button className="wd-cal-nav" onClick={prevMonth} style={prevBtnStyle}>‹</button>
               <span className="wd-cal-month">{monthName}</span>
               <button className="wd-cal-nav" onClick={nextMonth}>›</button>
             </div>
@@ -215,7 +228,7 @@ function WorkerDashboard() {
           {/* MOBILE DATE STRIP */}
           <div className="wd-date-strip">
             <div className="wd-strip-month">
-              <button className="wd-strip-nav" onClick={prevMonth}>‹</button>
+              <button className="wd-strip-nav" onClick={prevMonth} style={prevBtnStyle}>‹</button>
               <span className="wd-strip-month-name">{monthName}</span>
               <button className="wd-strip-nav" onClick={nextMonth}>›</button>
             </div>
