@@ -19,7 +19,7 @@ const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 function WorkerDashboard() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
-  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedCity, setSelectedCity] = useState('Nashik')
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
   const [searchQuery, setSearchQuery] = useState('')
@@ -30,7 +30,6 @@ function WorkerDashboard() {
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
-  // Fetch worker name from Supabase
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -41,7 +40,6 @@ function WorkerDashboard() {
     getUser()
   }, [])
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (dashRef.current && !dashRef.current.contains(e.target)) setDashDropdown(false)
@@ -56,7 +54,14 @@ function WorkerDashboard() {
     navigate('/')
   }
 
-  // Calendar helpers
+  const today = new Date()
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
+  const isPastDay = (day) => {
+    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    return d < todayMidnight
+  }
+
   const getDaysInMonth = (date) => {
     const year = date.getFullYear()
     const month = date.getMonth()
@@ -67,7 +72,6 @@ function WorkerDashboard() {
   }
 
   const { daysInMonth, startOffset } = getDaysInMonth(currentMonth)
-  const today = new Date()
 
   const isToday = (day) =>
     day === today.getDate() &&
@@ -81,6 +85,7 @@ function WorkerDashboard() {
     selectedDate.getFullYear() === currentMonth.getFullYear()
 
   const handleDayClick = (day) => {
+    if (isPastDay(day)) return
     const clicked = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
     if (selectedDate && selectedDate.getTime() === clicked.getTime()) {
       setSelectedDate(null)
@@ -99,7 +104,6 @@ function WorkerDashboard() {
     return selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
   }
 
-  // Get day of week label for strip (0=Sun, 1=Mon etc.)
   const getDayLabel = (day) => {
     const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).getDay()
     return DAYS[d === 0 ? 6 : d - 1]
@@ -119,7 +123,6 @@ function WorkerDashboard() {
         </div>
 
         <div className="wd-nav-right">
-          {/* My Dashboard dropdown */}
           <div className="wd-nav-item" ref={dashRef}>
             <button className="wd-nav-btn" onClick={() => { setDashDropdown(!dashDropdown); setProfileDropdown(false) }}>
               My Dashboard <span className="wd-chevron">{dashDropdown ? '▲' : '▼'}</span>
@@ -135,7 +138,6 @@ function WorkerDashboard() {
             )}
           </div>
 
-          {/* My Profile dropdown */}
           <div className="wd-nav-item" ref={profileRef}>
             <button className="wd-nav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
               <div className="wd-avatar">👤</div>
@@ -187,10 +189,11 @@ function WorkerDashboard() {
               ))}
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1
+                const past = isPastDay(day)
                 return (
                   <div
                     key={day}
-                    className={`wd-cal-day ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`}
+                    className={`wd-cal-day ${past ? 'past' : ''} ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`}
                     onClick={() => handleDayClick(day)}
                   >
                     {day}
@@ -220,6 +223,7 @@ function WorkerDashboard() {
             <div className="wd-strip-scroll">
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1
+                if (isPastDay(day)) return null
                 return (
                   <div
                     key={day}
@@ -249,7 +253,6 @@ function WorkerDashboard() {
         <div className="wd-right">
           <h2 className="wd-section-title">What would you like to do today?</h2>
 
-          {/* Search & Filters */}
           <div className="wd-filters">
             <div className="wd-search-wrap">
               <span className="wd-search-icon">🔍</span>
@@ -283,7 +286,6 @@ function WorkerDashboard() {
             </select>
           </div>
 
-          {/* Empty state */}
           <div className="wd-empty-state">
             <div className="wd-empty-icon">📋</div>
             <h3 className="wd-empty-title">No shifts available yet</h3>

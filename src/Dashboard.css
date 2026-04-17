@@ -435,13 +435,19 @@
   font-weight: 500;
 }
 
-.wd-cal-day:hover:not(.empty) {
+.wd-cal-day:hover:not(.empty):not(.past) {
   background: #FFF8F3;
   color: #E8470F;
 }
 
 .wd-cal-day.empty {
   cursor: default;
+}
+
+.wd-cal-day.past {
+  color: #ccc;
+  cursor: default;
+  pointer-events: none;
 }
 
 .wd-cal-day.today {
@@ -611,7 +617,6 @@
    ============================================ */
 @media (max-width: 768px) {
 
-  /* Navbar */
   .wd-navbar {
     padding: 0 16px;
     height: 60px;
@@ -639,7 +644,6 @@
     gap: 8px;
   }
 
-  /* Layout stacks vertically */
   .wd-main {
     flex-direction: column;
   }
