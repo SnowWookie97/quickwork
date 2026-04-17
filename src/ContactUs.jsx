@@ -19,9 +19,7 @@ function ContactUs() {
       </nav>
 
       <div className="contact-hero">
-        <p className="contact-label">GET IN TOUCH</p>
-        <h1 className="contact-title">We're here to <span className="contact-orange">help you</span></h1>
-        <p className="contact-sub">Reach out to us through any of the channels below</p>
+        <h1 className="contact-title">We're here to <span className="contact-orange">help!</span></h1>
       </div>
 
       <div className="contact-main">
@@ -29,11 +27,10 @@ function ContactUs() {
         {/* THREE CARDS */}
         <div className="contact-cards">
 
-          {/* Call Us */}
           <div className="contact-card">
             <div className="contact-card-icon">📞</div>
             <h2 className="contact-card-title">Call Us Directly</h2>
-            <p className="contact-card-desc">Speak to our team directly for immediate help</p>
+            <p className="contact-card-desc">Speak to our team for immediate help</p>
             <a href="tel:+919521099270" className="contact-card-value">+91 95210 99270</a>
             <div className="contact-card-hours">
               <span className="hours-label">Operating Hours</span>
@@ -41,7 +38,6 @@ function ContactUs() {
             </div>
           </div>
 
-          {/* Write To Us */}
           <div className="contact-card contact-card-featured">
             <div className="contact-card-icon">✉️</div>
             <h2 className="contact-card-title">Write To Us</h2>
@@ -53,7 +49,6 @@ function ContactUs() {
             </div>
           </div>
 
-          {/* Visit Us */}
           <div className="contact-card">
             <div className="contact-card-icon">📍</div>
             <h2 className="contact-card-title">Visit Us On-Site</h2>
@@ -71,8 +66,6 @@ function ContactUs() {
 
         {/* MAP */}
         <div className="contact-map-section">
-          <h2 className="contact-map-title">Find Us</h2>
-          <p className="contact-map-sub">Click the map to open directions in Google Maps</p>
           <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="contact-map-link">
             <div className="contact-map-container">
               <iframe
