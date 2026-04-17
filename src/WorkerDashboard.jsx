@@ -167,7 +167,7 @@ function WorkerDashboard() {
 
       {/* NAVBAR */}
       <nav className="wd-navbar">
-        <div className="wd-nav-logo">
+        <div className="wd-nav-logo" onClick={() => navigate('/')}>
           <img src={logoImg} alt="QuickWork" className="wd-logo-img" />
           <span className="wd-logo-text">QuickWork</span>
         </div>
@@ -202,7 +202,7 @@ function WorkerDashboard() {
                     onClick={() => {
                       setProfileDropdown(false)
                       if (item === 'Log Out') handleLogout()
-                      else if (item === 'Contact Us') window.location.href = 'mailto:hello@quickwork.in'
+                      else if (item === 'Contact Us') navigate('/contact')
                       else if (item === 'Invite Friends') setShowInviteModal(true)
                       else navigate('/under-construction')
                     }}
