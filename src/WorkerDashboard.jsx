@@ -19,6 +19,9 @@ const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 function WorkerDashboard() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
+  const [referralCode, setReferralCode] = useState('')
+  const [showInviteModal, setShowInviteModal] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedCity, setSelectedCity] = useState('Nashik')
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
@@ -36,6 +39,15 @@ function WorkerDashboard() {
       if (!user) { navigate('/login'); return }
       const fullName = user.user_metadata?.name || ''
       setFirstName(fullName.split(' ')[0])
+
+      // Fetch referral code
+      const { data: refData } = await supabase
+        .from('referrals')
+        .select('referral_code')
+        .eq('user_id', user.id)
+        .single()
+
+      if (refData) setReferralCode(refData.referral_code)
     }
     getUser()
   }, [])
@@ -52,6 +64,12 @@ function WorkerDashboard() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/')
+  }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(referralCode)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const today = new Date()
@@ -118,7 +136,7 @@ function WorkerDashboard() {
   }
 
   const dashMenuItems = ['My Shifts', 'Payments', 'Ratings']
-  const profileMenuItems = ['Update Profile', 'Settings', 'Validation', 'Contact Us', 'Feedback', 'Log Out']
+  const profileMenuItems = ['Update Profile', 'Settings', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Log Out']
 
   const prevBtnStyle = {
     opacity: isCurrentMonth ? 0.2 : 1,
@@ -127,6 +145,25 @@ function WorkerDashboard() {
 
   return (
     <div className="wd-page">
+
+      {/* INVITE MODAL */}
+      {showInviteModal && (
+        <div className="invite-overlay" onClick={() => setShowInviteModal(false)}>
+          <div className="invite-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="invite-close" onClick={() => setShowInviteModal(false)}>✕</button>
+            <div className="invite-icon">🎉</div>
+            <h2 className="invite-title">Invite Friends to QuickWork</h2>
+            <p className="invite-sub">Share your unique referral code with friends. When they sign up using your code, they'll be linked to you!</p>
+            <div className="invite-code-box">
+              <span className="invite-code">{referralCode || 'Loading...'}</span>
+              <button className="invite-copy-btn" onClick={handleCopy}>
+                {copied ? '✅ Copied!' : 'Copy'}
+              </button>
+            </div>
+            <p className="invite-note">Your friends can enter this code during signup under "Were you invited by a friend?"</p>
+          </div>
+        </div>
+      )}
 
       {/* NAVBAR */}
       <nav className="wd-navbar">
@@ -161,15 +198,16 @@ function WorkerDashboard() {
                 {profileMenuItems.map(item => (
                   <div
                     key={item}
-                    className={`wd-dropdown-item ${item === 'Log Out' ? 'logout-item' : ''}`}
+                    className={`wd-dropdown-item ${item === 'Log Out' ? 'logout-item' : ''} ${item === 'Invite Friends' ? 'invite-item' : ''}`}
                     onClick={() => {
                       setProfileDropdown(false)
                       if (item === 'Log Out') handleLogout()
                       else if (item === 'Contact Us') window.location.href = 'mailto:hello@quickwork.in'
+                      else if (item === 'Invite Friends') setShowInviteModal(true)
                       else navigate('/under-construction')
                     }}
                   >
-                    {item}
+                    {item === 'Invite Friends' ? '🎉 Invite Friends' : item}
                   </div>
                 ))}
               </div>

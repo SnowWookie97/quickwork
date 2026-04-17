@@ -26,6 +26,8 @@ function Signup() {
     password: '',
     industry: '',
   })
+  const [wasReferred, setWasReferred] = useState(false)
+  const [referralCode, setReferralCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -35,7 +37,6 @@ function Signup() {
   const handleSignup = async () => {
     setError('')
 
-    // Basic validation
     if (!form.name || !form.mobile || !form.email || !form.password) {
       setError('Please fill in all fields.')
       return
@@ -52,10 +53,28 @@ function Signup() {
       setError('Please select your industry.')
       return
     }
+    if (wasReferred && !referralCode.trim()) {
+      setError('Please enter the referral code or switch to No.')
+      return
+    }
+
+    // Validate referral code if provided
+    if (wasReferred && referralCode.trim()) {
+      const { data: refData, error: refError } = await supabase
+        .from('referrals')
+        .select('referral_code')
+        .eq('referral_code', referralCode.trim().toUpperCase())
+        .single()
+
+      if (refError || !refData) {
+        setError('Invalid referral code. Please check and try again.')
+        return
+      }
+    }
 
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
@@ -64,9 +83,18 @@ function Signup() {
           name: form.name,
           mobile: form.mobile,
           ...(role === 'business' && { industry: form.industry }),
+          ...(wasReferred && referralCode.trim() && { referred_by: referralCode.trim().toUpperCase() }),
         }
       }
     })
+
+    // If referred, update the referrals table with referred_by
+    if (!error && data.user && wasReferred && referralCode.trim()) {
+      await supabase
+        .from('referrals')
+        .update({ referred_by: referralCode.trim().toUpperCase() })
+        .eq('user_id', data.user.id)
+    }
 
     setLoading(false)
 
@@ -155,6 +183,45 @@ function Signup() {
                   onChange={update('password')}
                 />
               </div>
+
+              {/* REFERRAL SECTION */}
+              <div className="form-group">
+                <label>
+                  {role === 'business'
+                    ? 'Were you invited by another business?'
+                    : 'Were you invited by a friend?'}
+                </label>
+                <div className="referral-toggle">
+                  <button
+                    type="button"
+                    className={`toggle-btn ${!wasReferred ? 'active' : ''}`}
+                    onClick={() => { setWasReferred(false); setReferralCode('') }}
+                  >
+                    No
+                  </button>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${wasReferred ? 'active' : ''}`}
+                    onClick={() => setWasReferred(true)}
+                  >
+                    Yes
+                  </button>
+                </div>
+              </div>
+
+              {wasReferred && (
+                <div className="form-group">
+                  <label>Enter Referral Code</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. QW-A3F9K2"
+                    value={referralCode}
+                    onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                    style={{ textTransform: 'uppercase', letterSpacing: '2px' }}
+                  />
+                </div>
+              )}
+
               {error && <p className="auth-error">{error}</p>}
               <button className="auth-btn" onClick={handleSignup} disabled={loading}>
                 {loading ? 'Creating account...' : 'Create Account →'}
