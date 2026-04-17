@@ -39,14 +39,11 @@ function WorkerDashboard() {
       if (!user) { navigate('/login'); return }
       const fullName = user.user_metadata?.name || ''
       setFirstName(fullName.split(' ')[0])
-
-      // Fetch referral code
       const { data: refData } = await supabase
         .from('referrals')
         .select('referral_code')
         .eq('user_id', user.id)
         .single()
-
       if (refData) setReferralCode(refData.referral_code)
     }
     getUser()
@@ -74,10 +71,7 @@ function WorkerDashboard() {
 
   const today = new Date()
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-
-  const isCurrentMonth =
-    currentMonth.getMonth() === today.getMonth() &&
-    currentMonth.getFullYear() === today.getFullYear()
+  const isCurrentMonth = currentMonth.getMonth() === today.getMonth() && currentMonth.getFullYear() === today.getFullYear()
 
   const isPastDay = (day) => {
     const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
@@ -96,9 +90,7 @@ function WorkerDashboard() {
   const { daysInMonth, startOffset } = getDaysInMonth(currentMonth)
 
   const isToday = (day) =>
-    day === today.getDate() &&
-    currentMonth.getMonth() === today.getMonth() &&
-    currentMonth.getFullYear() === today.getFullYear()
+    day === today.getDate() && currentMonth.getMonth() === today.getMonth() && currentMonth.getFullYear() === today.getFullYear()
 
   const isSelected = (day) =>
     selectedDate &&
@@ -109,20 +101,12 @@ function WorkerDashboard() {
   const handleDayClick = (day) => {
     if (isPastDay(day)) return
     const clicked = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-    if (selectedDate && selectedDate.getTime() === clicked.getTime()) {
-      setSelectedDate(null)
-    } else {
-      setSelectedDate(clicked)
-    }
+    if (selectedDate && selectedDate.getTime() === clicked.getTime()) setSelectedDate(null)
+    else setSelectedDate(clicked)
   }
 
-  const prevMonth = () => {
-    if (isCurrentMonth) return
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
-  }
-
+  const prevMonth = () => { if (isCurrentMonth) return; setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)) }
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
-
   const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
 
   const formatSelectedDate = () => {
@@ -135,13 +119,10 @@ function WorkerDashboard() {
     return DAYS[d === 0 ? 6 : d - 1]
   }
 
+  const prevBtnStyle = { opacity: isCurrentMonth ? 0.2 : 1, cursor: isCurrentMonth ? 'default' : 'pointer' }
+
   const dashMenuItems = ['My Shifts', 'Payments', 'Ratings']
   const profileMenuItems = ['Update Profile', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Settings', 'Log Out']
-
-  const prevBtnStyle = {
-    opacity: isCurrentMonth ? 0.2 : 1,
-    cursor: isCurrentMonth ? 'default' : 'pointer'
-  }
 
   return (
     <div className="wd-page">
@@ -156,9 +137,7 @@ function WorkerDashboard() {
             <p className="invite-sub">Share your unique referral code with friends. When they sign up using your code, they'll be linked to you!</p>
             <div className="invite-code-box">
               <span className="invite-code">{referralCode || 'Loading...'}</span>
-              <button className="invite-copy-btn" onClick={handleCopy}>
-                {copied ? '✅ Copied!' : 'Copy'}
-              </button>
+              <button className="invite-copy-btn" onClick={handleCopy}>{copied ? '✅ Copied!' : 'Copy'}</button>
             </div>
             <p className="invite-note">Your friends can enter this code during signup under "Were you invited by a friend?"</p>
           </div>
@@ -167,7 +146,8 @@ function WorkerDashboard() {
 
       {/* NAVBAR */}
       <nav className="wd-navbar">
-        <div className="wd-nav-logo" onClick={() => navigate('/')}>
+        {/* Logo does nothing — already on dashboard */}
+        <div className="wd-nav-logo">
           <img src={logoImg} alt="QuickWork" className="wd-logo-img" />
           <span className="wd-logo-text">QuickWork</span>
         </div>
@@ -218,8 +198,6 @@ function WorkerDashboard() {
 
       {/* MAIN CONTENT */}
       <div className="wd-main">
-
-        {/* LEFT PANEL */}
         <div className="wd-left">
           <h2 className="wd-greeting">Hello, <span className="wd-name">{firstName || 'Worker'}</span>! 👋</h2>
 
@@ -230,7 +208,6 @@ function WorkerDashboard() {
               <span className="wd-cal-month">{monthName}</span>
               <button className="wd-cal-nav" onClick={nextMonth}>›</button>
             </div>
-
             <div className="wd-cal-grid">
               {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                 <div key={i} className="wd-cal-dow">{d}</div>
@@ -242,17 +219,12 @@ function WorkerDashboard() {
                 const day = i + 1
                 const past = isPastDay(day)
                 return (
-                  <div
-                    key={day}
-                    className={`wd-cal-day ${past ? 'past' : ''} ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`}
-                    onClick={() => handleDayClick(day)}
-                  >
+                  <div key={day} className={`wd-cal-day ${past ? 'past' : ''} ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`} onClick={() => handleDayClick(day)}>
                     {day}
                   </div>
                 )
               })}
             </div>
-
             {selectedDate ? (
               <div className="wd-cal-selected-info">
                 📅 Showing shifts for <strong>{formatSelectedDate()}</strong>
@@ -270,24 +242,18 @@ function WorkerDashboard() {
               <span className="wd-strip-month-name">{monthName}</span>
               <button className="wd-strip-nav" onClick={nextMonth}>›</button>
             </div>
-
             <div className="wd-strip-scroll">
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1
                 if (isPastDay(day)) return null
                 return (
-                  <div
-                    key={day}
-                    className={`wd-strip-day ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`}
-                    onClick={() => handleDayClick(day)}
-                  >
+                  <div key={day} className={`wd-strip-day ${isToday(day) ? 'today' : ''} ${isSelected(day) ? 'selected' : ''}`} onClick={() => handleDayClick(day)}>
                     <span className="wd-strip-dow">{getDayLabel(day)}</span>
                     <span className="wd-strip-num">{day}</span>
                   </div>
                 )
               })}
             </div>
-
             {selectedDate && (
               <div className="wd-strip-selected-info">
                 <span>📅 {formatSelectedDate()}</span>
@@ -297,53 +263,27 @@ function WorkerDashboard() {
           </div>
         </div>
 
-        {/* DIVIDER */}
         <div className="wd-divider" />
 
-        {/* RIGHT PANEL */}
         <div className="wd-right">
           <h2 className="wd-section-title">What would you like to do today?</h2>
-
           <div className="wd-filters">
             <div className="wd-search-wrap">
               <span className="wd-search-icon">🔍</span>
-              <input
-                className="wd-search"
-                type="text"
-                placeholder="Search jobs, companies..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <input className="wd-search" type="text" placeholder="Search jobs, companies..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
-
-            <select
-              className="wd-select category-select"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              {CATEGORIES.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
+            <select className="wd-select category-select" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
-
-            <select
-              className="wd-select city-select"
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-            >
-              {CITIES.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
+            <select className="wd-select city-select" value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
+              {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-
           <div className="wd-empty-state">
             <div className="wd-empty-icon">📋</div>
             <h3 className="wd-empty-title">No shifts available yet</h3>
             <p className="wd-empty-sub">
-              {selectedDate
-                ? `No shifts posted for ${formatSelectedDate()} in ${selectedCity}.`
-                : `No shifts available in ${selectedCity} right now.`}
+              {selectedDate ? `No shifts posted for ${formatSelectedDate()} in ${selectedCity}.` : `No shifts available in ${selectedCity} right now.`}
               <br />Check back soon — businesses are joining every day!
             </p>
           </div>

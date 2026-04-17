@@ -14,7 +14,8 @@ function BusinessDashboard() {
   return (
     <div className="dashboard-page">
       <nav className="dash-navbar">
-        <div className="nav-logo" onClick={() => navigate('/')}>
+        {/* Logo does nothing — already on dashboard */}
+        <div className="nav-logo">
           <img src={logoImg} alt="QuickWork" className="logo-img" />
           <span className="logo-text">QuickWork</span>
         </div>

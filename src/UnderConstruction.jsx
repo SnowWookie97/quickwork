@@ -1,14 +1,31 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './Dashboard.css'
 
 function UnderConstruction() {
   const navigate = useNavigate()
+  const [userRole, setUserRole] = useState(null)
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) setUserRole(user.user_metadata?.role)
+    }
+    getUser()
+  }, [])
+
+  const handleLogoClick = () => {
+    if (userRole === 'business') navigate('/business/dashboard')
+    else if (userRole === 'worker') navigate('/worker/dashboard')
+    else navigate('/')
+  }
 
   return (
     <div className="dashboard-page">
       <nav className="dash-navbar">
-        <div className="nav-logo" onClick={() => navigate('/')}>
+        <div className="nav-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
           <img src={logoImg} alt="QuickWork" className="logo-img" />
           <span className="logo-text">QuickWork</span>
         </div>
