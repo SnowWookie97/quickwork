@@ -1,31 +1,47 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './ContactUs.css'
 
 function ContactUs() {
   const navigate = useNavigate()
+  const [userRole, setUserRole] = useState(null)
 
   const address = "Flat No.4, Vastupark-B, Ashwin Nagar, Near Mahindra Guest House, Nashik, 422009, Maharashtra"
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
 
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) setUserRole(user.user_metadata?.role)
+    }
+    getUser()
+  }, [])
+
+  const handleLogoClick = () => {
+    if (userRole === 'business') navigate('/business/dashboard')
+    else if (userRole === 'worker') navigate('/worker/dashboard')
+    else navigate('/')
+  }
+
   return (
     <div className="contact-page">
       <nav className="contact-navbar">
-        <div className="contact-nav-logo" onClick={() => navigate('/')}>
+        <div className="contact-nav-logo" onClick={handleLogoClick}>
           <img src={logoImg} alt="QuickWork" className="contact-logo-img" />
           <span className="contact-logo-text">QuickWork</span>
         </div>
         <button className="contact-back-btn" onClick={() => navigate(-1)}>← Back</button>
       </nav>
 
-      <div className="contact-hero">
-        <h1 className="contact-title">We're here to <span className="contact-orange">help!</span></h1>
-      </div>
+      <div className="contact-body">
 
-      <div className="contact-main">
+        <div className="contact-hero">
+          <h1 className="contact-title">We're here to <span className="contact-orange">help!</span></h1>
+        </div>
 
         <div className="contact-cards">
-
           <div className="contact-card">
             <div className="contact-card-icon">📞</div>
             <h2 className="contact-card-title">Call Us Directly</h2>
@@ -37,7 +53,7 @@ function ContactUs() {
             </div>
           </div>
 
-          <div className="contact-card contact-card-featured">
+          <div className="contact-card">
             <div className="contact-card-icon">✉️</div>
             <h2 className="contact-card-title">Write To Us</h2>
             <p className="contact-card-desc">Send us an email and we'll get back to you</p>
@@ -60,31 +76,27 @@ function ContactUs() {
               <span className="hours-value">Mon – Fri, 9:00 AM – 2:00 PM</span>
             </div>
           </div>
-
         </div>
 
-        <div className="contact-map-section">
-          <div className="contact-map-card">
-            <div className="contact-map-left">
-              <div className="contact-map-pin">📍</div>
-              <div>
-                <h3 className="contact-map-title">Find Us in Nashik</h3>
-                <p className="contact-map-address">
-                  Flat No.4, Vastupark-B, Ashwin Nagar,<br />
-                  Near Mahindra Guest House,<br />
-                  Nashik, Maharashtra – 422009
-                </p>
-                <div className="contact-map-hours">
-                  <span>🕘 Mon – Fri &nbsp;|&nbsp; 9:00 AM – 2:00 PM</span>
-                </div>
+        <div className="contact-map-card">
+          <div className="contact-map-left">
+            <div className="contact-map-pin">📍</div>
+            <div>
+              <h3 className="contact-map-title">Find Us in Nashik</h3>
+              <p className="contact-map-address">
+                Flat No.4, Vastupark-B, Ashwin Nagar,<br />
+                Near Mahindra Guest House,<br />
+                Nashik, Maharashtra – 422009
+              </p>
+              <div className="contact-map-hours">
+                <span>🕘 Mon – Fri &nbsp;|&nbsp; 9:00 AM – 2:00 PM</span>
               </div>
             </div>
-            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="contact-map-btn">
-              🗺️ Open in Google Maps →
-            </a>
           </div>
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="contact-map-btn">
+            🗺️ Open in Google Maps →
+          </a>
         </div>
-
 
       </div>
     </div>
