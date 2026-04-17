@@ -24,7 +24,6 @@ function ContactUs() {
 
       <div className="contact-main">
 
-        {/* THREE CARDS */}
         <div className="contact-cards">
 
           <div className="contact-card">
@@ -64,7 +63,6 @@ function ContactUs() {
 
         </div>
 
-        {/* MAP BUTTON SECTION */}
         <div className="contact-map-section">
           <div className="contact-map-card">
             <div className="contact-map-left">
