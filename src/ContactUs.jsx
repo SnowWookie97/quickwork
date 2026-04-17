@@ -70,7 +70,7 @@ function ContactUs() {
             <div className="contact-map-container">
               <iframe
                 title="QuickWork Location"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU3aLo&q=Ashwin+Nagar+Nashik+Maharashtra+422009"
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA3jv2ryZrA2AerDsHIxaXoexyzYCGbwl0&q=Ashwin+Nagar+Nashik+Maharashtra+422009"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
