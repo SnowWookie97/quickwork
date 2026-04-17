@@ -5,14 +5,25 @@ import logoImg from './assets/logo.png'
 import './AuthForm.css'
 
 const INDUSTRIES = [
-  'Logistics',
-  'Retail',
-  'Hospitality',
-  'Office',
-  'Events',
-  'Delivery',
-  'Warehouse',
+  'Logistics', 'Retail', 'Hospitality', 'Office', 'Events', 'Delivery', 'Warehouse',
 ]
+
+function generateCode(userId) {
+  // Simple hash from userId to generate a code like QW-A3F9K2
+  let hash = 0
+  for (let i = 0; i < userId.length; i++) {
+    hash = ((hash << 5) - hash) + userId.charCodeAt(i)
+    hash |= 0
+  }
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = 'QW-'
+  let n = Math.abs(hash)
+  for (let i = 0; i < 6; i++) {
+    code += chars[n % chars.length]
+    n = Math.floor(n / chars.length) + (i * 7)
+  }
+  return code
+}
 
 function Signup() {
   const navigate = useNavigate()
@@ -20,11 +31,7 @@ function Signup() {
   const role = location.state?.role || 'worker'
 
   const [form, setForm] = useState({
-    name: '',
-    mobile: '',
-    email: '',
-    password: '',
-    industry: '',
+    name: '', mobile: '', email: '', password: '', industry: '',
   })
   const [wasReferred, setWasReferred] = useState(false)
   const [referralCode, setReferralCode] = useState('')
@@ -38,43 +45,37 @@ function Signup() {
     setError('')
 
     if (!form.name || !form.mobile || !form.email || !form.password) {
-      setError('Please fill in all fields.')
-      return
+      setError('Please fill in all fields.'); return
     }
     if (form.mobile.length < 10) {
-      setError('Please enter a valid mobile number.')
-      return
+      setError('Please enter a valid mobile number.'); return
     }
     if (form.password.length < 6) {
-      setError('Password must be at least 6 characters.')
-      return
+      setError('Password must be at least 6 characters.'); return
     }
     if (role === 'business' && !form.industry) {
-      setError('Please select your industry.')
-      return
+      setError('Please select your industry.'); return
     }
     if (wasReferred && !referralCode.trim()) {
-      setError('Please enter the referral code or switch to No.')
-      return
+      setError('Please enter the referral code or switch to No.'); return
     }
 
     // Validate referral code if provided
     if (wasReferred && referralCode.trim()) {
-      const { data: refData, error: refError } = await supabase
+      const { data: refData } = await supabase
         .from('referrals')
         .select('referral_code')
         .eq('referral_code', referralCode.trim().toUpperCase())
         .single()
 
-      if (refError || !refData) {
-        setError('Invalid referral code. Please check and try again.')
-        return
+      if (!refData) {
+        setError('Invalid referral code. Please check and try again.'); return
       }
     }
 
     setLoading(true)
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error: signupError } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
@@ -83,26 +84,28 @@ function Signup() {
           name: form.name,
           mobile: form.mobile,
           ...(role === 'business' && { industry: form.industry }),
-          ...(wasReferred && referralCode.trim() && { referred_by: referralCode.trim().toUpperCase() }),
         }
       }
     })
 
-    // If referred, update the referrals table with referred_by
-    if (!error && data.user && wasReferred && referralCode.trim()) {
-      await supabase
-        .from('referrals')
-        .update({ referred_by: referralCode.trim().toUpperCase() })
-        .eq('user_id', data.user.id)
+    if (signupError) {
+      setLoading(false)
+      setError(signupError.message)
+      return
+    }
+
+    // Create referral record in app (no trigger needed)
+    if (data.user) {
+      const newCode = generateCode(data.user.id)
+      await supabase.from('referrals').insert({
+        user_id: data.user.id,
+        referral_code: newCode,
+        referred_by: wasReferred && referralCode.trim() ? referralCode.trim().toUpperCase() : null,
+      })
     }
 
     setLoading(false)
-
-    if (error) {
-      setError(error.message)
-    } else {
-      setSuccess(true)
-    }
+    setSuccess(true)
   }
 
   return (
@@ -187,9 +190,7 @@ function Signup() {
               {/* REFERRAL SECTION */}
               <div className="form-group">
                 <label>
-                  {role === 'business'
-                    ? 'Were you invited by another business?'
-                    : 'Were you invited by a friend?'}
+                  {role === 'business' ? 'Were you invited by another business?' : 'Were you invited by a friend?'}
                 </label>
                 <div className="referral-toggle">
                   <button
