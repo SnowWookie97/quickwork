@@ -136,7 +136,7 @@ function WorkerDashboard() {
   }
 
   const dashMenuItems = ['My Shifts', 'Payments', 'Ratings']
-  const profileMenuItems = ['Update Profile', 'Settings', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Log Out']
+  const profileMenuItems = ['Update Profile', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Settings', 'Log Out']
 
   const prevBtnStyle = {
     opacity: isCurrentMonth ? 0.2 : 1,
