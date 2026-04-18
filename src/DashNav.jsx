@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './DashNav.css'
 
-function DashNav({ userRole }) {
+function DashNav({ userRole, onHomepage }) {
   const navigate = useNavigate()
   const [dashDropdown, setDashDropdown] = useState(false)
   const [profileDropdown, setProfileDropdown] = useState(false)
@@ -55,7 +55,6 @@ function DashNav({ userRole }) {
 
   return (
     <>
-      {/* INVITE MODAL */}
       {showInviteModal && (
         <div className="dashnav-invite-overlay" onClick={() => setShowInviteModal(false)}>
           <div className="dashnav-invite-modal" onClick={(e) => e.stopPropagation()}>
@@ -88,7 +87,10 @@ function DashNav({ userRole }) {
                 {dashMenuItems.map(item => (
                   <div key={item} className="dashnav-dropdown-item" onClick={() => {
                     setDashDropdown(false)
-                    if (item === 'Homepage') navigate('/worker/dashboard')
+                    if (item === 'Homepage') {
+                      if (onHomepage) onHomepage()
+                      else navigate('/worker/dashboard')
+                    }
                     else if (item === 'My Shifts') navigate('/my-shifts')
                     else navigate('/under-construction')
                   }}>
