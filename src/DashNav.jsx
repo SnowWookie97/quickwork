@@ -87,11 +87,9 @@ function DashNav({ userRole, onHomepage }) {
                 {dashMenuItems.map(item => (
                   <div key={item} className="dashnav-dropdown-item" onClick={() => {
                     setDashDropdown(false)
-                    if (item === 'Homepage') {
-                      if (onHomepage) onHomepage()
-                      else navigate('/worker/dashboard')
-                    }
+                    if (item === 'Homepage') { if (onHomepage) onHomepage(); else navigate('/worker/dashboard') }
                     else if (item === 'My Shifts') navigate('/my-shifts')
+                    else if (item === 'Payments') navigate('/payments')
                     else navigate('/under-construction')
                   }}>
                     {item}

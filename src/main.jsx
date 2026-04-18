@@ -13,6 +13,7 @@ import UnderConstruction from './UnderConstruction.jsx'
 import ContactUs from './ContactUs.jsx'
 import Feedback from './Feedback.jsx'
 import MyShifts from './MyShifts.jsx'
+import Payments from './Payments.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/my-shifts" element={<MyShifts />} />
+        <Route path="/payments" element={<Payments />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
