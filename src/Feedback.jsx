@@ -6,36 +6,71 @@ import './Feedback.css'
 
 function StarRating({ value, onChange }) {
   const [hovered, setHovered] = useState(null)
-
-  const stars = [1, 2, 3, 4, 5]
-  const halfStars = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
-
   const display = hovered !== null ? hovered : value
 
   return (
     <div className="star-rating">
-      {stars.map((star) => {
-        const full = display >= star
-        const half = display >= star - 0.5 && display < star
+      {[1, 2, 3, 4, 5].map((star) => {
+        const fillFull = display >= star
+        const fillHalf = display >= star - 0.5 && display < star
+
         return (
-          <div key={star} className="star-wrapper">
-            {/* Left half */}
+          <div
+            key={star}
+            className="star-wrap"
+            onMouseLeave={() => setHovered(null)}
+          >
+            {/* Left half hover zone */}
             <div
-              className="star-half left"
+              className="star-zone left"
               onMouseEnter={() => setHovered(star - 0.5)}
-              onMouseLeave={() => setHovered(null)}
               onClick={() => onChange(star - 0.5)}
             />
-            {/* Right half */}
+            {/* Right half hover zone */}
             <div
-              className="star-half right"
+              className="star-zone right"
               onMouseEnter={() => setHovered(star)}
-              onMouseLeave={() => setHovered(null)}
               onClick={() => onChange(star)}
             />
-            <span className={`star-icon ${full ? 'full' : half ? 'half' : 'empty'}`}>
-              {full ? '★' : half ? '⭐' : '☆'}
-            </span>
+
+            {/* SVG star with clip for half fill */}
+            <svg
+              className="star-svg"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <clipPath id={`half-${star}`}>
+                  <rect x="0" y="0" width="12" height="24" />
+                </clipPath>
+              </defs>
+              {/* Background star (empty) */}
+              <polygon
+                points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                fill="#e0e0e0"
+                stroke="#e0e0e0"
+                strokeWidth="1"
+              />
+              {/* Full fill */}
+              {fillFull && (
+                <polygon
+                  points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                  fill="#E8470F"
+                  stroke="#E8470F"
+                  strokeWidth="1"
+                />
+              )}
+              {/* Half fill */}
+              {fillHalf && (
+                <polygon
+                  points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                  fill="#E8470F"
+                  stroke="#E8470F"
+                  strokeWidth="1"
+                  clipPath={`url(#half-${star})`}
+                />
+              )}
+            </svg>
           </div>
         )
       })}
@@ -54,11 +89,7 @@ function Feedback() {
   const [submitted, setSubmitted] = useState(false)
 
   const [form, setForm] = useState({
-    q1: '',
-    q2: '',
-    q3: '',
-    q4Rating: 0,
-    q4Comment: '',
+    q1: '', q2: '', q3: '', q4Rating: 0, q4Comment: '',
   })
 
   useEffect(() => {
@@ -110,9 +141,7 @@ function Feedback() {
           <div className="fb-ty-emoji">🙏</div>
           <h1 className="fb-ty-title">Thank you for your feedback!</h1>
           <p className="fb-ty-sub">We take every piece of feedback seriously. You may even hear back from us!</p>
-          <div className="fb-ty-gif">
-            <span style={{ fontSize: '80px' }}>🎉</span>
-          </div>
+          <div className="fb-ty-gif"><span style={{ fontSize: '80px' }}>🎉</span></div>
           <button className="fb-submit-btn" onClick={handleLogoClick}>← Back to Dashboard</button>
         </div>
       </div>
@@ -130,63 +159,36 @@ function Feedback() {
       </nav>
 
       <div className="fb-body">
-
         <div className="fb-hero">
           <h1 className="fb-title">Share your <span className="fb-orange">feedback</span></h1>
           <p className="fb-sub">Help us make QuickWork better for everyone</p>
         </div>
 
         <div className="fb-form">
-
-          {/* Q1 */}
           <div className="fb-section">
             <label className="fb-label">💡 What can we improve?</label>
-            <textarea
-              className="fb-textarea"
-              placeholder="Tell us what could be better..."
-              value={form.q1}
-              onChange={(e) => setForm({ ...form, q1: e.target.value })}
-            />
+            <textarea className="fb-textarea" placeholder="Tell us what could be better..." value={form.q1} onChange={(e) => setForm({ ...form, q1: e.target.value })} />
           </div>
 
-          {/* Q2 */}
           <div className="fb-section">
             <label className="fb-label">❤️ What do you like about QuickWork?</label>
-            <textarea
-              className="fb-textarea"
-              placeholder="What's working well for you..."
-              value={form.q2}
-              onChange={(e) => setForm({ ...form, q2: e.target.value })}
-            />
+            <textarea className="fb-textarea" placeholder="What's working well for you..." value={form.q2} onChange={(e) => setForm({ ...form, q2: e.target.value })} />
           </div>
 
-          {/* Q3 */}
           <div className="fb-section">
             <label className="fb-label">⚠️ What are the most common challenges you face?</label>
-            <textarea
-              className="fb-textarea"
-              placeholder="Any pain points or frustrations..."
-              value={form.q3}
-              onChange={(e) => setForm({ ...form, q3: e.target.value })}
-            />
+            <textarea className="fb-textarea" placeholder="Any pain points or frustrations..." value={form.q3} onChange={(e) => setForm({ ...form, q3: e.target.value })} />
           </div>
 
-          {/* Q4 */}
           <div className="fb-section">
             <label className="fb-label">🏢 How reliable and professional are the businesses on the platform?</label>
             <StarRating value={form.q4Rating} onChange={(v) => setForm({ ...form, q4Rating: v })} />
-            <textarea
-              className="fb-textarea fb-textarea-sm"
-              placeholder="Optional — elaborate if you'd like..."
-              value={form.q4Comment}
-              onChange={(e) => setForm({ ...form, q4Comment: e.target.value })}
-            />
+            <textarea className="fb-textarea fb-textarea-sm" placeholder="Optional — elaborate if you'd like..." value={form.q4Comment} onChange={(e) => setForm({ ...form, q4Comment: e.target.value })} />
           </div>
 
           <button className="fb-submit-btn" onClick={handleSubmit} disabled={loading}>
             {loading ? 'Submitting...' : 'Submit Feedback →'}
           </button>
-
         </div>
       </div>
     </div>
