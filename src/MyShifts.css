@@ -146,6 +146,25 @@
   .ms-body { flex-direction: column; padding: 16px 20px; gap: 16px; overflow: auto; }
   .ms-right { width: 100%; }
   .ms-reminders { height: auto; min-height: 80px; }
-  .ms-tabs { overflow-x: auto; }
+  .ms-tabs {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #E8470F transparent;
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+.ms-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.ms-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ms-tabs::-webkit-scrollbar-thumb {
+  background: #E8470F;
+  border-radius: 3px;
+}
   .ms-tab { font-size: 12px; padding: 8px 12px; }
 }
