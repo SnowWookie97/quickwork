@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
-import logoImg from './assets/logo.png'
+import DashNav from './DashNav'
 import './ContactUs.css'
 
 function ContactUs() {
@@ -19,24 +19,11 @@ function ContactUs() {
     getUser()
   }, [])
 
-  const handleLogoClick = () => {
-    if (userRole === 'business') navigate('/business/dashboard')
-    else if (userRole === 'worker') navigate('/worker/dashboard')
-    else navigate('/')
-  }
-
   return (
     <div className="contact-page">
-      <nav className="contact-navbar">
-        <div className="contact-nav-logo" onClick={handleLogoClick}>
-          <img src={logoImg} alt="QuickWork" className="contact-logo-img" />
-          <span className="contact-logo-text">QuickWork</span>
-        </div>
-        <button className="contact-back-btn" onClick={() => navigate(-1)}>← Back</button>
-      </nav>
+      <DashNav userRole={userRole} />
 
       <div className="contact-body">
-
         <div className="contact-hero">
           <h1 className="contact-title">We're here to <span className="contact-orange">help!</span></h1>
         </div>
@@ -97,7 +84,6 @@ function ContactUs() {
             🗺️ Open in Google Maps →
           </a>
         </div>
-
       </div>
     </div>
   )

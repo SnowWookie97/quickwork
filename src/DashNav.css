@@ -1,0 +1,97 @@
+.dashnav {
+  height: 70px;
+  flex-shrink: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFF8F3;
+  border-bottom: 1px solid #f0e8e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashnav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.dashnav-logo-img { height: 40px; width: auto; }
+.dashnav-logo-text { font-size: 16px; font-weight: 700; color: #E8470F; }
+
+.dashnav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashnav-item { position: relative; }
+
+.dashnav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 2px solid #1A2744;
+  color: #1A2744;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashnav-btn:hover { background: #1A2744; color: white; }
+
+.profile-btn { border-color: #E8470F; color: #E8470F; }
+.profile-btn:hover { background: #E8470F; color: white; }
+
+.dashnav-avatar { font-size: 18px; }
+.dashnav-chevron { font-size: 10px; }
+
+.dashnav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  min-width: 180px;
+  overflow: hidden;
+  z-index: 200;
+}
+
+.dashnav-dropdown-item {
+  padding: 12px 18px;
+  font-size: 14px;
+  color: #1A2744;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-weight: 500;
+}
+
+.dashnav-dropdown-item:hover { background: #FFF8F3; color: #E8470F; }
+
+.dashnav-dropdown-item.invite-item { color: #E8470F; font-weight: 600; }
+
+.dashnav-dropdown-item.logout-item {
+  color: #e53e3e;
+  border-top: 1px solid #eee;
+  font-weight: 600;
+}
+
+.dashnav-dropdown-item.logout-item:hover { background: #fff5f5; color: #e53e3e; }
+
+@media (max-width: 768px) {
+  .dashnav { padding: 0 16px; height: 60px; }
+  .dashnav-logo-img { height: 32px; }
+  .dashnav-logo-text { font-size: 14px; }
+  .dashnav-btn { font-size: 11px; padding: 6px 10px; gap: 4px; }
+  .dashnav-avatar { display: none; }
+  .dashnav-right { gap: 8px; }
+}

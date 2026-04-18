@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
-import logoImg from './assets/logo.png'
+import DashNav from './DashNav'
 import './Dashboard.css'
 
 function UnderConstruction() {
@@ -16,21 +16,9 @@ function UnderConstruction() {
     getUser()
   }, [])
 
-  const handleLogoClick = () => {
-    if (userRole === 'business') navigate('/business/dashboard')
-    else if (userRole === 'worker') navigate('/worker/dashboard')
-    else navigate('/')
-  }
-
   return (
     <div className="dashboard-page">
-      <nav className="dash-navbar">
-        <div className="nav-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-          <img src={logoImg} alt="QuickWork" className="logo-img" />
-          <span className="logo-text">QuickWork</span>
-        </div>
-        <button className="dash-logout" onClick={() => navigate(-1)}>← Go Back</button>
-      </nav>
+      <DashNav userRole={userRole} />
 
       <div className="dash-container">
         <div className="dash-card">

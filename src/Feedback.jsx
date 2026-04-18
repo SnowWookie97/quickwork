@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
-import logoImg from './assets/logo.png'
+import DashNav from './DashNav'
 import './Feedback.css'
 
 function StarRating({ value, onChange }) {
@@ -42,9 +42,7 @@ function Feedback() {
   const [cooldownMsg, setCooldownMsg] = useState(null)
   const [checking, setChecking] = useState(true)
 
-  const [form, setForm] = useState({
-    q1: '', q2: '', q3: '', q4Rating: 0, q4Comment: '',
-  })
+  const [form, setForm] = useState({ q1: '', q2: '', q3: '', q4Rating: 0, q4Comment: '' })
 
   useEffect(() => {
     const getUser = async () => {
@@ -55,19 +53,11 @@ function Feedback() {
       setUserName(user.user_metadata?.name || '')
       setUserEmail(user.email || '')
 
-      // Check 2-week cooldown
       const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
-      const { data } = await supabase
-        .from('feedback')
-        .select('created_at')
-        .eq('user_id', user.id)
-        .gte('created_at', twoWeeksAgo)
-        .order('created_at', { ascending: false })
-        .limit(1)
+      const { data } = await supabase.from('feedback').select('created_at').eq('user_id', user.id).gte('created_at', twoWeeksAgo).order('created_at', { ascending: false }).limit(1)
 
       if (data && data.length > 0) {
-        const lastSubmitted = new Date(data[0].created_at)
-        const nextAllowed = new Date(lastSubmitted.getTime() + 14 * 24 * 60 * 60 * 1000)
+        const nextAllowed = new Date(new Date(data[0].created_at).getTime() + 14 * 24 * 60 * 60 * 1000)
         const daysLeft = Math.ceil((nextAllowed - Date.now()) / (1000 * 60 * 60 * 24))
         setCooldownMsg(`You've already submitted feedback recently. You can submit again in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}.`)
       }
@@ -86,15 +76,9 @@ function Feedback() {
     if (cooldownMsg) return
     setLoading(true)
     const { error } = await supabase.from('feedback').insert({
-      user_id: userId,
-      user_name: userName,
-      user_email: userEmail,
-      user_role: userRole,
-      q1_improvement: form.q1 || null,
-      q2_likes: form.q2 || null,
-      q3_challenges: form.q3 || null,
-      q4_business_rating: form.q4Rating || null,
-      q4_business_comment: form.q4Comment || null,
+      user_id: userId, user_name: userName, user_email: userEmail, user_role: userRole,
+      q1_improvement: form.q1 || null, q2_likes: form.q2 || null, q3_challenges: form.q3 || null,
+      q4_business_rating: form.q4Rating || null, q4_business_comment: form.q4Comment || null,
     })
     setLoading(false)
     if (!error) setShowModal(true)
@@ -104,8 +88,6 @@ function Feedback() {
 
   return (
     <div className="fb-page">
-
-      {/* THANK YOU MODAL */}
       {showModal && (
         <div className="fb-modal-overlay">
           <div className="fb-modal">
@@ -118,17 +100,9 @@ function Feedback() {
         </div>
       )}
 
-      <nav className="fb-navbar">
-        <div className="fb-nav-logo" onClick={handleLogoClick}>
-          <img src={logoImg} alt="QuickWork" className="fb-logo-img" />
-          <span className="fb-logo-text">QuickWork</span>
-        </div>
-        <button className="fb-back-btn" onClick={() => navigate(-1)}>← Back</button>
-      </nav>
+      <DashNav userRole={userRole} />
 
       <div className="fb-body">
-
-        {/* LEFT — FORM */}
         <div className="fb-left">
           <div className="fb-hero">
             <h1 className="fb-title">Share your <span className="fb-orange">feedback</span></h1>
@@ -140,23 +114,19 @@ function Feedback() {
               <label className="fb-label">💡 What can we improve?</label>
               <textarea className="fb-textarea" placeholder="Tell us what could be better..." value={form.q1} onChange={(e) => setForm({ ...form, q1: e.target.value })} disabled={!!cooldownMsg} />
             </div>
-
             <div className="fb-section">
               <label className="fb-label">❤️ What do you like about QuickWork?</label>
               <textarea className="fb-textarea" placeholder="What's working well for you..." value={form.q2} onChange={(e) => setForm({ ...form, q2: e.target.value })} disabled={!!cooldownMsg} />
             </div>
-
             <div className="fb-section">
               <label className="fb-label">⚠️ What are the most common challenges you face?</label>
               <textarea className="fb-textarea" placeholder="Any pain points or frustrations..." value={form.q3} onChange={(e) => setForm({ ...form, q3: e.target.value })} disabled={!!cooldownMsg} />
             </div>
-
             <div className="fb-section">
               <label className="fb-label">🏢 How reliable and professional are the businesses on the platform?</label>
               <StarRating value={form.q4Rating} onChange={(v) => !cooldownMsg && setForm({ ...form, q4Rating: v })} />
               <textarea className="fb-textarea fb-textarea-sm" placeholder="Optional — elaborate if you'd like..." value={form.q4Comment} onChange={(e) => setForm({ ...form, q4Comment: e.target.value })} disabled={!!cooldownMsg} />
             </div>
-
             {cooldownMsg ? (
               <div className="fb-cooldown-error">{cooldownMsg}</div>
             ) : (
@@ -167,17 +137,12 @@ function Feedback() {
           </div>
         </div>
 
-        {/* RIGHT — NOTICE */}
         <div className="fb-right">
           <div className="fb-notice">
             <div className="fb-notice-icon">📋</div>
             <h3 className="fb-notice-title">A note on feedback</h3>
-            <p className="fb-notice-text">
-              We genuinely read and act on every submission. To keep feedback meaningful, each user may submit once every <strong>2 weeks</strong>.
-            </p>
-            <p className="fb-notice-text">
-              This space is for honest criticism, suggestions, and praise that help us improve QuickWork for everyone.
-            </p>
+            <p className="fb-notice-text">We genuinely read and act on every submission. To keep feedback meaningful, each user may submit once every <strong>2 weeks</strong>.</p>
+            <p className="fb-notice-text">This space is for honest criticism, suggestions, and praise that help us improve QuickWork for everyone.</p>
             <div className="fb-notice-divider" />
             <p className="fb-notice-urgent">
               <strong>Have an urgent concern?</strong><br />
@@ -186,7 +151,6 @@ function Feedback() {
             </p>
           </div>
         </div>
-
       </div>
     </div>
   )
