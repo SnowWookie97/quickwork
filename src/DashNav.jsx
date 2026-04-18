@@ -50,7 +50,7 @@ function DashNav({ userRole }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const dashMenuItems = ['My Shifts', 'Payments', 'Ratings']
+  const dashMenuItems = ['Homepage', 'My Shifts', 'Payments', 'Ratings']
   const profileMenuItems = ['Update Profile', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Settings', 'Log Out']
 
   return (
@@ -88,7 +88,8 @@ function DashNav({ userRole }) {
                 {dashMenuItems.map(item => (
                   <div key={item} className="dashnav-dropdown-item" onClick={() => {
                     setDashDropdown(false)
-                    if (item === 'My Shifts') navigate('/my-shifts')
+                    if (item === 'Homepage') navigate('/worker/dashboard')
+                    else if (item === 'My Shifts') navigate('/my-shifts')
                     else navigate('/under-construction')
                   }}>
                     {item}
