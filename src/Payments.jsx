@@ -34,6 +34,8 @@ function Payments() {
   }
 
   const pendingAmount = 0.00
+  const immediateAmount = (pendingAmount - (pendingAmount * 0.0575)).toFixed(2)
+  const fee = (pendingAmount * 0.0575).toFixed(2)
 
   return (
     <div className="pay-page">
@@ -56,11 +58,12 @@ function Payments() {
               <button className="pay-immediate-btn" disabled={pendingAmount === 0}>
                 Request Immediate Payment
               </button>
-              {pendingAmount > 0 ? (
+              {pendingAmount > 0 && (
                 <p className="pay-immediate-note">
-                  A 5.75% processing fee applies
+                  You'll receive ₹{immediateAmount} after a ₹{fee} fee (5.75%)
                 </p>
-              ) : (
+              )}
+              {pendingAmount === 0 && (
                 <p className="pay-immediate-note">No pending amount to withdraw</p>
               )}
             </div>
@@ -80,7 +83,7 @@ function Payments() {
               <span className="pay-notice-icon">⚡</span>
               <div>
                 <strong>Immediate Payment</strong>
-                <p>Need your money sooner? Request an immediate payout anytime. A 5.75% processing fee applies.</p>
+                <p>Need your money sooner? Request an immediate payout anytime. A 5.75% processing fee applies — for example, ₹800 pending becomes ₹754 after the fee.</p>
               </div>
             </div>
           </div>
@@ -131,6 +134,10 @@ function Payments() {
               <p>No payment details added yet.</p>
               <button className="pay-details-btn">+ Add UPI / Bank Account</button>
             </div>
+            <div className="pay-details-divider" />
+            <p className="pay-details-note">
+              💡 Payments will be sent to this account every Friday at 2:00 PM. Make sure your details are correct before your first shift.
+            </p>
           </div>
         </div>
 
