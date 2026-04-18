@@ -20,6 +20,7 @@ function WorkerDashboard() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
   const [userRole, setUserRole] = useState(null)
+  const [showHomepageMsg, setShowHomepageMsg] = useState(false)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedCity, setSelectedCity] = useState('Nashik')
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
@@ -70,7 +71,13 @@ function WorkerDashboard() {
 
   return (
     <div className="wd-page">
-      <DashNav userRole={userRole} />
+      <DashNav userRole={userRole} onHomepage={() => setShowHomepageMsg(true)} />
+
+      {showHomepageMsg && (
+        <div className="wd-homepage-msg" onClick={() => setShowHomepageMsg(false)}>
+          This is the homepage bro 🙌 <span className="wd-homepage-msg-close">✕</span>
+        </div>
+      )}
 
       <div className="wd-main">
         <div className="wd-left">
