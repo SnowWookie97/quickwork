@@ -12,6 +12,7 @@ import BusinessDashboard from './BusinessDashboard.jsx'
 import UnderConstruction from './UnderConstruction.jsx'
 import ContactUs from './ContactUs.jsx'
 import Feedback from './Feedback.jsx'
+import MyShifts from './MyShifts.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/under-construction" element={<UnderConstruction />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/my-shifts" element={<MyShifts />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

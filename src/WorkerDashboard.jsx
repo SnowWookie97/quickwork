@@ -160,7 +160,7 @@ function WorkerDashboard() {
             {dashDropdown && (
               <div className="wd-dropdown">
                 {dashMenuItems.map(item => (
-                  <div key={item} className="wd-dropdown-item" onClick={() => { navigate('/under-construction'); setDashDropdown(false) }}>
+                  <div key={item} className="wd-dropdown-item" onClick={() => { if (item === 'My Shifts') { navigate('/my-shifts'); setDashDropdown(false) } else { navigate('/under-construction'); setDashDropdown(false) } }}>
                     {item}
                   </div>
                 ))}

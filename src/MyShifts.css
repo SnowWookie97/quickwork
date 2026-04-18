@@ -1,0 +1,234 @@
+.ms-page {
+  height: 100vh;
+  overflow: hidden;
+  background: #FFF8F3;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* NAVBAR */
+.ms-navbar {
+  height: 64px;
+  flex-shrink: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFF8F3;
+  border-bottom: 1px solid #f0e8e0;
+}
+
+.ms-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.ms-logo-img { height: 36px; width: auto; }
+.ms-logo-text { font-size: 15px; font-weight: 700; color: #E8470F; }
+
+.ms-back-btn {
+  background: transparent;
+  border: 2px solid #1A2744;
+  color: #1A2744;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ms-back-btn:hover { background: #1A2744; color: white; }
+
+/* GREETING BAR */
+.ms-greeting-bar {
+  padding: 20px 40px 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #f0e8e0;
+  background: #FFF8F3;
+}
+
+.ms-greeting {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1A2744;
+}
+
+.ms-orange { color: #E8470F; }
+
+.ms-greeting-sub {
+  font-size: 13px;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* BODY */
+.ms-body {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  padding: 24px 40px;
+  overflow: hidden;
+}
+
+/* LEFT */
+.ms-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* TABS */
+.ms-tabs {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ms-tab {
+  padding: 9px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 2px solid #eee;
+  background: white;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ms-tab:hover {
+  border-color: #E8470F;
+  color: #E8470F;
+}
+
+.ms-tab.active {
+  background: #E8470F;
+  border-color: #E8470F;
+  color: white;
+}
+
+/* TAB CONTENT */
+.ms-tab-content {
+  flex: 1;
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0e8e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* EMPTY STATE */
+.ms-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 24px;
+  gap: 10px;
+}
+
+.ms-empty-icon { font-size: 44px; opacity: 0.6; }
+
+.ms-empty-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1A2744;
+}
+
+.ms-empty-sub {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+.ms-find-btn {
+  margin-top: 8px;
+  background: #E8470F;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ms-find-btn:hover { background: #c93a0a; }
+
+/* RIGHT — REMINDERS */
+.ms-right {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.ms-reminders {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0e8e0;
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ms-reminders-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0e8e0;
+}
+
+.ms-reminders-icon { font-size: 18px; }
+
+.ms-reminders-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1A2744;
+}
+
+.ms-reminders-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-reminders-empty p {
+  font-size: 13px;
+  color: #bbb;
+  text-align: center;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .ms-page { height: auto; overflow: auto; }
+
+  .ms-navbar { padding: 0 20px; }
+  .ms-greeting-bar { padding: 16px 20px 12px; }
+  .ms-greeting { font-size: 18px; }
+
+  .ms-body {
+    flex-direction: column;
+    padding: 16px 20px;
+    gap: 16px;
+    overflow: auto;
+  }
+
+  .ms-right { width: 100%; }
+
+  .ms-reminders { height: auto; min-height: 100px; }
+
+  .ms-tabs { flex-wrap: wrap; }
+}
