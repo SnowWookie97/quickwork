@@ -51,7 +51,7 @@ function DashNav({ userRole, onHomepage }) {
   }
 
   const dashMenuItems = ['Homepage', 'My Shifts', 'Payments', 'Ratings']
-  const profileMenuItems = ['Update Profile', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Settings', 'Log Out']
+  const profileMenuItems = ['Update Profile', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Settings', 'Privacy Policy', 'Terms and Conditions', 'Log Out']
 
   return (
     <>
@@ -102,7 +102,7 @@ function DashNav({ userRole, onHomepage }) {
           <div className="dashnav-item" ref={profileRef}>
             <button className="dashnav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
               <span className="dashnav-avatar">👤</span>
-              My Profile <span className="dashnav-chevron">{profileDropdown ? '▲' : '▼'}</span>
+              My Account <span className="dashnav-chevron">{profileDropdown ? '▲' : '▼'}</span>
             </button>
             {profileDropdown && (
               <div className="dashnav-dropdown">
