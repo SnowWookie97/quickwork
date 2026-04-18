@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
 import DashNav from './DashNav'
-import logoImg from './assets/logo.png'
 import './Dashboard.css'
 
 const CITIES = [
@@ -21,9 +20,6 @@ function WorkerDashboard() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
   const [userRole, setUserRole] = useState(null)
-  const [referralCode, setReferralCode] = useState('')
-  const [showInviteModal, setShowInviteModal] = useState(false)
-  const [copied, setCopied] = useState(false)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedCity, setSelectedCity] = useState('Nashik')
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
@@ -36,17 +32,9 @@ function WorkerDashboard() {
       if (!user) { navigate('/login'); return }
       setUserRole(user.user_metadata?.role)
       setFirstName((user.user_metadata?.name || '').split(' ')[0])
-      const { data: refData } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
-      if (refData) setReferralCode(refData.referral_code)
     }
     getUser()
   }, [])
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(referralCode)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
 
   const today = new Date()
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
@@ -76,40 +64,14 @@ function WorkerDashboard() {
   const prevMonth = () => { if (isCurrentMonth) return; setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)) }
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
   const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
-
   const formatSelectedDate = () => selectedDate ? selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null
-
-  const getDayLabel = (day) => {
-    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).getDay()
-    return DAYS[d === 0 ? 6 : d - 1]
-  }
-
+  const getDayLabel = (day) => { const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).getDay(); return DAYS[d === 0 ? 6 : d - 1] }
   const prevBtnStyle = { opacity: isCurrentMonth ? 0.2 : 1, cursor: isCurrentMonth ? 'default' : 'pointer' }
 
   return (
     <div className="wd-page">
+      <DashNav userRole={userRole} />
 
-      {/* INVITE MODAL */}
-      {showInviteModal && (
-        <div className="invite-overlay" onClick={() => setShowInviteModal(false)}>
-          <div className="invite-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="invite-close" onClick={() => setShowInviteModal(false)}>✕</button>
-            <div className="invite-icon">🎉</div>
-            <h2 className="invite-title">Invite Friends to QuickWork</h2>
-            <p className="invite-sub">Share your unique referral code with friends. When they sign up using your code, they'll be linked to you!</p>
-            <div className="invite-code-box">
-              <span className="invite-code">{referralCode || 'Loading...'}</span>
-              <button className="invite-copy-btn" onClick={handleCopy}>{copied ? '✅ Copied!' : 'Copy'}</button>
-            </div>
-            <p className="invite-note">Your friends can enter this code during signup under "Were you invited by a friend?"</p>
-          </div>
-        </div>
-      )}
-
-      {/* NAVBAR — pass onInvite to open modal */}
-      <DashNav userRole={userRole} onInvite={() => setShowInviteModal(true)} />
-
-      {/* MAIN CONTENT */}
       <div className="wd-main">
         <div className="wd-left">
           <h2 className="wd-greeting">Hello, <span className="wd-name">{firstName || 'Worker'}</span>! 👋</h2>
