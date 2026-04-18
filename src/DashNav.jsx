@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './DashNav.css'
 
-function DashNav({ userRole, onLogout }) {
+function DashNav({ userRole, onInvite }) {
   const navigate = useNavigate()
   const [dashDropdown, setDashDropdown] = useState(false)
   const [profileDropdown, setProfileDropdown] = useState(false)
@@ -42,7 +42,6 @@ function DashNav({ userRole, onLogout }) {
       </div>
 
       <div className="dashnav-right">
-        {/* My Dashboard */}
         <div className="dashnav-item" ref={dashRef}>
           <button className="dashnav-btn" onClick={() => { setDashDropdown(!dashDropdown); setProfileDropdown(false) }}>
             My Dashboard <span className="dashnav-chevron">{dashDropdown ? '▲' : '▼'}</span>
@@ -62,7 +61,6 @@ function DashNav({ userRole, onLogout }) {
           )}
         </div>
 
-        {/* My Profile */}
         <div className="dashnav-item" ref={profileRef}>
           <button className="dashnav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
             <span className="dashnav-avatar">👤</span>
@@ -79,7 +77,7 @@ function DashNav({ userRole, onLogout }) {
                     if (item === 'Log Out') handleLogout()
                     else if (item === 'Contact Us') navigate('/contact')
                     else if (item === 'Feedback') navigate('/feedback')
-                    else if (item === 'Invite Friends') onLogout && onLogout('invite')
+                    else if (item === 'Invite Friends') { if (onInvite) onInvite() }
                     else navigate('/under-construction')
                   }}
                 >
