@@ -83,7 +83,7 @@ function Payments() {
               <span className="pay-notice-icon">⚡</span>
               <div>
                 <strong>Immediate Payment</strong>
-                <p>Need your money sooner? Request an immediate payout anytime. A 5.75% processing fee applies — for example, ₹800 pending becomes ₹754 after the fee.</p>
+                <p>Need your money sooner? Request an immediate payout anytime. A 5.75% processing fee applies! </p>
               </div>
             </div>
           </div>
