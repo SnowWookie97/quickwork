@@ -40,7 +40,7 @@ function Feedback() {
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [cooldownMsg, setCooldownMsg] = useState(null)
-  const [checking, setChecking] = useState(true)
+  const [checking, setChecking] = useState(false)
 
   const [form, setForm] = useState({ q1: '', q2: '', q3: '', q4Rating: 0, q4Comment: '' })
 
@@ -84,7 +84,7 @@ function Feedback() {
     if (!error) setShowModal(true)
   }
 
-  if (checking) return null
+  
 
   return (
     <div className="fb-page">
