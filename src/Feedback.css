@@ -172,11 +172,12 @@
 
 /* RIGHT — NOTICE */
 .fb-right {
-  width: 280px;
+  width: 400px;
   flex-shrink: 0;
   display: flex;
   align-items: flex-start;
-  padding-top: 8px;
+  padding-top: 90px;
+  padding-left:70px;
 }
 
 .fb-notice {
