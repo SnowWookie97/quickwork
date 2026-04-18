@@ -11,6 +11,7 @@ import WorkerDashboard from './WorkerDashboard.jsx'
 import BusinessDashboard from './BusinessDashboard.jsx'
 import UnderConstruction from './UnderConstruction.jsx'
 import ContactUs from './ContactUs.jsx'
+import Feedback from './Feedback.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/business/dashboard" element={<BusinessDashboard />} />
         <Route path="/under-construction" element={<UnderConstruction />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/feedback" element={<Feedback />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

@@ -183,6 +183,7 @@ function WorkerDashboard() {
                       setProfileDropdown(false)
                       if (item === 'Log Out') handleLogout()
                       else if (item === 'Contact Us') navigate('/contact')
+                      else if (item === 'Feedback') navigate('/feedback')
                       else if (item === 'Invite Friends') setShowInviteModal(true)
                       else navigate('/under-construction')
                     }}
