@@ -15,61 +15,18 @@ function StarRating({ value, onChange }) {
         const fillHalf = display >= star - 0.5 && display < star
 
         return (
-          <div
-            key={star}
-            className="star-wrap"
-            onMouseLeave={() => setHovered(null)}
-          >
-            {/* Left half hover zone */}
-            <div
-              className="star-zone left"
-              onMouseEnter={() => setHovered(star - 0.5)}
-              onClick={() => onChange(star - 0.5)}
-            />
-            {/* Right half hover zone */}
-            <div
-              className="star-zone right"
-              onMouseEnter={() => setHovered(star)}
-              onClick={() => onChange(star)}
-            />
-
-            {/* SVG star with clip for half fill */}
-            <svg
-              className="star-svg"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+          <div key={star} className="star-wrap" onMouseLeave={() => setHovered(null)}>
+            <div className="star-zone left" onMouseEnter={() => setHovered(star - 0.5)} onClick={() => onChange(star - 0.5)} />
+            <div className="star-zone right" onMouseEnter={() => setHovered(star)} onClick={() => onChange(star)} />
+            <svg className="star-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <clipPath id={`half-${star}`}>
                   <rect x="0" y="0" width="12" height="24" />
                 </clipPath>
               </defs>
-              {/* Background star (empty) */}
-              <polygon
-                points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-                fill="#e0e0e0"
-                stroke="#e0e0e0"
-                strokeWidth="1"
-              />
-              {/* Full fill */}
-              {fillFull && (
-                <polygon
-                  points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-                  fill="#E8470F"
-                  stroke="#E8470F"
-                  strokeWidth="1"
-                />
-              )}
-              {/* Half fill */}
-              {fillHalf && (
-                <polygon
-                  points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-                  fill="#E8470F"
-                  stroke="#E8470F"
-                  strokeWidth="1"
-                  clipPath={`url(#half-${star})`}
-                />
-              )}
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#e0e0e0" stroke="#e0e0e0" strokeWidth="1" />
+              {fillFull && <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#E8470F" stroke="#E8470F" strokeWidth="1" />}
+              {fillHalf && <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#E8470F" stroke="#E8470F" strokeWidth="1" clipPath={`url(#half-${star})`} />}
             </svg>
           </div>
         )
@@ -86,7 +43,7 @@ function Feedback() {
   const [userEmail, setUserEmail] = useState('')
   const [userId, setUserId] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
   const [form, setForm] = useState({
     q1: '', q2: '', q3: '', q4Rating: 0, q4Comment: '',
@@ -124,32 +81,25 @@ function Feedback() {
       q4_business_comment: form.q4Comment || null,
     })
     setLoading(false)
-    if (!error) setSubmitted(true)
-  }
-
-  if (submitted) {
-    return (
-      <div className="fb-page">
-        <nav className="fb-navbar">
-          <div className="fb-nav-logo" onClick={handleLogoClick}>
-            <img src={logoImg} alt="QuickWork" className="fb-logo-img" />
-            <span className="fb-logo-text">QuickWork</span>
-          </div>
-          <button className="fb-back-btn" onClick={() => navigate(-1)}>← Back</button>
-        </nav>
-        <div className="fb-thankyou">
-          <div className="fb-ty-emoji">🙏</div>
-          <h1 className="fb-ty-title">Thank you for your feedback!</h1>
-          <p className="fb-ty-sub">We take every piece of feedback seriously. You may even hear back from us!</p>
-          <div className="fb-ty-gif"><span style={{ fontSize: '80px' }}>🎉</span></div>
-          <button className="fb-submit-btn" onClick={handleLogoClick}>← Back to Dashboard</button>
-        </div>
-      </div>
-    )
+    if (!error) setShowModal(true)
   }
 
   return (
     <div className="fb-page">
+
+      {/* THANK YOU MODAL */}
+      {showModal && (
+        <div className="fb-modal-overlay">
+          <div className="fb-modal">
+            <div className="fb-modal-emoji">🙏</div>
+            <h2 className="fb-modal-title">Thank you for your feedback!</h2>
+            <p className="fb-modal-sub">We take every piece of feedback seriously. You may even hear back from us!</p>
+            <div className="fb-modal-confetti">🎉</div>
+            <button className="fb-submit-btn" onClick={handleLogoClick}>← Back to Dashboard</button>
+          </div>
+        </div>
+      )}
+
       <nav className="fb-navbar">
         <div className="fb-nav-logo" onClick={handleLogoClick}>
           <img src={logoImg} alt="QuickWork" className="fb-logo-img" />
