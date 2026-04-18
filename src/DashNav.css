@@ -61,13 +61,35 @@
   border: 1px solid #eee;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  min-width: 180px;
+  min-width: 200px;
   overflow: hidden;
   z-index: 200;
 }
 
+.dashnav-dropdown-grouped {
+  min-width: 220px;
+}
+
+/* GROUP STYLES */
+.dashnav-group {
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.dashnav-group:last-child {
+  border-bottom: none;
+}
+
+.dashnav-group-label {
+  padding: 10px 18px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #bbb;
+  text-transform: uppercase;
+}
+
 .dashnav-dropdown-item {
-  padding: 12px 18px;
+  padding: 10px 18px;
   font-size: 14px;
   color: #1A2744;
   cursor: pointer;
@@ -81,20 +103,10 @@
 
 .dashnav-dropdown-item.logout-item {
   color: #e53e3e;
-  border-top: 1px solid #eee;
   font-weight: 600;
 }
 
 .dashnav-dropdown-item.logout-item:hover { background: #fff5f5; color: #e53e3e; }
-
-@media (max-width: 768px) {
-  .dashnav { padding: 0 16px; height: 60px; }
-  .dashnav-logo-img { height: 32px; }
-  .dashnav-logo-text { font-size: 14px; }
-  .dashnav-btn { font-size: 11px; padding: 6px 10px; gap: 4px; }
-  .dashnav-avatar { display: none; }
-  .dashnav-right { gap: 8px; }
-}
 
 /* INVITE MODAL */
 .dashnav-invite-overlay {
@@ -196,4 +208,13 @@
   font-size: 12px;
   color: #aaa;
   line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .dashnav { padding: 0 16px; height: 60px; }
+  .dashnav-logo-img { height: 32px; }
+  .dashnav-logo-text { font-size: 14px; }
+  .dashnav-btn { font-size: 11px; padding: 6px 10px; gap: 4px; }
+  .dashnav-avatar { display: none; }
+  .dashnav-right { gap: 8px; }
 }

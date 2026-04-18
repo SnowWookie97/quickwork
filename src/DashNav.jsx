@@ -51,7 +51,30 @@ function DashNav({ userRole, onHomepage }) {
   }
 
   const dashMenuItems = ['Homepage', 'My Shifts', 'Payments', 'Ratings']
-  const profileMenuItems = ['Update Profile', 'Validation', 'Invite Friends', 'Contact Us', 'Feedback', 'Settings', 'Privacy Policy', 'Terms and Conditions', 'Log Out']
+
+  const profileGroups = [
+    {
+      label: 'ACCOUNT',
+      items: ['My Profile', 'Validation', 'Settings']
+    },
+    {
+      label: 'FROM QUICKWORK',
+      items: ['Invite Friends', 'Contact Us', 'Insurance', 'Feedback']
+    },
+    {
+      label: 'LEGAL',
+      items: ['Privacy Policy', 'Terms and Conditions']
+    }
+  ]
+
+  const handleProfileItem = (item) => {
+    setProfileDropdown(false)
+    if (item === 'Log Out') handleLogout()
+    else if (item === 'Contact Us') navigate('/contact')
+    else if (item === 'Feedback') navigate('/feedback')
+    else if (item === 'Invite Friends') setShowInviteModal(true)
+    else navigate('/under-construction')
+  }
 
   return (
     <>
@@ -78,6 +101,7 @@ function DashNav({ userRole, onHomepage }) {
         </div>
 
         <div className="dashnav-right">
+          {/* MY DASHBOARD */}
           <div className="dashnav-item" ref={dashRef}>
             <button className="dashnav-btn" onClick={() => { setDashDropdown(!dashDropdown); setProfileDropdown(false) }}>
               My Dashboard <span className="dashnav-chevron">{dashDropdown ? '▲' : '▼'}</span>
@@ -99,29 +123,33 @@ function DashNav({ userRole, onHomepage }) {
             )}
           </div>
 
+          {/* MY ACCOUNT */}
           <div className="dashnav-item" ref={profileRef}>
             <button className="dashnav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
               <span className="dashnav-avatar">👤</span>
               My Account <span className="dashnav-chevron">{profileDropdown ? '▲' : '▼'}</span>
             </button>
             {profileDropdown && (
-              <div className="dashnav-dropdown">
-                {profileMenuItems.map(item => (
-                  <div
-                    key={item}
-                    className={`dashnav-dropdown-item ${item === 'Log Out' ? 'logout-item' : ''} ${item === 'Invite Friends' ? 'invite-item' : ''}`}
-                    onClick={() => {
-                      setProfileDropdown(false)
-                      if (item === 'Log Out') handleLogout()
-                      else if (item === 'Contact Us') navigate('/contact')
-                      else if (item === 'Feedback') navigate('/feedback')
-                      else if (item === 'Invite Friends') setShowInviteModal(true)
-                      else navigate('/under-construction')
-                    }}
-                  >
-                    {item === 'Invite Friends' ? '🎉 Invite Friends' : item}
+              <div className="dashnav-dropdown dashnav-dropdown-grouped">
+                {profileGroups.map((group, gi) => (
+                  <div key={gi} className="dashnav-group">
+                    <div className="dashnav-group-label">{group.label}</div>
+                    {group.items.map(item => (
+                      <div
+                        key={item}
+                        className={`dashnav-dropdown-item ${item === 'Invite Friends' ? 'invite-item' : ''}`}
+                        onClick={() => handleProfileItem(item)}
+                      >
+                        {item === 'Invite Friends' ? '🎉 Invite Friends' : item}
+                      </div>
+                    ))}
                   </div>
                 ))}
+                <div className="dashnav-group">
+                  <div className="dashnav-dropdown-item logout-item" onClick={() => handleProfileItem('Log Out')}>
+                    Log Out
+                  </div>
+                </div>
               </div>
             )}
           </div>
