@@ -4,13 +4,13 @@ import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './MyShifts.css'
 
-const TABS = ['Upcoming Shifts', 'Applied', 'Past Shifts']
+const TABS = ['Completed Shifts', 'Applied Shifts', 'Upcoming Shifts', 'Cancelled Shifts']
 
 function MyShifts() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
   const [userRole, setUserRole] = useState(null)
-  const [activeTab, setActiveTab] = useState('Upcoming Shifts')
+  const [activeTab, setActiveTab] = useState('Completed Shifts')
 
   useEffect(() => {
     const getUser = async () => {
@@ -37,20 +37,29 @@ function MyShifts() {
   }
 
   const emptyMessages = {
+    'Completed Shifts': {
+      icon: '🏁',
+      title: 'No completed shifts yet',
+      sub: "Your completed shifts will appear here once you've worked your first one. Keep going!",
+      showBrowse: false,
+    },
+    'Applied Shifts': {
+      icon: '📨',
+      title: "You haven't applied to any shifts yet",
+      sub: 'Once you apply for a shift, it will show up here while you wait for confirmation.',
+      showBrowse: true,
+    },
     'Upcoming Shifts': {
       icon: '📅',
       title: 'No upcoming shifts yet',
       sub: 'Head over to the dashboard and apply for shifts — your confirmed shifts will appear here.',
+      showBrowse: true,
     },
-    'Applied': {
-      icon: '📨',
-      title: "You haven't applied to any shifts yet",
-      sub: 'Once you apply for a shift, it will show up here while you wait for confirmation.',
-    },
-    'Past Shifts': {
-      icon: '🏁',
-      title: 'Nothing here yet',
-      sub: 'Your completed shifts will appear here once you\'ve worked your first one. Keep going!',
+    'Cancelled Shifts': {
+      icon: '❌',
+      title: 'No cancelled shifts',
+      sub: 'Any shifts that were cancelled — either by you or the business — will be listed here.',
+      showBrowse: false,
     },
   }
 
@@ -69,10 +78,8 @@ function MyShifts() {
 
       {/* GREETING */}
       <div className="ms-greeting-bar">
-        <div>
-          <h1 className="ms-greeting">{getGreeting()}, <span className="ms-orange">{firstName || 'there'}</span>!</h1>
-          <p className="ms-greeting-sub">Here you can find all your shifts.</p>
-        </div>
+        <h1 className="ms-greeting">{getGreeting()}, <span className="ms-orange">{firstName || 'there'}</span>!</h1>
+        <p className="ms-greeting-sub">Here you can find all your shifts.</p>
       </div>
 
       {/* MAIN CONTENT */}
@@ -80,30 +87,34 @@ function MyShifts() {
 
         {/* LEFT — SHIFTS */}
         <div className="ms-left">
-          {/* TABS */}
-          <div className="ms-tabs">
-            {TABS.map(tab => (
-              <button
-                key={tab}
-                className={`ms-tab ${activeTab === tab ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {/* TAB CONTENT */}
-          <div className="ms-tab-content">
-            <div className="ms-empty">
-              <div className="ms-empty-icon">{current.icon}</div>
-              <h3 className="ms-empty-title">{current.title}</h3>
-              <p className="ms-empty-sub">{current.sub}</p>
-              {activeTab !== 'Past Shifts' && (
-                <button className="ms-find-btn" onClick={() => navigate('/worker/dashboard')}>
-                  Browse Shifts →
+          <div className="ms-card">
+            {/* TABS inside the card */}
+            <div className="ms-tabs">
+              {TABS.map(tab => (
+                <button
+                  key={tab}
+                  className={`ms-tab ${activeTab === tab ? 'active' : ''}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
                 </button>
-              )}
+              ))}
+            </div>
+
+            <div className="ms-tab-divider" />
+
+            {/* TAB CONTENT */}
+            <div className="ms-tab-content">
+              <div className="ms-empty">
+                <div className="ms-empty-icon">{current.icon}</div>
+                <h3 className="ms-empty-title">{current.title}</h3>
+                <p className="ms-empty-sub">{current.sub}</p>
+                {current.showBrowse && (
+                  <button className="ms-find-btn" onClick={() => navigate('/worker/dashboard')}>
+                    Browse Shifts →
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

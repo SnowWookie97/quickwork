@@ -45,10 +45,9 @@
 
 /* GREETING BAR */
 .ms-greeting-bar {
-  padding: 20px 40px 12px;
+  padding: 16px 40px 14px;
   flex-shrink: 0;
   border-bottom: 1px solid #f0e8e0;
-  background: #FFF8F3;
 }
 
 .ms-greeting {
@@ -69,8 +68,8 @@
 .ms-body {
   flex: 1;
   display: flex;
-  gap: 24px;
-  padding: 24px 40px;
+  gap: 20px;
+  padding: 20px 40px;
   overflow: hidden;
 }
 
@@ -79,50 +78,62 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
   overflow: hidden;
 }
 
-/* TABS */
-.ms-tabs {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.ms-tab {
-  padding: 9px 20px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 2px solid #eee;
-  background: white;
-  color: #888;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.ms-tab:hover {
-  border-color: #E8470F;
-  color: #E8470F;
-}
-
-.ms-tab.active {
-  background: #E8470F;
-  border-color: #E8470F;
-  color: white;
-}
-
-/* TAB CONTENT */
-.ms-tab-content {
+/* CARD — contains tabs + content */
+.ms-card {
   flex: 1;
   background: white;
   border-radius: 16px;
   border: 2px solid #f0e8e0;
   display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* TABS — inside the card at the top */
+.ms-tabs {
+  display: flex;
+  gap: 0;
+  padding: 16px 20px 0;
+  flex-shrink: 0;
+}
+
+.ms-tab {
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ms-tab:hover {
+  color: #E8470F;
+}
+
+.ms-tab.active {
+  color: #E8470F;
+  border-bottom-color: #E8470F;
+}
+
+.ms-tab-divider {
+  height: 1px;
+  background: #f0e8e0;
+  flex-shrink: 0;
+}
+
+/* TAB CONTENT */
+.ms-tab-content {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 /* EMPTY STATE */
@@ -131,7 +142,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px 24px;
+  padding: 32px 24px;
   gap: 10px;
 }
 
@@ -167,7 +178,7 @@
 
 /* RIGHT — REMINDERS */
 .ms-right {
-  width: 260px;
+  width: 240px;
   flex-shrink: 0;
 }
 
@@ -175,11 +186,11 @@
   background: white;
   border-radius: 16px;
   border: 2px solid #f0e8e0;
-  padding: 20px;
+  padding: 16px 18px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .ms-reminders-header {
@@ -188,6 +199,7 @@
   gap: 8px;
   padding-bottom: 12px;
   border-bottom: 1px solid #f0e8e0;
+  flex-shrink: 0;
 }
 
 .ms-reminders-icon { font-size: 18px; }
@@ -214,21 +226,12 @@
 /* MOBILE */
 @media (max-width: 768px) {
   .ms-page { height: auto; overflow: auto; }
-
   .ms-navbar { padding: 0 20px; }
-  .ms-greeting-bar { padding: 16px 20px 12px; }
+  .ms-greeting-bar { padding: 14px 20px 12px; }
   .ms-greeting { font-size: 18px; }
-
-  .ms-body {
-    flex-direction: column;
-    padding: 16px 20px;
-    gap: 16px;
-    overflow: auto;
-  }
-
+  .ms-body { flex-direction: column; padding: 16px 20px; gap: 16px; overflow: auto; }
   .ms-right { width: 100%; }
-
-  .ms-reminders { height: auto; min-height: 100px; }
-
-  .ms-tabs { flex-wrap: wrap; }
+  .ms-reminders { height: auto; min-height: 80px; }
+  .ms-tabs { overflow-x: auto; }
+  .ms-tab { font-size: 12px; padding: 8px 12px; }
 }
