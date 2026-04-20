@@ -53,7 +53,7 @@ function FAQ() {
 
       <div className="faq-body">
 
-        {/* LEFT — CONTACT PANEL */}
+        {/* LEFT — still have questions panel */}
         <div className="faq-left">
           <div className="faq-contact-card">
             <div className="faq-contact-icon">💬</div>
@@ -63,21 +63,22 @@ function FAQ() {
           </div>
         </div>
 
-        {/* RIGHT — FAQ PANEL */}
+        {/* RIGHT — category tabs + FAQs */}
         <div className="faq-right">
 
-          {/* CATEGORY FILTER */}
-          <div className="faq-filter-row">
-            <label className="faq-filter-label">Browse by topic</label>
-            <select
-              className="faq-filter-select"
-              value={activeCategory}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-            >
+          {/* TABS */}
+          <div className="faq-tabs-card">
+            <div className="faq-tabs">
               {CATEGORIES.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+                <button
+                  key={cat}
+                  className={`faq-tab ${activeCategory === cat ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange(cat)}
+                >
+                  {cat}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           {/* FAQ LIST */}
@@ -106,8 +107,8 @@ function FAQ() {
               ))
             )}
           </div>
-
         </div>
+
       </div>
     </div>
   )
