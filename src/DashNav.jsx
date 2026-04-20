@@ -59,7 +59,7 @@ function DashNav({ userRole, onHomepage }) {
     },
     {
       label: 'FROM QUICKWORK',
-      items: ['Invite Friends', 'Contact Us', 'Insurance', 'Feedback']
+      items: ['Invite Friends', 'Contact Us', 'Insurance','FAQ', 'Feedback']
     },
     {
       label: 'LEGAL',
