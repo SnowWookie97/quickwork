@@ -53,18 +53,8 @@ function FAQ() {
 
       <div className="faq-body">
 
-        {/* LEFT — still have questions panel */}
+        {/* LEFT — tabs + FAQs */}
         <div className="faq-left">
-          <div className="faq-contact-card">
-            <div className="faq-contact-icon">💬</div>
-            <h3 className="faq-contact-title">Still have questions?</h3>
-            <p className="faq-contact-sub">Our team is happy to help. Get in touch with us directly.</p>
-            <button className="faq-contact-btn" onClick={() => navigate('/contact')}>Contact Us →</button>
-          </div>
-        </div>
-
-        {/* RIGHT — category tabs + FAQs */}
-        <div className="faq-right">
 
           {/* TABS */}
           <div className="faq-tabs-card">
@@ -106,6 +96,16 @@ function FAQ() {
                 </div>
               ))
             )}
+          </div>
+        </div>
+
+        {/* RIGHT — still have questions notice */}
+        <div className="faq-right">
+          <div className="faq-contact-card">
+            <div className="faq-contact-icon">💬</div>
+            <h3 className="faq-contact-title">Still have questions?</h3>
+            <p className="faq-contact-sub">Our team is happy to help. Get in touch with us directly.</p>
+            <button className="faq-contact-btn" onClick={() => navigate('/contact')}>Contact Us →</button>
           </div>
         </div>
 

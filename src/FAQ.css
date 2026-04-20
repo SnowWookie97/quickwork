@@ -30,52 +30,8 @@
   align-items: flex-start;
 }
 
-/* LEFT — contact notice, vertically centered */
+/* LEFT — FAQs, takes most space */
 .faq-left {
-  width: 220px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: sticky;
-  top: 90px;
-}
-
-.faq-contact-card {
-  background: white;
-  border-radius: 16px;
-  border: 2px solid #f0e8e0;
-  padding: 24px 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  width: 100%;
-}
-
-.faq-contact-icon { font-size: 34px; }
-.faq-contact-title { font-size: 14px; font-weight: 800; color: #1A2744; }
-.faq-contact-sub { font-size: 12px; color: #888; line-height: 1.6; }
-
-.faq-contact-btn {
-  background: #E8470F;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.2s;
-  margin-top: 4px;
-}
-
-.faq-contact-btn:hover { background: #c93a0a; }
-
-/* RIGHT — tabs + FAQs */
-.faq-right {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -189,10 +145,50 @@
 .faq-empty-title { font-size: 15px; font-weight: 700; color: #1A2744; }
 .faq-empty-sub { font-size: 13px; color: #888; line-height: 1.6; max-width: 300px; }
 
+/* RIGHT — notice panel */
+.faq-right {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 90px;
+}
+
+.faq-contact-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0e8e0;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.faq-contact-icon { font-size: 34px; }
+.faq-contact-title { font-size: 14px; font-weight: 800; color: #1A2744; }
+.faq-contact-sub { font-size: 12px; color: #888; line-height: 1.6; }
+
+.faq-contact-btn {
+  background: #E8470F;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+
+.faq-contact-btn:hover { background: #c93a0a; }
+
 /* MOBILE */
 @media (max-width: 768px) {
   .faq-hero { padding: 20px 20px 14px; }
   .faq-title { font-size: 20px; }
-  .faq-body { flex-direction: column-reverse; padding: 16px 20px 32px; gap: 16px; }
-  .faq-left { width: 100%; position: static; }
+  .faq-body { flex-direction: column; padding: 16px 20px 32px; gap: 16px; }
+  .faq-right { width: 100%; position: static; }
 }
