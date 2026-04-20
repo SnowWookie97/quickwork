@@ -32,7 +32,6 @@ function FAQ() {
       setUserRole(user.user_metadata?.role)
     }
     getUser()
-
     const handleResize = () => setIsMobile(window.innerWidth <= 768)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -69,9 +68,11 @@ function FAQ() {
 
       <div className="faq-body">
 
-        {/* LEFT — tabs + FAQs */}
+        {/* LEFT — single white card with tabs + FAQs inside */}
         <div className="faq-left">
-          <div className="faq-tabs-card">
+          <div className="faq-card">
+
+            {/* TABS inside card */}
             <div className="faq-tabs">
               {CATEGORIES.map(cat => (
                 <button
@@ -83,39 +84,43 @@ function FAQ() {
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className="faq-list">
-            {currentFAQs.length === 0 ? (
-              <div className="faq-empty">
-                <div className="faq-empty-icon">📭</div>
-                <p className="faq-empty-title">No FAQs in this category yet</p>
-                <p className="faq-empty-sub">We're adding more answers soon. In the meantime, feel free to contact us directly.</p>
-              </div>
-            ) : (
-              currentFAQs.map((faq, i) => (
-                <div key={i} className={`faq-item ${openIndex === i ? 'open' : ''}`}>
-                  <button className="faq-question" onClick={() => toggle(i)}>
-                    <span>{faq.question}</span>
-                    <span className="faq-chevron">{openIndex === i ? '▲' : '▼'}</span>
-                  </button>
-                  {openIndex === i && (
-                    <div className="faq-answer">
-                      {faq.answer.split('\n\n').map((para, j) => (
-                        <p key={j}>{para}</p>
-                      ))}
-                    </div>
-                  )}
+            <div className="faq-tab-divider" />
+
+            {/* FAQ LIST inside card */}
+            <div className="faq-list">
+              {currentFAQs.length === 0 ? (
+                <div className="faq-empty">
+                  <div className="faq-empty-icon">📭</div>
+                  <p className="faq-empty-title">No FAQs in this category yet</p>
+                  <p className="faq-empty-sub">We're adding more answers soon. In the meantime, feel free to contact us directly.</p>
                 </div>
-              ))
-            )}
+              ) : (
+                currentFAQs.map((faq, i) => (
+                  <div key={i} className={`faq-item ${openIndex === i ? 'open' : ''}`}>
+                    <button className="faq-question" onClick={() => toggle(i)}>
+                      <span>{faq.question}</span>
+                      <span className="faq-chevron">{openIndex === i ? '▲' : '▼'}</span>
+                    </button>
+                    {openIndex === i && (
+                      <div className="faq-answer">
+                        {faq.answer.split('\n\n').map((para, j) => (
+                          <p key={j}>{para}</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
           </div>
 
-          {/* Show notice below FAQs on mobile */}
+          {/* Notice below card on mobile */}
           {isMobile && <ContactCard />}
         </div>
 
-        {/* RIGHT — notice on desktop only */}
+        {/* RIGHT — notice on desktop */}
         {!isMobile && (
           <div className="faq-right">
             <ContactCard />
