@@ -59,7 +59,7 @@ function DashNav({ userRole, onHomepage }) {
     },
     {
       label: 'FROM QUICKWORK',
-      items: ['Invite Friends', 'Contact Us', 'Insurance','FAQ', 'Feedback']
+      items: ['Invite Friends', 'Contact Us', 'Insurance', 'FAQ', 'Feedback']
     },
     {
       label: 'LEGAL',
@@ -72,6 +72,7 @@ function DashNav({ userRole, onHomepage }) {
     if (item === 'Log Out') handleLogout()
     else if (item === 'Contact Us') navigate('/contact')
     else if (item === 'Feedback') navigate('/feedback')
+    else if (item === 'FAQ') navigate('/faq')
     else if (item === 'Invite Friends') setShowInviteModal(true)
     else navigate('/under-construction')
   }
@@ -101,7 +102,6 @@ function DashNav({ userRole, onHomepage }) {
         </div>
 
         <div className="dashnav-right">
-          {/* MY DASHBOARD */}
           <div className="dashnav-item" ref={dashRef}>
             <button className="dashnav-btn" onClick={() => { setDashDropdown(!dashDropdown); setProfileDropdown(false) }}>
               My Dashboard <span className="dashnav-chevron">{dashDropdown ? '▲' : '▼'}</span>
@@ -123,7 +123,6 @@ function DashNav({ userRole, onHomepage }) {
             )}
           </div>
 
-          {/* MY ACCOUNT */}
           <div className="dashnav-item" ref={profileRef}>
             <button className="dashnav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
               <span className="dashnav-avatar">👤</span>
