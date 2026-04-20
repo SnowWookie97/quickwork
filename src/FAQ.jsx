@@ -23,6 +23,7 @@ function FAQ() {
   const [userRole, setUserRole] = useState(null)
   const [activeCategory, setActiveCategory] = useState('Accounts')
   const [openIndex, setOpenIndex] = useState(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
 
   useEffect(() => {
     const getUser = async () => {
@@ -31,6 +32,10 @@ function FAQ() {
       setUserRole(user.user_metadata?.role)
     }
     getUser()
+
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   const toggle = (i) => setOpenIndex(openIndex === i ? null : i)
@@ -41,6 +46,17 @@ function FAQ() {
   }
 
   const currentFAQs = FAQS[activeCategory] || []
+
+  const ContactCard = () => (
+    <div className="faq-contact-card">
+      <div className="faq-contact-icon">💬</div>
+      <div className="faq-contact-text">
+        <h3 className="faq-contact-title">Still have questions?</h3>
+        <p className="faq-contact-sub">Our team is happy to help. Get in touch with us directly.</p>
+      </div>
+      <button className="faq-contact-btn" onClick={() => navigate('/contact')}>Contact Us →</button>
+    </div>
+  )
 
   return (
     <div className="faq-page">
@@ -55,8 +71,6 @@ function FAQ() {
 
         {/* LEFT — tabs + FAQs */}
         <div className="faq-left">
-
-          {/* TABS */}
           <div className="faq-tabs-card">
             <div className="faq-tabs">
               {CATEGORIES.map(cat => (
@@ -71,7 +85,6 @@ function FAQ() {
             </div>
           </div>
 
-          {/* FAQ LIST */}
           <div className="faq-list">
             {currentFAQs.length === 0 ? (
               <div className="faq-empty">
@@ -97,17 +110,17 @@ function FAQ() {
               ))
             )}
           </div>
+
+          {/* Show notice below FAQs on mobile */}
+          {isMobile && <ContactCard />}
         </div>
 
-        {/* RIGHT — still have questions notice */}
-        <div className="faq-right">
-          <div className="faq-contact-card">
-            <div className="faq-contact-icon">💬</div>
-            <h3 className="faq-contact-title">Still have questions?</h3>
-            <p className="faq-contact-sub">Our team is happy to help. Get in touch with us directly.</p>
-            <button className="faq-contact-btn" onClick={() => navigate('/contact')}>Contact Us →</button>
+        {/* RIGHT — notice on desktop only */}
+        {!isMobile && (
+          <div className="faq-right">
+            <ContactCard />
           </div>
-        </div>
+        )}
 
       </div>
     </div>

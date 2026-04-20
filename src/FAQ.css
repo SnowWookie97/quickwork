@@ -30,7 +30,7 @@
   align-items: flex-start;
 }
 
-/* LEFT — FAQs, takes most space */
+/* LEFT — FAQs */
 .faq-left {
   flex: 1;
   display: flex;
@@ -189,6 +189,46 @@
 @media (max-width: 768px) {
   .faq-hero { padding: 20px 20px 14px; }
   .faq-title { font-size: 20px; }
-  .faq-body { flex-direction: column; padding: 16px 20px 32px; gap: 16px; }
-  .faq-right { width: 100%; position: static; }
+
+  .faq-body {
+    flex-direction: column;
+    padding: 16px 16px 32px;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .faq-right {
+    width: 100%;
+    position: static;
+  }
+
+  .faq-contact-card {
+    flex-direction: row;
+    text-align: left;
+    gap: 14px;
+    padding: 16px;
+    align-items: center;
+  }
+
+  .faq-contact-icon { font-size: 28px; flex-shrink: 0; }
+
+  .faq-contact-title { font-size: 13px; margin-bottom: 2px; }
+  .faq-contact-sub { font-size: 11px; }
+
+  .faq-contact-btn {
+    width: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 8px 14px;
+  }
+
+  .faq-tabs-card {
+    padding: 10px 12px 0;
+  }
+
+  .faq-tab {
+    font-size: 12px;
+    padding: 6px 14px 10px;
+  }
 }
