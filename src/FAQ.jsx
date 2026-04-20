@@ -4,7 +4,12 @@ import { supabase } from './supabase'
 import DashNav from './DashNav'
 import './FAQ.css'
 
-const CATEGORIES = ['Accounts', 'Shifts', 'Payments', 'Technical App Problems']
+const CATEGORIES = [
+  { label: 'Accounts', short: 'Accounts' },
+  { label: 'Shifts', short: 'Shifts' },
+  { label: 'Payments', short: 'Payments' },
+  { label: 'Technical App Problems', short: 'Technical' },
+]
 
 const FAQS = {
   'Accounts': [
@@ -68,26 +73,23 @@ function FAQ() {
 
       <div className="faq-body">
 
-        {/* LEFT — single white card with tabs + FAQs inside */}
         <div className="faq-left">
           <div className="faq-card">
 
-            {/* TABS inside card */}
             <div className="faq-tabs">
               {CATEGORIES.map(cat => (
                 <button
-                  key={cat}
-                  className={`faq-tab ${activeCategory === cat ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange(cat)}
+                  key={cat.label}
+                  className={`faq-tab ${activeCategory === cat.label ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange(cat.label)}
                 >
-                  {cat}
+                  {isMobile ? cat.short : cat.label}
                 </button>
               ))}
             </div>
 
             <div className="faq-tab-divider" />
 
-            {/* FAQ LIST inside card */}
             <div className="faq-list">
               {currentFAQs.length === 0 ? (
                 <div className="faq-empty">
@@ -116,11 +118,9 @@ function FAQ() {
 
           </div>
 
-          {/* Notice below card on mobile */}
           {isMobile && <ContactCard />}
         </div>
 
-        {/* RIGHT — notice on desktop */}
         {!isMobile && (
           <div className="faq-right">
             <ContactCard />

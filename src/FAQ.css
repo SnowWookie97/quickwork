@@ -6,7 +6,6 @@
   flex-direction: column;
 }
 
-/* HERO */
 .faq-hero {
   text-align: center;
   padding: 24px 40px 16px;
@@ -18,7 +17,6 @@
 .faq-orange { color: #E8470F; }
 .faq-sub { font-size: 13px; color: #888; margin-top: 6px; }
 
-/* BODY */
 .faq-body {
   flex: 1;
   display: flex;
@@ -30,7 +28,6 @@
   align-items: flex-start;
 }
 
-/* LEFT — FAQ section */
 .faq-left {
   flex: 1;
   display: flex;
@@ -39,7 +36,6 @@
   min-width: 0;
 }
 
-/* SINGLE WHITE CARD */
 .faq-card {
   background: white;
   border-radius: 16px;
@@ -49,17 +45,12 @@
   flex-direction: column;
 }
 
-/* TABS inside card */
 .faq-tabs {
   display: flex;
   gap: 0;
   padding: 14px 20px 0;
-  overflow-x: auto;
-  scrollbar-width: none;
   flex-shrink: 0;
 }
-
-.faq-tabs::-webkit-scrollbar { display: none; }
 
 .faq-tab {
   padding: 8px 18px 12px;
@@ -80,7 +71,6 @@
 
 .faq-tab-divider { height: 1px; background: #f0e8e0; flex-shrink: 0; }
 
-/* FAQ LIST inside card */
 .faq-list {
   display: flex;
   flex-direction: column;
@@ -135,7 +125,6 @@
   margin-top: 12px;
 }
 
-/* EMPTY STATE */
 .faq-empty {
   padding: 40px 24px;
   display: flex;
@@ -149,7 +138,6 @@
 .faq-empty-title { font-size: 15px; font-weight: 700; color: #1A2744; }
 .faq-empty-sub { font-size: 13px; color: #888; line-height: 1.6; max-width: 300px; }
 
-/* RIGHT — notice panel */
 .faq-right {
   width: 220px;
   flex-shrink: 0;
@@ -194,9 +182,37 @@
 @media (max-width: 768px) {
   .faq-hero { padding: 20px 20px 14px; }
   .faq-title { font-size: 20px; }
-  .faq-body { flex-direction: column; padding: 16px 16px 32px; gap: 16px; align-items: stretch; }
+
+  .faq-body {
+    flex-direction: column;
+    padding: 16px 16px 32px;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* Tabs fill full width evenly — no overflow, no scroll */
+  .faq-tabs {
+    padding: 10px 0 0;
+    width: 100%;
+  }
+
+  .faq-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    padding: 8px 4px 10px;
+  }
+
   .faq-right { width: 100%; position: static; }
-  .faq-contact-card { flex-direction: row; text-align: left; padding: 16px; align-items: center; gap: 12px; }
+
+  .faq-contact-card {
+    flex-direction: row;
+    text-align: left;
+    padding: 14px 16px;
+    align-items: center;
+    gap: 12px;
+  }
+
   .faq-contact-icon { font-size: 26px; flex-shrink: 0; }
-  .faq-contact-btn { width: auto; margin-top: 0; white-space: nowrap; flex-shrink: 0; }
+  .faq-contact-btn { width: auto; margin-top: 0; white-space: nowrap; flex-shrink: 0; padding: 8px 12px; }
 }
