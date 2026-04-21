@@ -1,0 +1,234 @@
+.val-page {
+  min-height: 100vh;
+  background: #FFF8F3;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.val-body {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  padding: 24px 40px 40px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* LEFT */
+.val-left {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 90px;
+}
+
+.val-current-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0e8e0;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.val-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.val-current-shield { margin: 8px 0; }
+
+.val-current-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1A2744;
+  margin: 0;
+}
+
+.val-current-sub {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+.val-current-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin-top: 8px;
+  text-align: left;
+  padding: 12px;
+  background: #FFF8F3;
+  border-radius: 10px;
+}
+
+.val-next-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0e8e0;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.val-gold-card { border-color: #B8860B; background: #FFFBEA; }
+
+.val-next-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1A2744;
+  margin: 0;
+}
+
+.val-next-how {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.val-contact-btn {
+  background: #E8470F;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+
+.val-contact-btn:hover { background: #c93a0a; }
+
+/* RIGHT */
+.val-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.val-levels-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.val-levels-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.val-level-row {
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #f0e8e0;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.val-level-row:hover { border-color: #E8470F; }
+.val-level-row.active { border-color: #E8470F; border-left-width: 4px; }
+.val-level-row.locked { opacity: 0.5; cursor: default; }
+.val-level-row.locked:hover { border-color: #f0e8e0; }
+
+.val-level-info { flex: 1; }
+
+.val-level-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A2744;
+  margin: 0 0 2px;
+}
+
+.val-level-sub {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+.val-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-done { background: #E1F5EE; color: #0F6E56; }
+.status-current { background: #FAEEDA; color: #854F0B; }
+.status-available { background: #E6F1FB; color: #185FA5; }
+.status-locked { background: #f5f5f5; color: #aaa; }
+
+.val-detail-card {
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #f0e8e0;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.val-detail-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A2744;
+  margin: 0;
+}
+
+.val-detail-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.val-detail-divider { height: 1px; background: #f0e8e0; }
+
+.val-detail-how-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.val-detail-how {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .val-body { flex-direction: column; padding: 16px 20px 32px; gap: 16px; }
+  .val-left { width: 100%; position: static; }
+}

@@ -4,13 +4,36 @@ import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './DashNav.css'
 
-function DashNav({ userRole, onHomepage }) {
+const SHIELD_DATA = [
+  { fill: "#f5c87a", stroke: "#BA7517", stroke2: "#EF9F27", labelColor: "#633806", numColor: "#412402", decoration: "" },
+  { fill: "#e8e8e8", stroke: "#bbb", stroke2: "#ddd", labelColor: "#999", numColor: "#777", decoration: `<circle cx="22" cy="38" r="2.5" fill="#bbb" opacity="0.6"/>` },
+  { fill: "#c8e6f8", stroke: "#378ADD", stroke2: "#85B7EB", labelColor: "#185FA5", numColor: "#0C447C", decoration: `<circle cx="16" cy="36" r="2" fill="#378ADD" opacity="0.5"/><circle cx="22" cy="39" r="2.5" fill="#378ADD" opacity="0.7"/><circle cx="28" cy="36" r="2" fill="#378ADD" opacity="0.5"/>` },
+  { fill: "#FFD700", stroke: "#B8860B", stroke2: "#FFE55C", labelColor: "#7a5a00", numColor: "#5a3e00", decoration: `<path d="M15 24 L19.5 29 L29 19" stroke="#7a5a00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="22" cy="38" r="2.5" fill="#B8860B" opacity="0.8"/>` }
+]
+
+function MiniShield({ level }) {
+  const d = SHIELD_DATA[level - 1]
+  return (
+    <svg width="22" height="24" viewBox="0 0 44 48" style={{ flexShrink: 0 }}>
+      <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z"
+        fill={d.fill} stroke={d.stroke} strokeWidth="2"/>
+      <path d="M22 8 L34 13 L34 25 C34 33.5 22 40 22 40 C22 40 10 33.5 10 25 L10 13 Z"
+        fill="none" stroke={d.stroke2} strokeWidth="1" opacity="0.6"/>
+      <text x="22" y="32" textAnchor="middle" fontSize="16" fill={d.numColor}
+        fontWeight="700" fontFamily="sans-serif">{level}</text>
+      <g dangerouslySetInnerHTML={{ __html: d.decoration }} />
+    </svg>
+  )
+}
+
+function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
   const navigate = useNavigate()
   const [dashDropdown, setDashDropdown] = useState(false)
   const [profileDropdown, setProfileDropdown] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [referralCode, setReferralCode] = useState('')
   const [copied, setCopied] = useState(false)
+  const [trustLevel, setTrustLevel] = useState(trustLevelProp || 1)
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -24,14 +47,20 @@ function DashNav({ userRole, onHomepage }) {
   }, [])
 
   useEffect(() => {
-    const fetchReferral = async () => {
+    const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
-      if (data) setReferralCode(data.referral_code)
+      const { data: refData } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
+      if (refData) setReferralCode(refData.referral_code)
+      const { data: profileData } = await supabase.from('profiles').select('trust_level').eq('id', user.id).single()
+      if (profileData) setTrustLevel(profileData.trust_level)
     }
-    fetchReferral()
+    fetchData()
   }, [])
+
+  useEffect(() => {
+    if (trustLevelProp) setTrustLevel(trustLevelProp)
+  }, [trustLevelProp])
 
   const handleLogoClick = () => {
     if (userRole === 'business') navigate('/business/dashboard')
@@ -53,18 +82,9 @@ function DashNav({ userRole, onHomepage }) {
   const dashMenuItems = ['Homepage', 'My Shifts', 'Payments', 'Ratings']
 
   const profileGroups = [
-    {
-      label: 'ACCOUNT',
-      items: ['My Profile', 'Validation', 'Settings']
-    },
-    {
-      label: 'FROM QUICKWORK',
-      items: ['Invite Friends', 'Contact Us', 'Insurance', 'FAQ', 'Feedback']
-    },
-    {
-      label: 'LEGAL',
-      items: ['Privacy Policy', 'Terms and Conditions']
-    }
+    { label: 'ACCOUNT', items: ['My Profile', 'Validation', 'Settings'] },
+    { label: 'FROM QUICKWORK', items: ['Invite Friends', 'Contact Us', 'Insurance', 'FAQ', 'Feedback'] },
+    { label: 'LEGAL', items: ['Privacy Policy', 'Terms and Conditions'] }
   ]
 
   const handleProfileItem = (item) => {
@@ -73,6 +93,7 @@ function DashNav({ userRole, onHomepage }) {
     else if (item === 'Contact Us') navigate('/contact')
     else if (item === 'Feedback') navigate('/feedback')
     else if (item === 'FAQ') navigate('/faq')
+    else if (item === 'Validation') navigate('/validation')
     else if (item === 'Invite Friends') setShowInviteModal(true)
     else navigate('/under-construction')
   }
@@ -139,7 +160,8 @@ function DashNav({ userRole, onHomepage }) {
                         className={`dashnav-dropdown-item ${item === 'Invite Friends' ? 'invite-item' : ''}`}
                         onClick={() => handleProfileItem(item)}
                       >
-                        {item === 'Invite Friends' ? '🎉 Invite Friends' : item}
+                        <span>{item === 'Invite Friends' ? '🎉 Invite Friends' : item}</span>
+                        {item === 'Validation' && <MiniShield level={trustLevel} />}
                       </div>
                     ))}
                   </div>

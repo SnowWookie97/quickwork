@@ -15,6 +15,7 @@ import Feedback from './Feedback.jsx'
 import MyShifts from './MyShifts.jsx'
 import Payments from './Payments.jsx'
 import FAQ from './FAQ.jsx'
+import Validation from './Validation.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/my-shifts" element={<MyShifts />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/validation" element={<Validation />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

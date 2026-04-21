@@ -95,6 +95,10 @@
   cursor: pointer;
   transition: background 0.15s;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .dashnav-dropdown-item:hover { background: #FFF8F3; color: #E8470F; }
