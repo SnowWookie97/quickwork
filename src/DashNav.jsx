@@ -5,23 +5,32 @@ import logoImg from './assets/logo.png'
 import './DashNav.css'
 
 const SHIELD_DATA = [
-  { fill: "#f5c87a", stroke: "#BA7517", stroke2: "#EF9F27", labelColor: "#633806", numColor: "#412402", decoration: "" },
-  { fill: "#e8e8e8", stroke: "#bbb", stroke2: "#ddd", labelColor: "#999", numColor: "#777", decoration: `<circle cx="22" cy="38" r="2.5" fill="#bbb" opacity="0.6"/>` },
-  { fill: "#c8e6f8", stroke: "#378ADD", stroke2: "#85B7EB", labelColor: "#185FA5", numColor: "#0C447C", decoration: `<circle cx="16" cy="36" r="2" fill="#378ADD" opacity="0.5"/><circle cx="22" cy="39" r="2.5" fill="#378ADD" opacity="0.7"/><circle cx="28" cy="36" r="2" fill="#378ADD" opacity="0.5"/>` },
-  { fill: "#FFD700", stroke: "#B8860B", stroke2: "#FFE55C", labelColor: "#7a5a00", numColor: "#5a3e00", decoration: `<path d="M15 24 L19.5 29 L29 19" stroke="#7a5a00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="22" cy="38" r="2.5" fill="#B8860B" opacity="0.8"/>` }
+  { fill: "#e8e8e8", stroke: "#bbb", stroke2: "#ddd", labelColor: "#999", numColor: "#777" },
+  { fill: "#C0DD97", stroke: "#3B6D11", stroke2: "#639922", labelColor: "#27500A", numColor: "#173404" },
+  { fill: "#c8e6f8", stroke: "#378ADD", stroke2: "#85B7EB", labelColor: "#185FA5", numColor: "#0C447C" },
+  { fill: "#FFD700", stroke: "#B8860B", stroke2: "#FFE55C", labelColor: "#7a5a00", numColor: "#5a3e00" }
 ]
 
 function MiniShield({ level }) {
   const d = SHIELD_DATA[level - 1]
+  const isPremium = level >= 3
+
+  if (isPremium) {
+    return (
+      <svg width="20" height="22" viewBox="0 0 48 52" style={{ flexShrink: 0 }}>
+        <path d="M24 2 L43 9 L43 28 C43 40 24 49 24 49 C24 49 5 40 5 28 L5 9 Z" fill="none" stroke={d.stroke} strokeWidth={level === 4 ? "4" : "3"} opacity="0.2"/>
+        <path d="M24 4 L41 10.5 L41 28 C41 39 24 47 24 47 C24 47 7 39 7 28 L7 10.5 Z" fill={d.fill} stroke={d.stroke} strokeWidth="2.5"/>
+        <path d="M24 9 L36 14.5 L36 27 C36 35.5 24 42 24 42 C24 42 12 35.5 12 27 L12 14.5 Z" fill="none" stroke={d.stroke2} strokeWidth="1.2" opacity="0.8"/>
+        <text x="24" y="33" textAnchor="middle" fontSize="16" fill={d.numColor} fontWeight="700" fontFamily="sans-serif">{level}</text>
+      </svg>
+    )
+  }
+
   return (
-    <svg width="22" height="24" viewBox="0 0 44 48" style={{ flexShrink: 0 }}>
-      <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z"
-        fill={d.fill} stroke={d.stroke} strokeWidth="2"/>
-      <path d="M22 8 L34 13 L34 25 C34 33.5 22 40 22 40 C22 40 10 33.5 10 25 L10 13 Z"
-        fill="none" stroke={d.stroke2} strokeWidth="1" opacity="0.6"/>
-      <text x="22" y="32" textAnchor="middle" fontSize="16" fill={d.numColor}
-        fontWeight="700" fontFamily="sans-serif">{level}</text>
-      <g dangerouslySetInnerHTML={{ __html: d.decoration }} />
+    <svg width="20" height="22" viewBox="0 0 44 48" style={{ flexShrink: 0 }}>
+      <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z" fill={d.fill} stroke={d.stroke} strokeWidth="2"/>
+      <path d="M22 8 L34 13 L34 25 C34 33.5 22 40 22 40 C22 40 10 33.5 10 25 L10 13 Z" fill="none" stroke={d.stroke2} strokeWidth="1" opacity="0.6"/>
+      <text x="22" y="30" textAnchor="middle" fontSize="16" fill={d.numColor} fontWeight="700" fontFamily="sans-serif">{level}</text>
     </svg>
   )
 }
@@ -98,6 +107,12 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
     else navigate('/under-construction')
   }
 
+  const renderItem = (item) => {
+    if (item === 'Invite Friends') return <><span>🎉 Invite Friends</span></>
+    if (item === 'Validation') return <><MiniShield level={trustLevel} /><span>Validation</span></>
+    return <span>{item}</span>
+  }
+
   return (
     <>
       {showInviteModal && (
@@ -160,8 +175,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
                         className={`dashnav-dropdown-item ${item === 'Invite Friends' ? 'invite-item' : ''}`}
                         onClick={() => handleProfileItem(item)}
                       >
-                        <span>{item === 'Invite Friends' ? '🎉 Invite Friends' : item}</span>
-                        {item === 'Validation' && <MiniShield level={trustLevel} />}
+                        {renderItem(item)}
                       </div>
                     ))}
                   </div>
