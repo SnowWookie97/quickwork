@@ -232,3 +232,42 @@
   .val-body { flex-direction: column; padding: 16px 20px 32px; gap: 16px; }
   .val-left { width: 100%; position: static; }
 }
+
+/* NOTICE */
+.val-notice {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 40px;
+  margin-top: 24px;
+}
+
+.val-notice-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1A2744;
+  margin: 0 0 10px;
+}
+
+.val-notice-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.7;
+  margin: 0 0 6px;
+  text-align: justify;
+}
+
+.val-dance {
+  display: inline-block;
+  font-size: 16px;
+  animation: dance 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes dance {
+  0% { transform: rotate(-15deg) translateY(0px); }
+  100% { transform: rotate(15deg) translateY(-4px); }
+}
+
+@media (max-width: 768px) {
+  .val-notice { padding: 0 20px; }
+}
