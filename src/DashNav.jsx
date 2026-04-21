@@ -42,7 +42,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [referralCode, setReferralCode] = useState('')
   const [copied, setCopied] = useState(false)
-  const [trustLevel, setTrustLevel] = useState(trustLevelProp || 1)
+  const [trustLevel, setTrustLevel] = useState(trustLevelProp || null)
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -109,7 +109,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
 
   const renderItem = (item) => {
     if (item === 'Invite Friends') return <><span>🎉 Invite Friends</span></>
-    if (item === 'Validation') return <><MiniShield level={trustLevel} /><span>Validation</span></>
+    if (item === 'Validation') return <>{trustLevel && <MiniShield level={trustLevel} />}<span>Validation</span></>
     return <span>{item}</span>
   }
 

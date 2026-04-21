@@ -281,3 +281,32 @@
 @media (max-width: 768px) {
   .val-notice { padding: 0 20px; }
 }
+
+/* LOADING STATE */
+.val-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 16px;
+  padding: 60px 20px;
+}
+
+.val-loading-shield {
+  width: 60px;
+  height: 66px;
+  background: #f0e8e0;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  animation: shimmer 1.2s ease-in-out infinite alternate;
+}
+
+.val-loading-text {
+  font-size: 13px;
+  color: #bbb;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}

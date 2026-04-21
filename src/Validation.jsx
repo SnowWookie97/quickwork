@@ -96,7 +96,15 @@ function Validation() {
     return { text: '🔒 Locked', cls: 'status-locked' }
   }
 
-  if (!trustLevel) return <div className="val-page"><DashNav userRole={userRole} /></div>
+  if (!trustLevel) return (
+    <div className="val-page">
+      <DashNav userRole={userRole} />
+      <div className="val-loading">
+        <div className="val-loading-shield"></div>
+        <p className="val-loading-text">Loading your trust level...</p>
+      </div>
+    </div>
+  )
 
   const current = LEVELS[trustLevel - 1]
   const next = trustLevel < 4 ? LEVELS[trustLevel] : null
