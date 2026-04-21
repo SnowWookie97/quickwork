@@ -37,11 +37,9 @@ const LEVELS = [
 
 function ShieldSVG({ level, size = 52 }) {
   const d = LEVELS[level - 1]
-
   if (d.premium) {
-    const w = size, h = Math.round(size * 1.1)
     return (
-      <svg width={w} height={h} viewBox="0 0 48 52">
+      <svg width={size} height={Math.round(size * 1.1)} viewBox="0 0 48 52">
         <path d="M24 2 L43 9 L43 28 C43 40 24 49 24 49 C24 49 5 40 5 28 L5 9 Z"
           fill="none" stroke={d.stroke} strokeWidth={level === 4 ? "4" : "3"} opacity="0.2"/>
         <path d="M24 4 L41 10.5 L41 28 C41 39 24 47 24 47 C24 47 7 39 7 28 L7 10.5 Z"
@@ -57,7 +55,6 @@ function ShieldSVG({ level, size = 52 }) {
       </svg>
     )
   }
-
   return (
     <svg width={size} height={Math.round(size * 1.1)} viewBox="0 0 44 48">
       <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z"
@@ -75,8 +72,14 @@ function ShieldSVG({ level, size = 52 }) {
 function Validation() {
   const navigate = useNavigate()
   const [userRole, setUserRole] = useState(null)
-  const [trustLevel, setTrustLevel] = useState(null)
-  const [activeLevel, setActiveLevel] = useState(null)
+  const [trustLevel, setTrustLevel] = useState(() => {
+    const cached = localStorage.getItem('qw_trust_level')
+    return cached ? parseInt(cached) : 1
+  })
+  const [activeLevel, setActiveLevel] = useState(() => {
+    const cached = localStorage.getItem('qw_trust_level')
+    return cached ? parseInt(cached) : 1
+  })
 
   useEffect(() => {
     const getUser = async () => {
@@ -84,7 +87,11 @@ function Validation() {
       if (!user) { navigate('/login'); return }
       setUserRole(user.user_metadata?.role)
       const { data } = await supabase.from('profiles').select('trust_level').eq('id', user.id).single()
-      if (data) { setTrustLevel(data.trust_level); setActiveLevel(data.trust_level) }
+      if (data) {
+        setTrustLevel(data.trust_level)
+        setActiveLevel(data.trust_level)
+        localStorage.setItem('qw_trust_level', data.trust_level)
+      }
     }
     getUser()
   }, [])
@@ -95,16 +102,6 @@ function Validation() {
     if (num === trustLevel + 1) return { text: 'Available to unlock', cls: 'status-available' }
     return { text: '🔒 Locked', cls: 'status-locked' }
   }
-
-  if (!trustLevel) return (
-    <div className="val-page">
-      <DashNav userRole={userRole} />
-      <div className="val-loading">
-        <div className="val-loading-shield"></div>
-        <p className="val-loading-text">Loading your trust level...</p>
-      </div>
-    </div>
-  )
 
   const current = LEVELS[trustLevel - 1]
   const next = trustLevel < 4 ? LEVELS[trustLevel] : null

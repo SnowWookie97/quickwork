@@ -42,7 +42,11 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [referralCode, setReferralCode] = useState('')
   const [copied, setCopied] = useState(false)
-  const [trustLevel, setTrustLevel] = useState(trustLevelProp || null)
+  const [trustLevel, setTrustLevel] = useState(() => {
+    if (trustLevelProp) return trustLevelProp
+    const cached = localStorage.getItem('qw_trust_level')
+    return cached ? parseInt(cached) : null
+  })
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -62,7 +66,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
       const { data: refData } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
       if (refData) setReferralCode(refData.referral_code)
       const { data: profileData } = await supabase.from('profiles').select('trust_level').eq('id', user.id).single()
-      if (profileData) setTrustLevel(profileData.trust_level)
+      if (profileData) { setTrustLevel(profileData.trust_level); localStorage.setItem('qw_trust_level', profileData.trust_level) }
     }
     fetchData()
   }, [])
