@@ -75,8 +75,8 @@ function ShieldSVG({ level, size = 52 }) {
 function Validation() {
   const navigate = useNavigate()
   const [userRole, setUserRole] = useState(null)
-  const [trustLevel, setTrustLevel] = useState(1)
-  const [activeLevel, setActiveLevel] = useState(1)
+  const [trustLevel, setTrustLevel] = useState(null)
+  const [activeLevel, setActiveLevel] = useState(null)
 
   useEffect(() => {
     const getUser = async () => {
@@ -95,6 +95,8 @@ function Validation() {
     if (num === trustLevel + 1) return { text: 'Available to unlock', cls: 'status-available' }
     return { text: '🔒 Locked', cls: 'status-locked' }
   }
+
+  if (!trustLevel) return <div className="val-page"><DashNav userRole={userRole} /></div>
 
   const current = LEVELS[trustLevel - 1]
   const next = trustLevel < 4 ? LEVELS[trustLevel] : null
