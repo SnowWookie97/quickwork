@@ -237,24 +237,34 @@
 .val-notice {
   max-width: 1100px;
   width: 100%;
-  margin: 0 auto;
+  margin: 24px auto 0;
   padding: 0 40px;
-  margin-top: 24px;
+}
+
+.val-notice-inner {
+  background: white;
+  border: 2px solid #f0e8e0;
+  border-radius: 16px;
+  padding: 16px 22px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .val-notice-title {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 800;
   color: #1A2744;
-  margin: 0 0 10px;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .val-notice-text {
   font-size: 13px;
   color: #666;
-  line-height: 1.7;
-  margin: 0 0 6px;
-  text-align: justify;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .val-dance {

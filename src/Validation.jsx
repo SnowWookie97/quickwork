@@ -107,10 +107,10 @@ function Validation() {
 
       {/* NOTICE */}
       <div className="val-notice">
-        <h3 className="val-notice-title">Why does your trust level matter?</h3>
-        <p className="val-notice-text">Your trust level is shown to businesses every time you apply for a shift. The higher your level, the more likely businesses are to pick you — especially when multiple workers have applied for the same role.</p>
-        <p className="val-notice-text">At Trust Level 1 you can apply for all shifts right away, but verified workers are often preferred. At Trust Level 4, you're among the most trusted workers on QuickWork and the preferred choice for sensitive roles.</p>
-        <p className="val-notice-text">Upgrading is completely free and only takes a few days — every level you gain opens more doors. <span className="val-dance">🕺</span></p>
+        <div className="val-notice-inner">
+          <span className="val-notice-title">Why does your trust level matter?</span>
+          <p className="val-notice-text">Your trust level is visible to every business when you apply. Higher levels are preferred by employers. Upgrading is completely free and only takes a few days <span className="val-dance">🕺</span></p>
+        </div>
       </div>
 
       <div className="val-body">
