@@ -67,8 +67,12 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
       if (!user) return
       const { data: refData } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
       if (refData) setReferralCode(refData.referral_code)
-      const { data: profileData } = await supabase.from('profiles').select('trust_level, is_admin').eq('id', user.id).single()
+      const { data: profileData } = await supabase.from('profiles').select('trust_level, is_admin, is_blacklisted').eq('id', user.id).single()
       if (profileData) {
+        if (profileData.is_blacklisted) {
+          window.location.replace('/blacklisted')
+          return
+        }
         setTrustLevel(profileData.trust_level)
         localStorage.setItem('qw_trust_level', profileData.trust_level)
         const admin = profileData.is_admin === true

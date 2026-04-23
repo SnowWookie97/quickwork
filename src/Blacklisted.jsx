@@ -1,7 +1,20 @@
+import { useEffect } from 'react'
 import logoImg from './assets/logo.png'
 import './Blacklisted.css'
 
 function Blacklisted() {
+  useEffect(() => {
+    // Push multiple states so back button keeps returning here
+    window.history.pushState(null, '', window.location.href)
+    window.history.pushState(null, '', window.location.href)
+    window.history.pushState(null, '', window.location.href)
+    const blockBack = () => {
+      window.history.pushState(null, '', window.location.href)
+    }
+    window.addEventListener('popstate', blockBack)
+    return () => window.removeEventListener('popstate', blockBack)
+  }, [])
+
   return (
     <div className="bl-page">
 
