@@ -147,7 +147,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
           {/* Admin button — only visible to admin */}
           {isAdmin && (
             <button className="dashnav-btn admin-btn" onClick={() => navigate('/admin')}>
-              ⚡ Admin
+              Admin
             </button>
           )}
 
