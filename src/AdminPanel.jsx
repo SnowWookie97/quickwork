@@ -134,7 +134,6 @@ export default function AdminPanel() {
     const { error } = await supabase.from('profiles').update({ is_blacklisted: !current }).eq('id', user.id)
     if (error) { alert('Failed to update: ' + error.message); return }
     setProfiles(prev => ({ ...prev, [user.id]: { ...prev[user.id], is_blacklisted: !current } }))
-    fetchAll()
   }
 
   const handleDeleteUser = async (userId) => {
