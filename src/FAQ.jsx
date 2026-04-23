@@ -4,24 +4,7 @@ import { supabase } from './supabase'
 import DashNav from './DashNav'
 import './FAQ.css'
 
-const CATEGORIES = [
-  { label: 'Accounts', short: 'Accounts' },
-  { label: 'Shifts', short: 'Shifts' },
-  { label: 'Payments', short: 'Payments' },
-  { label: 'Technical App Problems', short: 'Technical' },
-]
-
-const FAQS = {
-  'Accounts': [
-    {
-      question: "What do I do if I want to register as both a business and a worker on QuickWork?",
-      answer: "QuickWork currently does not support dual registrations under the same account. If you wish to operate as both a business and a worker on the platform, you will need to create two separate accounts using different registration details (mobile number, email address, etc.).\n\nAlternatively, you may delete your existing account and re-register with the same details under your preferred role. To request an account deletion, please write to us via email — you can find our contact details on the Contact Us page."
-    }
-  ],
-  'Shifts': [],
-  'Payments': [],
-  'Technical App Problems': []
-}
+const CATEGORIES = ['Accounts', 'Shifts', 'Payments', 'Technical App Problems']
 
 function FAQ() {
   const navigate = useNavigate()
@@ -30,6 +13,7 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
   const [faqData, setFaqData] = useState({})
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
@@ -40,15 +24,22 @@ function FAQ() {
     getUser()
 
     const fetchFaqs = async () => {
-      const { data } = await supabase.from('faqs').select('*').order('created_at', { ascending: true })
+      const { data, error } = await supabase
+        .from('faqs')
+        .select('*')
+        .order('created_at', { ascending: true })
+
+      const grouped = {}
+      CATEGORIES.forEach(cat => { grouped[cat] = [] })
+
       if (data) {
-        const grouped = {}
-        CATEGORIES.forEach(cat => { grouped[cat] = [] })
         data.forEach(faq => {
-          if (grouped[faq.category]) grouped[faq.category].push(faq)
+          if (grouped[faq.category] !== undefined) {
+            grouped[faq.category].push(faq)
+          }
         })
-        setFaqData(grouped)
       }
+      setFaqData(grouped)
     }
     fetchFaqs()
 
@@ -90,15 +81,14 @@ function FAQ() {
 
         <div className="faq-left">
           <div className="faq-card">
-
             <div className="faq-tabs">
               {CATEGORIES.map(cat => (
                 <button
-                  key={cat.label}
-                  className={`faq-tab ${activeCategory === cat.label ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange(cat.label)}
+                  key={cat}
+                  className={`faq-tab ${activeCategory === cat ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange(cat)}
                 >
-                  {isMobile ? cat.short : cat.label}
+                  {isMobile ? cat.replace('Technical App Problems', 'Technical') : cat}
                 </button>
               ))}
             </div>
@@ -106,7 +96,11 @@ function FAQ() {
             <div className="faq-tab-divider" />
 
             <div className="faq-list">
-              {currentFAQs.length === 0 ? (
+              {loading ? (
+                <div className="faq-empty">
+                  <p className="faq-empty-title">Loading...</p>
+                </div>
+              ) : currentFAQs.length === 0 ? (
                 <div className="faq-empty">
                   <div className="faq-empty-icon">📭</div>
                   <p className="faq-empty-title">No FAQs in this category yet</p>
@@ -114,7 +108,7 @@ function FAQ() {
                 </div>
               ) : (
                 currentFAQs.map((faq, i) => (
-                  <div key={i} className={`faq-item ${openIndex === i ? 'open' : ''}`}>
+                  <div key={faq.id || i} className={`faq-item ${openIndex === i ? 'open' : ''}`}>
                     <button className="faq-question" onClick={() => toggle(i)}>
                       <span>{faq.question}</span>
                       <span className="faq-chevron">{openIndex === i ? '▲' : '▼'}</span>
@@ -130,7 +124,6 @@ function FAQ() {
                 ))
               )}
             </div>
-
           </div>
 
           {isMobile && <ContactCard />}

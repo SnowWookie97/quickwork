@@ -108,7 +108,7 @@ function Validation() {
 
   return (
     <div className="val-page">
-      <DashNav userRole={userRole} trustLevel={trustLevel} />
+      <DashNav userRole={userRole} trustLevel={trustLevel} currentPage="validation" />
 
       {/* NOTICE */}
       <div className="val-notice">

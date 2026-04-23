@@ -28,6 +28,7 @@ function WorkerDashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
 
   useEffect(() => {
+  useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { navigate("/login"); return }
@@ -73,7 +74,7 @@ function WorkerDashboard() {
 
   return (
     <div className="wd-page">
-      <DashNav userRole={userRole} onHomepage={() => setShowHomepageMsg(true)} />
+      <DashNav userRole={userRole} onHomepage={() => setShowHomepageMsg(true)} currentPage="dashboard" />
 
       {showHomepageMsg && (
         <div className="wd-homepage-msg" onClick={() => setShowHomepageMsg(false)}>

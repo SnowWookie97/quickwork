@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './DashNav.css'
@@ -33,8 +33,9 @@ function MiniShield({ level }) {
   )
 }
 
-function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
+function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [dashDropdown, setDashDropdown] = useState(false)
   const [profileDropdown, setProfileDropdown] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
@@ -164,7 +165,13 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
       )}
 
       {/* NOTICE BANNERS */}
-      {notices.map(notice => (
+      {notices.filter(n => {
+        const path = location.pathname
+        if (n.target_page === 'dashboard') return path.includes('dashboard')
+        if (n.target_page === 'validation') return path.includes('validation')
+        if (n.target_page === 'profile') return path.includes('profile')
+        return path.includes('dashboard')
+      }).map(notice => (
         <div key={notice.id} className="dashnav-notice-banner">
           <span className="dashnav-notice-text">📢 {notice.message}</span>
           <button className="dashnav-notice-dismiss" onClick={() => dismissNotice(notice.id)}>✕</button>
