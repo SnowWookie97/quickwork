@@ -163,8 +163,7 @@ export default function AdminPanel() {
       updates: { is_blacklisted: !current }
     })
     if (error) { alert('Failed: ' + error.message); return }
-    setProfiles(prev => ({ ...prev, [user.id]: { ...prev[user.id], is_blacklisted: !current } }))
-    alert('Done! Blacklisted: ' + !current)
+    await fetchAll()
   }
 
   const handleDeleteUser = async (userId) => {
