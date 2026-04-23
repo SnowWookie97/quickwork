@@ -165,6 +165,7 @@ export default function AdminPanel() {
       updates: { is_blacklisted: !current }
     })
     if (error) { alert('Failed: ' + error.message); setBlacklistLoading(false); return }
+    localStorage.removeItem('qw_admin_profiles')
     await fetchAll()
     setBlacklistLoading(false)
   }
