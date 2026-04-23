@@ -156,10 +156,11 @@ export default function AdminPanel() {
     setNoticeMsg('')
   }
 
-  // ── FIX: use admin_update_profile RPC to bypass RLS ──────────
+  // ── FIX: read fresh from DB to avoid stale cache ──────────────
   const handleBlacklist = async (user) => {
-    const current = profiles[user.id]?.is_blacklisted
     setBlacklistLoading(true)
+    const { data: fresh } = await supabase.from('profiles').select('is_blacklisted').eq('id', user.id).single()
+    const current = fresh?.is_blacklisted ?? false
     const { error } = await supabase.rpc('admin_update_profile', {
       target_user_id: user.id,
       updates: { is_blacklisted: !current }
