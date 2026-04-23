@@ -44,7 +44,9 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
     const c = localStorage.getItem('qw_trust_level')
     return trustLevelProp || (c ? parseInt(c) : 1)
   })
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem('qw_is_admin') === 'true'
+  })
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -67,7 +69,9 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
       if (profileData) {
         setTrustLevel(profileData.trust_level)
         localStorage.setItem('qw_trust_level', profileData.trust_level)
-        setIsAdmin(profileData.is_admin === true)
+        const admin = profileData.is_admin === true
+        setIsAdmin(admin)
+        localStorage.setItem('qw_is_admin', admin)
       }
     }
     fetchData()
@@ -84,6 +88,8 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
   }
 
   const handleLogout = async () => {
+    localStorage.removeItem('qw_is_admin')
+    localStorage.removeItem('qw_trust_level')
     await supabase.auth.signOut()
     navigate('/')
   }
@@ -144,7 +150,6 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
         </div>
 
         <div className="dashnav-right">
-          {/* Admin button — only visible to admin */}
           {isAdmin && (
             <button className="dashnav-btn admin-btn" onClick={() => navigate('/admin')}>
               Admin

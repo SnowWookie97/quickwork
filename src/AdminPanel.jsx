@@ -338,16 +338,37 @@ export default function AdminPanel() {
                 </div>
               )}
               {getFilteredUsers().map(u => (
-                <div key={u.id} className="ap-user-row">
-                  <div className="ap-avatar">{(u.name || u.email || '?')[0].toUpperCase()}</div>
-                  <div>
-                    <div className="ap-user-name">{u.name || '—'}</div>
-                    <div className="ap-user-email">{u.email}</div>
+                <div key={u.id}>
+                  <div className="ap-user-row ap-user-row-clickable" onClick={() => setSelectedUser(selectedUser?.id === u.id ? null : u)}>
+                    <div className="ap-avatar">{(u.name || u.email || '?')[0].toUpperCase()}</div>
+                    <div>
+                      <div className="ap-user-name">{u.name || '—'}</div>
+                      <div className="ap-user-email">{u.email}</div>
+                    </div>
+                    {profiles[u.id]?.is_blacklisted && <span className="ap-blacklisted-tag">Blacklisted</span>}
+                    <MiniShield level={profiles[u.id]?.trust_level || 1} />
+                    <span className={`ap-role-tag ${u.role}`}>{u.role}</span>
+                    <span className="ap-time">{formatDate(u.created_at)}</span>
                   </div>
-                  {profiles[u.id]?.is_blacklisted && <span className="ap-blacklisted-tag">Blacklisted</span>}
-                  <MiniShield level={profiles[u.id]?.trust_level || 1} />
-                  <span className={`ap-role-tag ${u.role}`}>{u.role}</span>
-                  <span className="ap-time">{formatDate(u.created_at)}</span>
+                  {selectedUser?.id === u.id && (
+                    <div className="ap-user-detail">
+                      <div className="ap-detail-actions">
+                        <button className="ap-btn-notice" onClick={() => setNoticeModal(u)}>📢 Send Notice</button>
+                        <button className="ap-btn-blacklist" onClick={() => handleBlacklist(u)}>
+                          {profiles[u.id]?.is_blacklisted ? '✓ Unblacklist' : '🚫 Blacklist'}
+                        </button>
+                        <button className="ap-btn-del-user" onClick={() => handleDeleteUser(u.id)}>🗑 Delete User</button>
+                      </div>
+                      <div className="ap-detail-grid">
+                        <div className="ap-field"><div className="ap-field-label">Email</div><div className="ap-field-value">{u.email}</div></div>
+                        <div className="ap-field"><div className="ap-field-label">Role</div><div className="ap-field-value">{u.role}</div></div>
+                        <div className="ap-field"><div className="ap-field-label">Trust Level</div><div className="ap-field-value">{profiles[u.id]?.trust_level || 1}</div></div>
+                        <div className="ap-field"><div className="ap-field-label">Signed Up</div><div className="ap-field-value">{formatDate(u.created_at)}</div></div>
+                        <div className="ap-field"><div className="ap-field-label">Last Login</div><div className="ap-field-value">{formatDate(u.last_sign_in_at)}</div></div>
+                        <div className="ap-field"><div className="ap-field-label">Blacklisted</div><div className="ap-field-value">{profiles[u.id]?.is_blacklisted ? 'Yes' : 'No'}</div></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </>

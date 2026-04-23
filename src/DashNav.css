@@ -225,13 +225,13 @@
 
 /* ADMIN BUTTON */
 .admin-btn {
-  background: #E8470F !important;
-  border-color: #E8470F !important;
+  background: #8B0000 !important;
+  border-color: #8B0000 !important;
   color: white !important;
   font-weight: 700 !important;
 }
 .admin-btn:hover {
-  background: #c93a0a !important;
-  border-color: #c93a0a !important;
+  background: #6b0000 !important;
+  border-color: #6b0000 !important;
   color: white !important;
 }
