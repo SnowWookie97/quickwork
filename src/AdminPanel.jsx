@@ -65,6 +65,7 @@ export default function AdminPanel() {
   const [faqModal, setFaqModal] = useState(null)
   const [faqForm, setFaqForm] = useState({ category: 'Accounts', question: '', answer: '' })
   const [selectedUser, setSelectedUser] = useState(null)
+  const [blacklistLoading, setBlacklistLoading] = useState(false)
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -158,12 +159,14 @@ export default function AdminPanel() {
   // ── FIX: use admin_update_profile RPC to bypass RLS ──────────
   const handleBlacklist = async (user) => {
     const current = profiles[user.id]?.is_blacklisted
+    setBlacklistLoading(true)
     const { error } = await supabase.rpc('admin_update_profile', {
       target_user_id: user.id,
       updates: { is_blacklisted: !current }
     })
-    if (error) { alert('Failed: ' + error.message); return }
+    if (error) { alert('Failed: ' + error.message); setBlacklistLoading(false); return }
     await fetchAll()
+    setBlacklistLoading(false)
   }
 
   const handleDeleteUser = async (userId) => {
@@ -386,8 +389,8 @@ export default function AdminPanel() {
                     <div className="ap-user-detail">
                       <div className="ap-detail-actions">
                         <button className="ap-btn-notice" onClick={() => setNoticeModal(u)}>📢 Send Notice</button>
-                        <button className="ap-btn-blacklist" onClick={() => handleBlacklist(u)}>
-                          {profiles[u.id]?.is_blacklisted ? '✓ Unblacklist' : '🚫 Blacklist'}
+                        <button className="ap-btn-blacklist" disabled={blacklistLoading} onClick={() => handleBlacklist(u)}>
+                          {blacklistLoading ? '⏳ Working...' : profiles[u.id]?.is_blacklisted ? '✓ Unblacklist' : '🚫 Blacklist'}
                         </button>
                         <button className="ap-btn-del-user" onClick={() => handleDeleteUser(u.id)}>🗑 Delete User</button>
                       </div>
@@ -471,8 +474,8 @@ export default function AdminPanel() {
                     <div className="ap-user-detail">
                       <div className="ap-detail-actions">
                         <button className="ap-btn-notice" onClick={() => setNoticeModal(u)}>📢 Send Notice</button>
-                        <button className="ap-btn-blacklist" onClick={() => handleBlacklist(u)}>
-                          {profiles[u.id]?.is_blacklisted ? '✓ Unblacklist' : '🚫 Blacklist'}
+                        <button className="ap-btn-blacklist" disabled={blacklistLoading} onClick={() => handleBlacklist(u)}>
+                          {blacklistLoading ? '⏳ Working...' : profiles[u.id]?.is_blacklisted ? '✓ Unblacklist' : '🚫 Blacklist'}
                         </button>
                         <button className="ap-btn-del-user" onClick={() => handleDeleteUser(u.id)}>🗑 Delete User</button>
                       </div>
