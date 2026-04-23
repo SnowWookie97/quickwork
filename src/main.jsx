@@ -16,6 +16,7 @@ import MyShifts from './MyShifts.jsx'
 import Payments from './Payments.jsx'
 import FAQ from './FAQ.jsx'
 import Validation from './Validation.jsx'
+import Blacklisted from './Blacklisted.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -37,6 +38,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/payments" element={<Payments />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/validation" element={<Validation />} />
+        <Route path="/blacklisted" element={<Blacklisted />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

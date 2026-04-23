@@ -1,0 +1,76 @@
+.bl-page {
+  min-height: 100vh;
+  background: #FFF8F3;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bl-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 0 0;
+}
+
+.bl-logo-img { height: 40px; width: auto; }
+.bl-logo-text { font-size: 18px; font-weight: 700; color: #E8470F; }
+
+.bl-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  max-width: 700px;
+  width: 100%;
+  gap: 16px;
+}
+
+.bl-icon { font-size: 52px; }
+
+.bl-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1A2744;
+  line-height: 1.3;
+}
+
+.bl-sub {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.7;
+  max-width: 500px;
+}
+
+.bl-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.bl-card {
+  background: white;
+  border-radius: 14px;
+  border: 2px solid #f0e8e0;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.bl-card-icon { font-size: 24px; }
+.bl-card-title { font-size: 13px; font-weight: 800; color: #1A2744; }
+.bl-card-value { font-size: 12px; font-weight: 600; color: #E8470F; line-height: 1.5; }
+.bl-card-hours { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+@media (max-width: 768px) {
+  .bl-title { font-size: 20px; }
+  .bl-cards { grid-template-columns: 1fr; }
+}
