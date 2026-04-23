@@ -97,7 +97,7 @@
   font-weight: 500;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 8px;
 }
 
@@ -221,4 +221,14 @@
   .dashnav-btn { font-size: 11px; padding: 6px 10px; gap: 4px; }
   .dashnav-avatar { display: none; }
   .dashnav-right { gap: 8px; }
+}
+
+/* ADMIN BUTTON */
+.admin-btn {
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+}
+.admin-btn:hover {
+  background: #fbbf24 !important;
+  color: #111 !important;
 }

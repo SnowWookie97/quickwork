@@ -5,16 +5,15 @@ import logoImg from './assets/logo.png'
 import './DashNav.css'
 
 const SHIELD_DATA = [
-  { fill: "#e8e8e8", stroke: "#bbb", stroke2: "#ddd", labelColor: "#999", numColor: "#777" },
-  { fill: "#C0DD97", stroke: "#3B6D11", stroke2: "#639922", labelColor: "#27500A", numColor: "#173404" },
-  { fill: "#c8e6f8", stroke: "#378ADD", stroke2: "#85B7EB", labelColor: "#185FA5", numColor: "#0C447C" },
-  { fill: "#FFD700", stroke: "#B8860B", stroke2: "#FFE55C", labelColor: "#7a5a00", numColor: "#5a3e00" }
+  { fill: "#e8e8e8", stroke: "#bbb", stroke2: "#ddd", numColor: "#777" },
+  { fill: "#C0DD97", stroke: "#3B6D11", stroke2: "#639922", numColor: "#173404" },
+  { fill: "#c8e6f8", stroke: "#378ADD", stroke2: "#85B7EB", numColor: "#0C447C" },
+  { fill: "#FFD700", stroke: "#B8860B", stroke2: "#FFE55C", numColor: "#5a3e00" }
 ]
 
 function MiniShield({ level }) {
   const d = SHIELD_DATA[level - 1]
   const isPremium = level >= 3
-
   if (isPremium) {
     return (
       <svg width="20" height="22" viewBox="0 0 48 52" style={{ flexShrink: 0 }}>
@@ -25,7 +24,6 @@ function MiniShield({ level }) {
       </svg>
     )
   }
-
   return (
     <svg width="20" height="22" viewBox="0 0 44 48" style={{ flexShrink: 0 }}>
       <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z" fill={d.fill} stroke={d.stroke} strokeWidth="2"/>
@@ -43,10 +41,10 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
   const [referralCode, setReferralCode] = useState('')
   const [copied, setCopied] = useState(false)
   const [trustLevel, setTrustLevel] = useState(() => {
-    if (trustLevelProp) return trustLevelProp
-    const cached = localStorage.getItem('qw_trust_level')
-    return cached ? parseInt(cached) : null
+    const c = localStorage.getItem('qw_trust_level')
+    return trustLevelProp || (c ? parseInt(c) : 1)
   })
+  const [isAdmin, setIsAdmin] = useState(false)
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -65,8 +63,12 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
       if (!user) return
       const { data: refData } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
       if (refData) setReferralCode(refData.referral_code)
-      const { data: profileData } = await supabase.from('profiles').select('trust_level').eq('id', user.id).single()
-      if (profileData) { setTrustLevel(profileData.trust_level); localStorage.setItem('qw_trust_level', profileData.trust_level) }
+      const { data: profileData } = await supabase.from('profiles').select('trust_level, is_admin').eq('id', user.id).single()
+      if (profileData) {
+        setTrustLevel(profileData.trust_level)
+        localStorage.setItem('qw_trust_level', profileData.trust_level)
+        setIsAdmin(profileData.is_admin || false)
+      }
     }
     fetchData()
   }, [])
@@ -142,6 +144,13 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
         </div>
 
         <div className="dashnav-right">
+          {/* Admin button — only visible to admin */}
+          {isAdmin && (
+            <button className="dashnav-btn admin-btn" onClick={() => navigate('/admin')}>
+              ⚡ Admin
+            </button>
+          )}
+
           <div className="dashnav-item" ref={dashRef}>
             <button className="dashnav-btn" onClick={() => { setDashDropdown(!dashDropdown); setProfileDropdown(false) }}>
               My Dashboard <span className="dashnav-chevron">{dashDropdown ? '▲' : '▼'}</span>
