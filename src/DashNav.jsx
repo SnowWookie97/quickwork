@@ -67,7 +67,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
       if (profileData) {
         setTrustLevel(profileData.trust_level)
         localStorage.setItem('qw_trust_level', profileData.trust_level)
-        setIsAdmin(profileData.is_admin || false)
+        setIsAdmin(profileData.is_admin === true)
       }
     }
     fetchData()
