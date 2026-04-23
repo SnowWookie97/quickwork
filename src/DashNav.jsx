@@ -110,6 +110,13 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
   const handleLogout = async () => {
     localStorage.removeItem('qw_is_admin')
     localStorage.removeItem('qw_trust_level')
+    localStorage.removeItem('qw_faq_data')
+    localStorage.removeItem('qw_admin_users')
+    localStorage.removeItem('qw_admin_profiles')
+    localStorage.removeItem('qw_admin_submissions')
+    localStorage.removeItem('qw_admin_feedbacks')
+    localStorage.removeItem('qw_admin_referrals')
+    localStorage.removeItem('qw_admin_faqs')
     await supabase.auth.signOut()
     navigate('/')
   }

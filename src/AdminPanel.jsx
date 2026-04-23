@@ -33,13 +33,25 @@ export default function AdminPanel() {
   const [adminPhoto, setAdminPhoto] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Data states
-  const [users, setUsers] = useState([])
-  const [profiles, setProfiles] = useState({})
-  const [submissions, setSubmissions] = useState([])
-  const [feedbacks, setFeedbacks] = useState([])
-  const [referrals, setReferrals] = useState([])
-  const [faqs, setFaqs] = useState([])
+  // Data states — load from cache instantly
+  const [users, setUsers] = useState(() => {
+    const c = localStorage.getItem('qw_admin_users'); return c ? JSON.parse(c) : []
+  })
+  const [profiles, setProfiles] = useState(() => {
+    const c = localStorage.getItem('qw_admin_profiles'); return c ? JSON.parse(c) : {}
+  })
+  const [submissions, setSubmissions] = useState(() => {
+    const c = localStorage.getItem('qw_admin_submissions'); return c ? JSON.parse(c) : []
+  })
+  const [feedbacks, setFeedbacks] = useState(() => {
+    const c = localStorage.getItem('qw_admin_feedbacks'); return c ? JSON.parse(c) : []
+  })
+  const [referrals, setReferrals] = useState(() => {
+    const c = localStorage.getItem('qw_admin_referrals'); return c ? JSON.parse(c) : []
+  })
+  const [faqs, setFaqs] = useState(() => {
+    const c = localStorage.getItem('qw_admin_faqs'); return c ? JSON.parse(c) : []
+  })
   const [signupFilter, setSignupFilter] = useState('week')
   const [customStart, setCustomStart] = useState('')
   const [customEnd, setCustomEnd] = useState('')
@@ -73,23 +85,39 @@ export default function AdminPanel() {
       const profileMap = {}
       profilesData.forEach(p => { profileMap[p.id] = p })
       setProfiles(profileMap)
+      localStorage.setItem('qw_admin_profiles', JSON.stringify(profileMap))
     }
 
     // Fetch user metadata via RPC or direct query
     const { data: usersData } = await supabase.rpc('get_all_users')
-    if (usersData) setUsers(usersData)
+    if (usersData) {
+      setUsers(usersData)
+      localStorage.setItem('qw_admin_users', JSON.stringify(usersData))
+    }
 
     const { data: subsData } = await supabase.from('aadhaar_submissions').select('*').order('submitted_at', { ascending: false })
-    if (subsData) setSubmissions(subsData)
+    if (subsData) {
+      setSubmissions(subsData)
+      localStorage.setItem('qw_admin_submissions', JSON.stringify(subsData))
+    }
 
     const { data: fbData } = await supabase.from('feedback').select('*').order('created_at', { ascending: false })
-    if (fbData) setFeedbacks(fbData)
+    if (fbData) {
+      setFeedbacks(fbData)
+      localStorage.setItem('qw_admin_feedbacks', JSON.stringify(fbData))
+    }
 
     const { data: refData } = await supabase.from('referrals').select('*')
-    if (refData) setReferrals(refData)
+    if (refData) {
+      setReferrals(refData)
+      localStorage.setItem('qw_admin_referrals', JSON.stringify(refData))
+    }
 
     const { data: faqData } = await supabase.from('faqs').select('*').order('created_at', { ascending: false })
-    if (faqData) setFaqs(faqData)
+    if (faqData) {
+      setFaqs(faqData)
+      localStorage.setItem('qw_admin_faqs', JSON.stringify(faqData))
+    }
   }
 
   const handlePhotoUpload = async (e) => {

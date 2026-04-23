@@ -12,8 +12,13 @@ function FAQ() {
   const [activeCategory, setActiveCategory] = useState('Accounts')
   const [openIndex, setOpenIndex] = useState(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
-  const [faqData, setFaqData] = useState({})
-  const [loading, setLoading] = useState(true)
+  const [faqData, setFaqData] = useState(() => {
+    const cached = localStorage.getItem('qw_faq_data')
+    return cached ? JSON.parse(cached) : {}
+  })
+  const [loading, setLoading] = useState(() => {
+    return !localStorage.getItem('qw_faq_data')
+  })
 
   useEffect(() => {
     const getUser = async () => {
@@ -40,6 +45,7 @@ function FAQ() {
         })
       }
       setFaqData(grouped)
+      localStorage.setItem('qw_faq_data', JSON.stringify(grouped))
       setLoading(false)
     }
     fetchFaqs()
