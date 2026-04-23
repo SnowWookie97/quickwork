@@ -40,6 +40,7 @@ function FAQ() {
         })
       }
       setFaqData(grouped)
+      setLoading(false)
     }
     fetchFaqs()
 

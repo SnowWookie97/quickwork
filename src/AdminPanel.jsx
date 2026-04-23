@@ -131,13 +131,17 @@ export default function AdminPanel() {
 
   const handleBlacklist = async (user) => {
     const current = profiles[user.id]?.is_blacklisted
-    await supabase.from('profiles').update({ is_blacklisted: !current }).eq('id', user.id)
+    const { error } = await supabase.from('profiles').update({ is_blacklisted: !current }).eq('id', user.id)
+    if (error) { alert('Failed to update: ' + error.message); return }
+    setProfiles(prev => ({ ...prev, [user.id]: { ...prev[user.id], is_blacklisted: !current } }))
     fetchAll()
   }
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to permanently delete this user?')) return
-    await supabase.auth.admin.deleteUser(userId)
+    if (!window.confirm('Are you sure? This cannot be undone.')) return
+    // Delete profile — auth user cleanup happens via cascade
+    const { error } = await supabase.from('profiles').delete().eq('id', userId)
+    if (error) { alert('Failed to delete: ' + error.message); return }
     fetchAll()
   }
 
