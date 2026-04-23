@@ -15,23 +15,26 @@ function Login() {
     setError('')
     setLoading(true)
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password })
 
-    setLoading(false)
-
-    if (error) {
-      setError(error.message)
+    if (authError) {
+      setLoading(false)
+      setError(authError.message)
       return
     }
 
     // Check blacklist before redirecting
-    const { data: profile } = await supabase.from('profiles').select('is_blacklisted').eq('id', data.user.id).single()
+    const { data: profile } = await supabase.from('profiles').select('is_blacklisted').eq('id', authData.user.id).single()
+    
+    setLoading(false)
+
     if (profile?.is_blacklisted) {
+      await supabase.auth.signOut()
       window.location.replace('/blacklisted')
       return
     }
 
-    const role = data.user?.user_metadata?.role
+    const role = authData.user?.user_metadata?.role
     if (role === 'business') {
       navigate('/business/dashboard')
     } else {
