@@ -159,9 +159,13 @@ export default function AdminPanel() {
 
   const handleBlacklist = async (user) => {
     const current = profiles[user.id]?.is_blacklisted
-    const { error } = await supabase.from('profiles').update({ is_blacklisted: !current }).eq('id', user.id)
-    if (error) { alert('Failed to update: ' + error.message); return }
+    console.log('Blacklisting user:', user.id, 'current:', current)
+    const { data, error } = await supabase.from('profiles').update({ is_blacklisted: !current }).eq('id', user.id).select()
+    console.log('Result:', data, 'Error:', error)
+    if (error) { alert('Failed: ' + error.message); return }
+    if (!data || data.length === 0) { alert('No rows updated — RLS may be blocking this'); return }
     setProfiles(prev => ({ ...prev, [user.id]: { ...prev[user.id], is_blacklisted: !current } }))
+    alert('Done! Blacklisted: ' + !current)
   }
 
   const handleDeleteUser = async (userId) => {
