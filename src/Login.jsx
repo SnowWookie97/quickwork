@@ -24,6 +24,13 @@ function Login() {
       return
     }
 
+    // Check blacklist before redirecting
+    const { data: profile } = await supabase.from('profiles').select('is_blacklisted').eq('id', data.user.id).single()
+    if (profile?.is_blacklisted) {
+      window.location.replace('/blacklisted')
+      return
+    }
+
     const role = data.user?.user_metadata?.role
     if (role === 'business') {
       navigate('/business/dashboard')
