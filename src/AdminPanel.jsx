@@ -79,7 +79,6 @@ export default function AdminPanel() {
   }, [])
 
   const fetchAll = async () => {
-    // Fetch all users from auth via profiles join
     const { data: profilesData } = await supabase.from('profiles').select('*')
     if (profilesData) {
       const profileMap = {}
@@ -88,7 +87,6 @@ export default function AdminPanel() {
       localStorage.setItem('qw_admin_profiles', JSON.stringify(profileMap))
     }
 
-    // Fetch user metadata via RPC or direct query
     const { data: usersData } = await supabase.rpc('get_all_users')
     if (usersData) {
       setUsers(usersData)
@@ -134,7 +132,7 @@ export default function AdminPanel() {
 
   const handleApprove = async (sub) => {
     await supabase.from('aadhaar_submissions').update({ status: 'approved', reviewed_at: new Date().toISOString() }).eq('id', sub.id)
-    await supabase.from('profiles').update({ trust_level: 2 }).eq('id', sub.user_id)
+    await supabase.rpc('admin_update_profile', { target_user_id: sub.user_id, updates: { trust_level: 2 } })
     fetchAll()
   }
 
@@ -157,21 +155,21 @@ export default function AdminPanel() {
     setNoticeMsg('')
   }
 
+  // ── FIX: use admin_update_profile RPC to bypass RLS ──────────
   const handleBlacklist = async (user) => {
     const current = profiles[user.id]?.is_blacklisted
-    console.log('Blacklisting user:', user.id, 'current:', current)
-    const { data, error } = await supabase.from('profiles').update({ is_blacklisted: !current }).eq('id', user.id).select()
-    console.log('Result:', data, 'Error:', error)
+    const { error } = await supabase.rpc('admin_update_profile', {
+      target_user_id: user.id,
+      updates: { is_blacklisted: !current }
+    })
     if (error) { alert('Failed: ' + error.message); return }
-    if (!data || data.length === 0) { alert('No rows updated — RLS may be blocking this'); return }
     setProfiles(prev => ({ ...prev, [user.id]: { ...prev[user.id], is_blacklisted: !current } }))
     alert('Done! Blacklisted: ' + !current)
   }
 
   const handleDeleteUser = async (userId) => {
     if (!window.confirm('Are you sure? This cannot be undone.')) return
-    // Delete profile — auth user cleanup happens via cascade
-    const { error } = await supabase.from('profiles').delete().eq('id', userId)
+    const { error } = await supabase.rpc('admin_delete_user', { target_user_id: userId })
     if (error) { alert('Failed to delete: ' + error.message); return }
     fetchAll()
   }
