@@ -235,3 +235,34 @@
   border-color: #6b0000 !important;
   color: white !important;
 }
+
+/* NOTICE BANNER */
+.dashnav-notice-banner {
+  background: #FFF3CD;
+  border-bottom: 1px solid #f0e8e0;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashnav-notice-text {
+  font-size: 13px;
+  color: #1A2744;
+  font-weight: 500;
+  flex: 1;
+}
+
+.dashnav-notice-dismiss {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.dashnav-notice-dismiss:hover { background: #f0e8e0; color: #1A2744; }

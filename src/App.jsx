@@ -50,7 +50,7 @@ function App() {
           </div>
           <div className="hero-right">
             <h2 className="hero-platform-title">INDIA'S FASTEST JOB PLATFORM</h2>
-            <img src={heroImg} alt="QuickWork platform" className="hero-img" />
+            <img src={heroImg} alt="QuickWork platform" className="hero-img" loading="eager" fetchPriority="high" />
           </div>
         </div>
       </section>

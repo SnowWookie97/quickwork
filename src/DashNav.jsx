@@ -47,6 +47,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('qw_is_admin') === 'true'
   })
+  const [notices, setNotices] = useState([])
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -75,6 +76,20 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
       }
     }
     fetchData()
+
+    // Fetch unread notices
+    const fetchNotices = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('notices')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_read', false)
+        .order('created_at', { ascending: false })
+      if (data) setNotices(data)
+    }
+    fetchNotices()
   }, [])
 
   useEffect(() => {
@@ -125,6 +140,11 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
     return <span>{item}</span>
   }
 
+  const dismissNotice = async (id) => {
+    await supabase.from('notices').update({ is_read: true }).eq('id', id)
+    setNotices(notices.filter(n => n.id !== id))
+  }
+
   return (
     <>
       {showInviteModal && (
@@ -142,6 +162,14 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp }) {
           </div>
         </div>
       )}
+
+      {/* NOTICE BANNERS */}
+      {notices.map(notice => (
+        <div key={notice.id} className="dashnav-notice-banner">
+          <span className="dashnav-notice-text">📢 {notice.message}</span>
+          <button className="dashnav-notice-dismiss" onClick={() => dismissNotice(notice.id)}>✕</button>
+        </div>
+      ))}
 
       <nav className="dashnav">
         <div className="dashnav-logo" onClick={handleLogoClick}>

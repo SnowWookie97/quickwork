@@ -29,6 +29,7 @@ function FAQ() {
   const [activeCategory, setActiveCategory] = useState('Accounts')
   const [openIndex, setOpenIndex] = useState(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+  const [faqData, setFaqData] = useState({})
 
   useEffect(() => {
     const getUser = async () => {
@@ -37,6 +38,20 @@ function FAQ() {
       setUserRole(user.user_metadata?.role)
     }
     getUser()
+
+    const fetchFaqs = async () => {
+      const { data } = await supabase.from('faqs').select('*').order('created_at', { ascending: true })
+      if (data) {
+        const grouped = {}
+        CATEGORIES.forEach(cat => { grouped[cat] = [] })
+        data.forEach(faq => {
+          if (grouped[faq.category]) grouped[faq.category].push(faq)
+        })
+        setFaqData(grouped)
+      }
+    }
+    fetchFaqs()
+
     const handleResize = () => setIsMobile(window.innerWidth <= 768)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -49,7 +64,7 @@ function FAQ() {
     setOpenIndex(null)
   }
 
-  const currentFAQs = FAQS[activeCategory] || []
+  const currentFAQs = faqData[activeCategory] || []
 
   const ContactCard = () => (
     <div className="faq-contact-card">
