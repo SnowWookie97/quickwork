@@ -28,7 +28,6 @@ function WorkerDashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
 
   useEffect(() => {
-  useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { navigate("/login"); return }
