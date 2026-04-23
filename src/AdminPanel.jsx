@@ -156,18 +156,18 @@ export default function AdminPanel() {
     setNoticeMsg('')
   }
 
-  // ── FIX: read fresh from DB to avoid stale cache ──────────────
+  // ── FIX: patch local state directly after RPC ─────────────────
   const handleBlacklist = async (user) => {
     setBlacklistLoading(true)
-    const { data: fresh } = await supabase.from('profiles').select('is_blacklisted').eq('id', user.id).single()
-    const current = fresh?.is_blacklisted ?? false
+    const current = profiles[user.id]?.is_blacklisted ?? false
     const { error } = await supabase.rpc('admin_update_profile', {
       target_user_id: user.id,
       updates: { is_blacklisted: !current }
     })
     if (error) { alert('Failed: ' + error.message); setBlacklistLoading(false); return }
-    localStorage.removeItem('qw_admin_profiles')
-    await fetchAll()
+    const updated = { ...profiles, [user.id]: { ...profiles[user.id], is_blacklisted: !current } }
+    setProfiles(updated)
+    localStorage.setItem('qw_admin_profiles', JSON.stringify(updated))
     setBlacklistLoading(false)
   }
 
