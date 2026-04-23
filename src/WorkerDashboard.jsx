@@ -28,14 +28,13 @@ function WorkerDashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
 
   useEffect(() => {
-  useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { navigate("/login"); return }
-      const { data: profile } = await supabase.from("profiles").select("is_blacklisted").eq("id", user.id).single()
-      if (profile?.is_blacklisted) { window.location.replace("/blacklisted"); return }
+      if (!user) { navigate('/login'); return }
+      const { data: profile } = await supabase.from('profiles').select('is_blacklisted').eq('id', user.id).single()
+      if (profile?.is_blacklisted) { window.location.replace('/blacklisted'); return }
       setUserRole(user.user_metadata?.role)
-      setFirstName((user.user_metadata?.name || "").split(" ")[0])
+      setFirstName((user.user_metadata?.name || '').split(' ')[0])
     }
     getUser()
   }, [])
@@ -43,9 +42,7 @@ function WorkerDashboard() {
   const today = new Date()
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
   const isCurrentMonth = currentMonth.getMonth() === today.getMonth() && currentMonth.getFullYear() === today.getFullYear()
-
   const isPastDay = (day) => new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day) < todayMidnight
-
   const getDaysInMonth = (date) => {
     const year = date.getFullYear()
     const month = date.getMonth()
@@ -53,18 +50,14 @@ function WorkerDashboard() {
     const daysInMonth = new Date(year, month + 1, 0).getDate()
     return { daysInMonth, startOffset: firstDay === 0 ? 6 : firstDay - 1 }
   }
-
   const { daysInMonth, startOffset } = getDaysInMonth(currentMonth)
-
   const isToday = (day) => day === today.getDate() && currentMonth.getMonth() === today.getMonth() && currentMonth.getFullYear() === today.getFullYear()
   const isSelected = (day) => selectedDate && selectedDate.getDate() === day && selectedDate.getMonth() === currentMonth.getMonth() && selectedDate.getFullYear() === currentMonth.getFullYear()
-
   const handleDayClick = (day) => {
     if (isPastDay(day)) return
     const clicked = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
     setSelectedDate(selectedDate && selectedDate.getTime() === clicked.getTime() ? null : clicked)
   }
-
   const prevMonth = () => { if (isCurrentMonth) return; setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)) }
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
   const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
@@ -86,7 +79,6 @@ function WorkerDashboard() {
         <div className="wd-left">
           <h2 className="wd-greeting">Hello, <span className="wd-name">{firstName || 'Worker'}</span>! 👋</h2>
 
-          {/* DESKTOP CALENDAR */}
           <div className="wd-calendar">
             <div className="wd-cal-header">
               <button className="wd-cal-nav" onClick={prevMonth} style={prevBtnStyle}>‹</button>
@@ -107,7 +99,6 @@ function WorkerDashboard() {
             ) : <p className="wd-cal-hint">Tap a date to filter shifts</p>}
           </div>
 
-          {/* MOBILE DATE STRIP */}
           <div className="wd-date-strip">
             <div className="wd-strip-month">
               <button className="wd-strip-nav" onClick={prevMonth} style={prevBtnStyle}>‹</button>
