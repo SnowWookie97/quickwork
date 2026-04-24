@@ -331,11 +331,9 @@ function Validation() {
             <div className="val-next-card">
               <p className="val-next-label">Next: <strong>Level {next.num} — {next.name}</strong></p>
               <p className="val-next-how">{next.how}</p>
-              {trustLevel === 1 ? renderLevel2Section() : (
-                <button className="val-contact-btn" onClick={() => navigate('/contact')}>
-                  Contact Us to Upgrade →
-                </button>
-              )}
+              <button className="val-contact-btn" onClick={() => navigate('/contact')}>
+                Contact Us →
+              </button>
             </div>
           ) : (
             <div className="val-next-card val-gold-card">
@@ -373,8 +371,14 @@ function Validation() {
               <h3 className="val-detail-name">Level {activeLevel} — {LEVELS[activeLevel - 1].name}</h3>
               <p className="val-detail-desc">{LEVELS[activeLevel - 1].description}</p>
               <div className="val-detail-divider" />
-              <p className="val-detail-how-label">How to achieve this</p>
-              <p className="val-detail-how">{LEVELS[activeLevel - 1].how}</p>
+              {activeLevel === 2 && trustLevel === 1 ? (
+                renderLevel2Section()
+              ) : (
+                <>
+                  <p className="val-detail-how-label">How to achieve this</p>
+                  <p className="val-detail-how">{LEVELS[activeLevel - 1].how}</p>
+                </>
+              )}
             </div>
           )}
         </div>
