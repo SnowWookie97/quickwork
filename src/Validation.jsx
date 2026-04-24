@@ -87,7 +87,7 @@ function Validation() {
   // Submission state
   const [submission, setSubmission] = useState(null) // existing submission if any
   const [submissionLoading, setSubmissionLoading] = useState(true)
-  const [showForm, setShowForm] = useState(false)
+  const [showForm, setShowForm] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [form, setForm] = useState({
@@ -233,15 +233,7 @@ function Validation() {
       )
     }
 
-    // No submission yet
-    if (!showForm) {
-      return (
-        <button className="val-contact-btn" onClick={() => setShowForm(true)}>
-          Submit Aadhaar for Verification →
-        </button>
-      )
-    }
-
+    // No submission yet — show form directly
     return renderForm()
   }
 
@@ -279,7 +271,7 @@ function Validation() {
               <option value="">Select</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="Transgender">Transgender</option>
             </select>
           </div>
         </div>
