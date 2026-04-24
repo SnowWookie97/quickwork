@@ -85,7 +85,8 @@ function Validation() {
   })
 
   // Submission state
-  const [submission, setSubmission] = useState(null) // existing submission if any
+  const [submission, setSubmission] = useState(null)
+  const [allSubmissions, setAllSubmissions] = useState([])
   const [submissionLoading, setSubmissionLoading] = useState(true)
   const [showForm, setShowForm] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -112,16 +113,17 @@ function Validation() {
         localStorage.setItem('qw_trust_level', data.trust_level)
       }
 
-      // Check for existing submission
-      const { data: sub } = await supabase
+      // Check for existing submission and count all rejections
+      const { data: allSubs } = await supabase
         .from('aadhaar_submissions')
         .select('*')
         .eq('user_id', user.id)
         .order('submitted_at', { ascending: false })
-        .limit(1)
-        .single()
 
-      if (sub) setSubmission(sub)
+      if (allSubs && allSubs.length > 0) {
+        setAllSubmissions(allSubs)
+        setSubmission(allSubs[0]) // most recent
+      }
       setSubmissionLoading(false)
     }
     getUser()
@@ -201,8 +203,21 @@ function Validation() {
   const renderLevel2Section = () => {
     if (submissionLoading) return <div className="val-loading"><div className="val-loading-shield" /><p className="val-loading-text">Checking submission status...</p></div>
 
-    // Already approved — they're level 2, nothing to show here
     if (trustLevel >= 2) return null
+
+    const rejectionCount = allSubmissions.filter(s => s.status === 'rejected').length
+
+    // Blocked after 4 rejections
+    if (rejectionCount >= 4) {
+      return (
+        <div className="val-submission-status" style={{ background: '#fff5f5', borderColor: '#fed7d7' }}>
+          <div className="val-submission-icon">🚫</div>
+          <h3 className="val-submission-title" style={{ color: '#c53030' }}>Verification Attempts Exhausted</h3>
+          <p className="val-submission-text">Your Aadhaar verification has been rejected 4 times. This usually means something needs to be resolved directly with our team. Please contact us and we will help you proceed.</p>
+          <button className="val-contact-btn" onClick={() => navigate('/contact')} style={{ marginTop: 8 }}>Contact Us to Proceed →</button>
+        </div>
+      )
+    }
 
     // Has a pending submission
     if (submission && submission.status === 'pending') {
@@ -216,16 +231,16 @@ function Validation() {
       )
     }
 
-    // Has a rejected submission — show form again with rejection note
+    // Has a rejected submission
     if (submission && submission.status === 'rejected') {
       return (
         <div className="val-submission-rejected">
           <div className="val-rejected-notice">
             <span className="val-rejected-icon">⚠️</span>
             <div>
-              <p className="val-rejected-title">Your previous submission was rejected</p>
+              <p className="val-rejected-title">Your previous submission was rejected {rejectionCount > 1 ? `(${rejectionCount} times so far)` : ''}</p>
               {submission.rejection_reason && <p className="val-rejected-reason">{submission.rejection_reason}</p>}
-              <p className="val-rejected-sub">Please correct the issue and resubmit below.</p>
+              <p className="val-rejected-sub">Please correct the issue and resubmit below. You have {4 - rejectionCount} attempt{4 - rejectionCount !== 1 ? 's' : ''} remaining.</p>
             </div>
           </div>
           {renderForm()}
@@ -233,7 +248,6 @@ function Validation() {
       )
     }
 
-    // No submission yet — show form directly
     return renderForm()
   }
 
