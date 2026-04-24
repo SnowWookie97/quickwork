@@ -223,19 +223,6 @@
   .dashnav-right { gap: 8px; }
 }
 
-/* ADMIN BUTTON */
-.admin-btn {
-  background: #8B0000 !important;
-  border-color: #8B0000 !important;
-  color: white !important;
-  font-weight: 700 !important;
-}
-.admin-btn:hover {
-  background: #6b0000 !important;
-  border-color: #6b0000 !important;
-  color: white !important;
-}
-
 /* NOTICE BANNER */
 .dashnav-notice-banner {
   background: #FFF3CD;

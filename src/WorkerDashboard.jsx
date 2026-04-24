@@ -31,8 +31,6 @@ function WorkerDashboard() {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { navigate('/login'); return }
-      const { data: profile } = await supabase.from('profiles').select('is_blacklisted').eq('id', user.id).single()
-      if (profile?.is_blacklisted) { window.location.replace('/blacklisted'); return }
       setUserRole(user.user_metadata?.role)
       setFirstName((user.user_metadata?.name || '').split(' ')[0])
     }

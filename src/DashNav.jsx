@@ -45,9 +45,6 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     const c = localStorage.getItem('qw_trust_level')
     return trustLevelProp || (c ? parseInt(c) : 1)
   })
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem('qw_is_admin') === 'true'
-  })
   const [notices, setNotices] = useState([])
   const dashRef = useRef(null)
   const profileRef = useRef(null)
@@ -65,9 +62,19 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data: refData } = await supabase.from('referrals').select('referral_code').eq('user_id', user.id).single()
+
+      const { data: refData } = await supabase
+        .from('referrals')
+        .select('referral_code')
+        .eq('user_id', user.id)
+        .single()
       if (refData) setReferralCode(refData.referral_code)
-      const { data: profileData } = await supabase.from('profiles').select('trust_level, is_admin, is_blacklisted').eq('id', user.id).single()
+
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('trust_level, is_blacklisted')
+        .eq('id', user.id)
+        .single()
       if (profileData) {
         if (profileData.is_blacklisted) {
           window.location.replace('/blacklisted')
@@ -75,14 +82,10 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
         }
         setTrustLevel(profileData.trust_level)
         localStorage.setItem('qw_trust_level', profileData.trust_level)
-        const admin = profileData.is_admin === true
-        setIsAdmin(admin)
-        localStorage.setItem('qw_is_admin', admin)
       }
     }
     fetchData()
 
-    // Fetch unread notices
     const fetchNotices = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -108,15 +111,8 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
   }
 
   const handleLogout = async () => {
-    localStorage.removeItem('qw_is_admin')
     localStorage.removeItem('qw_trust_level')
     localStorage.removeItem('qw_faq_data')
-    localStorage.removeItem('qw_admin_users')
-    localStorage.removeItem('qw_admin_profiles')
-    localStorage.removeItem('qw_admin_submissions')
-    localStorage.removeItem('qw_admin_feedbacks')
-    localStorage.removeItem('qw_admin_referrals')
-    localStorage.removeItem('qw_admin_faqs')
     await supabase.auth.signOut()
     navigate('/')
   }
@@ -196,12 +192,6 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
         </div>
 
         <div className="dashnav-right">
-          {isAdmin && (
-            <button className="dashnav-btn admin-btn" onClick={() => navigate('/admin')}>
-              Admin
-            </button>
-          )}
-
           <div className="dashnav-item" ref={dashRef}>
             <button className="dashnav-btn" onClick={() => { setDashDropdown(!dashDropdown); setProfileDropdown(false) }}>
               My Dashboard <span className="dashnav-chevron">{dashDropdown ? '▲' : '▼'}</span>
