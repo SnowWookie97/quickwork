@@ -345,7 +345,7 @@ function Validation() {
               <p className="val-next-label">Next: <strong>Level {next.num} — {next.name}</strong></p>
               <p className="val-next-how">{next.how}</p>
               <button className="val-contact-btn" onClick={() => navigate('/contact')}>
-                Contact Us →
+                Having trouble? Contact Us →
               </button>
             </div>
           ) : (
