@@ -15,6 +15,8 @@ const LEVELS = [
   {
     num: 2, name: "ID Verified", sub: "Aadhaar confirmed",
     description: "Submit your Aadhaar card for identity verification. Businesses will see your confirmed identity and trust you more.",
+    descriptionCurrent: "🎉 You are now Level 2 verified! Your identity has been confirmed via Aadhaar. Take the next step — get your address verified by a QuickWork team member and unlock the Level 3 trust shield.",
+    descriptionPast: "✅ You have been Level 2 verified!",
     how: "Submit a clear photo of your Aadhaar card via the form below. Our team will verify it within 1–2 business days.",
     fill: "#C0DD97", stroke: "#3B6D11", stroke2: "#639922", labelColor: "#27500A", numColor: "#173404",
     premium: false
@@ -255,8 +257,21 @@ function Validation() {
         </div>
         <div className="val-field-row">
           <div className="val-field-group">
-            <label className="val-field-label">Date of Birth</label>
-            <input className="val-field-input" type="date" value={form.date_of_birth} onChange={e => setForm({ ...form, date_of_birth: e.target.value })} />
+            <label className="val-field-label">Date of Birth (DD/MM/YYYY)</label>
+            <input
+              className="val-field-input"
+              type="text"
+              placeholder="e.g. 15/08/1995"
+              value={form.date_of_birth}
+              onChange={e => {
+                let val = e.target.value.replace(/[^\d]/g, '')
+                if (val.length >= 3) val = val.slice(0,2) + '/' + val.slice(2)
+                if (val.length >= 6) val = val.slice(0,5) + '/' + val.slice(5)
+                val = val.slice(0, 10)
+                setForm({ ...form, date_of_birth: val })
+              }}
+              maxLength={10}
+            />
           </div>
           <div className="val-field-group">
             <label className="val-field-label">Gender</label>
@@ -324,7 +339,13 @@ function Validation() {
             </div>
             <h2 className="val-current-name">{current.name}</h2>
             <p className="val-current-sub">{current.sub}</p>
-            <div className="val-current-desc">{current.description}</div>
+            <div className="val-current-desc">
+              {trustLevel === 2 && current.descriptionCurrent
+                ? current.descriptionCurrent
+                : trustLevel > 2 && current.descriptionPast
+                ? current.descriptionPast
+                : current.description}
+            </div>
           </div>
 
           {next ? (
