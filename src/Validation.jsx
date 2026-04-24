@@ -15,7 +15,7 @@ const LEVELS = [
   {
     num: 2, name: "ID Verified", sub: "Aadhaar confirmed",
     description: "Submit your Aadhaar card for identity verification. Businesses will see your confirmed identity and trust you more.",
-    how: "Submit a clear photo of your Aadhaar card via the Contact Us page. Our team will verify it within 1–2 business days.",
+    how: "Submit a clear photo of your Aadhaar card via the form below. Our team will verify it within 1–2 business days.",
     fill: "#C0DD97", stroke: "#3B6D11", stroke2: "#639922", labelColor: "#27500A", numColor: "#173404",
     premium: false
   },
@@ -72,6 +72,7 @@ function ShieldSVG({ level, size = 52 }) {
 function Validation() {
   const navigate = useNavigate()
   const [userRole, setUserRole] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [trustLevel, setTrustLevel] = useState(() => {
     const cached = localStorage.getItem('qw_trust_level')
     return cached ? parseInt(cached) : 1
@@ -81,20 +82,108 @@ function Validation() {
     return cached ? parseInt(cached) : 1
   })
 
+  // Submission state
+  const [submission, setSubmission] = useState(null) // existing submission if any
+  const [submissionLoading, setSubmissionLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [form, setForm] = useState({
+    full_name: '', date_of_birth: '', gender: '', address: ''
+  })
+  const [frontFile, setFrontFile] = useState(null)
+  const [backFile, setBackFile] = useState(null)
+  const [frontPreview, setFrontPreview] = useState(null)
+  const [backPreview, setBackPreview] = useState(null)
+
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { navigate('/login'); return }
       setUserRole(user.user_metadata?.role)
+      setUserId(user.id)
+
       const { data } = await supabase.from('profiles').select('trust_level').eq('id', user.id).single()
       if (data) {
         setTrustLevel(data.trust_level)
         setActiveLevel(data.trust_level)
         localStorage.setItem('qw_trust_level', data.trust_level)
       }
+
+      // Check for existing submission
+      const { data: sub } = await supabase
+        .from('aadhaar_submissions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('submitted_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (sub) setSubmission(sub)
+      setSubmissionLoading(false)
     }
     getUser()
   }, [])
+
+  const handleFileChange = (side, file) => {
+    if (!file) return
+    if (side === 'front') {
+      setFrontFile(file)
+      setFrontPreview(URL.createObjectURL(file))
+    } else {
+      setBackFile(file)
+      setBackPreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleSubmit = async () => {
+    setSubmitError('')
+    if (!form.full_name || !form.date_of_birth || !form.gender || !form.address) {
+      setSubmitError('Please fill in all fields.'); return
+    }
+    if (!frontFile || !backFile) {
+      setSubmitError('Please upload both front and back photos of your Aadhaar card.'); return
+    }
+
+    setSubmitting(true)
+
+    // Upload front image
+    const frontPath = `${userId}/front_${Date.now()}.${frontFile.name.split('.').pop()}`
+    const { error: frontError } = await supabase.storage
+      .from('aadhaar-docs')
+      .upload(frontPath, frontFile, { upsert: true })
+    if (frontError) { setSubmitError('Failed to upload front image. Please try again.'); setSubmitting(false); return }
+
+    // Upload back image
+    const backPath = `${userId}/back_${Date.now()}.${backFile.name.split('.').pop()}`
+    const { error: backError } = await supabase.storage
+      .from('aadhaar-docs')
+      .upload(backPath, backFile, { upsert: true })
+    if (backError) { setSubmitError('Failed to upload back image. Please try again.'); setSubmitting(false); return }
+
+    // Get signed URLs (private bucket)
+    const { data: frontUrl } = await supabase.storage.from('aadhaar-docs').createSignedUrl(frontPath, 60 * 60 * 24 * 365)
+    const { data: backUrl } = await supabase.storage.from('aadhaar-docs').createSignedUrl(backPath, 60 * 60 * 24 * 365)
+
+    // Insert submission
+    const { data: newSub, error: subError } = await supabase.from('aadhaar_submissions').insert({
+      user_id: userId,
+      full_name: form.full_name,
+      date_of_birth: form.date_of_birth,
+      gender: form.gender,
+      address: form.address,
+      front_image_url: frontUrl?.signedUrl,
+      back_image_url: backUrl?.signedUrl,
+      status: 'pending',
+      submitted_at: new Date().toISOString()
+    }).select().single()
+
+    if (subError) { setSubmitError('Submission failed. Please try again.'); setSubmitting(false); return }
+
+    setSubmission(newSub)
+    setShowForm(false)
+    setSubmitting(false)
+  }
 
   const getStatusInfo = (num) => {
     if (num < trustLevel) return { text: '✓ Completed', cls: 'status-done' }
@@ -105,6 +194,112 @@ function Validation() {
 
   const current = LEVELS[trustLevel - 1]
   const next = trustLevel < 4 ? LEVELS[trustLevel] : null
+
+  // Render Level 2 upgrade section
+  const renderLevel2Section = () => {
+    if (submissionLoading) return <div className="val-loading"><div className="val-loading-shield" /><p className="val-loading-text">Checking submission status...</p></div>
+
+    // Already approved — they're level 2, nothing to show here
+    if (trustLevel >= 2) return null
+
+    // Has a pending submission
+    if (submission && submission.status === 'pending') {
+      return (
+        <div className="val-submission-status">
+          <div className="val-submission-icon">⏳</div>
+          <h3 className="val-submission-title">Verification in Progress</h3>
+          <p className="val-submission-text">We have received your request for validation at Level 2. Our team will review your Aadhaar details and get back to you within 2 business days.</p>
+          <p className="val-submission-date">Submitted: {new Date(submission.submitted_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+        </div>
+      )
+    }
+
+    // Has a rejected submission — show form again with rejection note
+    if (submission && submission.status === 'rejected') {
+      return (
+        <div className="val-submission-rejected">
+          <div className="val-rejected-notice">
+            <span className="val-rejected-icon">⚠️</span>
+            <div>
+              <p className="val-rejected-title">Your previous submission was rejected</p>
+              {submission.rejection_reason && <p className="val-rejected-reason">{submission.rejection_reason}</p>}
+              <p className="val-rejected-sub">Please correct the issue and resubmit below.</p>
+            </div>
+          </div>
+          {renderForm()}
+        </div>
+      )
+    }
+
+    // No submission yet
+    if (!showForm) {
+      return (
+        <button className="val-contact-btn" onClick={() => setShowForm(true)}>
+          Submit Aadhaar for Verification →
+        </button>
+      )
+    }
+
+    return renderForm()
+  }
+
+  const renderForm = () => (
+    <div className="val-aadhaar-form">
+      <p className="val-form-title">Aadhaar Verification Form</p>
+      <p className="val-form-sub">Enter your details exactly as they appear on your Aadhaar card.</p>
+
+      <div className="val-form-fields">
+        <div className="val-field-group">
+          <label className="val-field-label">Full Name (as on Aadhaar)</label>
+          <input className="val-field-input" type="text" placeholder="e.g. Abhijeet Vijay Kotwal" value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} />
+        </div>
+        <div className="val-field-row">
+          <div className="val-field-group">
+            <label className="val-field-label">Date of Birth</label>
+            <input className="val-field-input" type="date" value={form.date_of_birth} onChange={e => setForm({ ...form, date_of_birth: e.target.value })} />
+          </div>
+          <div className="val-field-group">
+            <label className="val-field-label">Gender</label>
+            <select className="val-field-input" value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div className="val-field-group">
+          <label className="val-field-label">Address (as on Aadhaar)</label>
+          <textarea className="val-field-input val-field-textarea" placeholder="Full address as printed on your Aadhaar card" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} rows={3} />
+        </div>
+      </div>
+
+      {/* Photo upload */}
+      <div className="val-photo-notice">
+        📸 Please submit clear, well-lit photos of your Aadhaar card. Blurry or dark images will be rejected.
+      </div>
+
+      <div className="val-photo-row">
+        <div className="val-photo-upload" onClick={() => document.getElementById('front-upload').click()}>
+          {frontPreview ? <img src={frontPreview} alt="front" className="val-photo-preview" /> : <><span className="val-photo-icon">📄</span><span className="val-photo-label">Aadhaar Front</span><span className="val-photo-sub">Tap to upload</span></>}
+          <input id="front-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleFileChange('front', e.target.files[0])} />
+        </div>
+        <div className="val-photo-upload" onClick={() => document.getElementById('back-upload').click()}>
+          {backPreview ? <img src={backPreview} alt="back" className="val-photo-preview" /> : <><span className="val-photo-icon">📄</span><span className="val-photo-label">Aadhaar Back</span><span className="val-photo-sub">Tap to upload</span></>}
+          <input id="back-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleFileChange('back', e.target.files[0])} />
+        </div>
+      </div>
+
+      {submitError && <p className="val-submit-error">{submitError}</p>}
+
+      <div className="val-form-actions">
+        {!submission?.status === 'rejected' && <button className="val-cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>}
+        <button className="val-contact-btn" onClick={handleSubmit} disabled={submitting}>
+          {submitting ? 'Submitting...' : 'Submit for Verification →'}
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="val-page">
@@ -136,9 +331,11 @@ function Validation() {
             <div className="val-next-card">
               <p className="val-next-label">Next: <strong>Level {next.num} — {next.name}</strong></p>
               <p className="val-next-how">{next.how}</p>
-              <button className="val-contact-btn" onClick={() => navigate('/contact')}>
-                Contact Us to Upgrade →
-              </button>
+              {trustLevel === 1 ? renderLevel2Section() : (
+                <button className="val-contact-btn" onClick={() => navigate('/contact')}>
+                  Contact Us to Upgrade →
+                </button>
+              )}
             </div>
           ) : (
             <div className="val-next-card val-gold-card">
