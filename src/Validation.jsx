@@ -359,16 +359,21 @@ function Validation() {
               <p className="val-rejected-sub">Please request again or contact us for help.</p>
             </div>
           </div>
-          <button className="val-contact-btn" onClick={handleSubmit3} disabled={submitting3}>
-            {submitting3 ? 'Requesting...' : 'Request Again →'}
-          </button>
+          <div className="val-level3-form">
+            <div className="val-photo-notice" style={{ marginBottom: 12 }}>
+              📞 When you click the button below, a team member will call you on your registered mobile number and schedule a visit to your registered address to verify it in person.
+            </div>
+            <button className="val-contact-btn" onClick={handleSubmit3} disabled={submitting3}>
+              {submitting3 ? 'Requesting...' : 'Request Address Verification →'}
+            </button>
+          </div>
         </div>
       )
     }
     return (
       <div className="val-level3-form">
         <div className="val-photo-notice" style={{ marginBottom: 12 }}>
-          📞 Our team will call you on your registered mobile number to schedule a home visit. Make sure your address on your Aadhaar card is accurate before requesting.
+          📞 When you click the button below, a team member will call you on your registered mobile number and schedule a visit to your registered address to verify it in person.
         </div>
         <button className="val-contact-btn" onClick={handleSubmit3} disabled={submitting3}>
           {submitting3 ? 'Requesting...' : 'Request Address Verification →'}
@@ -463,11 +468,11 @@ function Validation() {
             <div className="val-next-card">
               <p className="val-next-label">Next: <strong>Level {next.num} — {next.name}</strong></p>
               <p className="val-next-how">{next.how}</p>
-              {trustLevel === 1 ? renderLevel2Section()
-                : trustLevel === 2 ? renderLevel3Section()
-                : trustLevel === 3 ? renderLevel4Section()
-                : null}
-              <p className="val-next-how" style={{ marginTop: 8 }}>Still have questions about this step?</p>
+              <div className="val-next-divider" />
+              <p className="val-next-help-title">Need help with validation?</p>
+              <p className="val-next-how">Check the FAQs for common questions about the verification process.</p>
+              <button className="val-contact-btn" style={{ marginBottom: 8 }} onClick={() => navigate('/faq')}>View FAQs →</button>
+              <p className="val-next-how" style={{ marginTop: 4 }}>Still stuck? Our team is happy to help.</p>
               <button className="val-contact-btn" onClick={() => navigate('/contact')}>Contact Us →</button>
             </div>
           ) : (
