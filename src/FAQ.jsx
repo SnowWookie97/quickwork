@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 import DashNav from './DashNav'
 import './FAQ.css'
 
-const CATEGORIES = ['Accounts', 'Shifts', 'Payments', 'Technical App Problems']
+const CATEGORIES = ["Accounts", "Shifts", "Payments", "Validation", "Technical App Problems"]
 
 function FAQ() {
   const navigate = useNavigate()

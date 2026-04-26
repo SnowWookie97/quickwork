@@ -12,13 +12,19 @@ const INDUSTRIES = [
   { group: 'Other', options: ['Agriculture', 'Security', 'Domestic Help', 'Other'] },
 ]
 
-const ALL_SKILLS = [
-  'Cooking', 'Cleaning', 'Driving', 'Waiter', 'Bartender', 'Receptionist',
-  'Packing', 'Loading / Unloading', 'Security Guard', 'Cashier',
-  'Construction Work', 'Electrician', 'Plumber', 'Carpenter',
-  'Data Entry', 'Customer Service', 'Sales', 'Delivery',
-  'Gardening', 'Painting', 'Tailoring', 'Babysitting / Caretaking', 'Other'
+const SKILL_GROUPS = [
+  { group: 'Physical & Labour', skills: ['Heavy Lifting / Loading', 'Unloading', 'Shelf Stacking', 'Restocking', 'Warehouse Packing', 'Moving & Shifting', 'Cleaning', 'Sweeping / Mopping', 'Gardening / Landscaping', 'Painting'] },
+  { group: 'Retail & Store', skills: ['Cloth Folding', 'Store Helper', 'Grocery Store Helper', 'Cashier / Billing', 'Inventory Management', 'Medical Store Helper', 'Customer Greeting', 'Product Display / Arrangement'] },
+  { group: 'Food & Hospitality', skills: ['Waiter / Serving', 'Kitchen Helper', 'Cook / Cooking', 'Bartender', 'Food Delivery', 'Hotel Housekeeping', 'Restaurant Service', 'Dishwashing'] },
+  { group: 'Office & Admin', skills: ['Data Entry', 'Receptionist', 'Filing / Record Keeping', 'Customer Service', 'Telecalling', 'Office Packing / Dispatch'] },
+  { group: 'Skilled Trade', skills: ['Electrician', 'Plumber', 'Carpenter', 'Painter', 'AC Technician', 'Two Wheeler Mechanic'] },
+  { group: 'Transport & Delivery', skills: ['Delivery (Two Wheeler)', 'Delivery (Four Wheeler)', 'Driver (Car)', 'Driver (Truck / Heavy Vehicle)'] },
+  { group: 'Security & Safety', skills: ['Security Guard', 'Traffic Management', 'Event Security'] },
+  { group: 'Care & Support', skills: ['Babysitting / Childcare', 'Elder Care', 'Patient Care / Hospital Helper', 'House Help'] },
+  { group: 'Events & Promotions', skills: ['Event Setup / Breakdown', 'Crowd Management', 'Promoter / Pamphlet Distribution', 'Usher'] },
 ]
+
+const ALL_SKILLS = SKILL_GROUPS.flatMap(g => g.skills)
 
 const DEGREE_FIELDS = [
   'Engineering', 'Commerce / Finance', 'Medicine / Healthcare',
@@ -56,6 +62,8 @@ function MyProfile() {
   const [skills, setSkills] = useState([])
   const [skillSearch, setSkillSearch] = useState('')
   const [showSkillDropdown, setShowSkillDropdown] = useState(false)
+  const [otherSkill, setOtherSkill] = useState('')
+  const [showOtherInput, setShowOtherInput] = useState(false)
 
   // Education
   const [hasDegree, setHasDegree] = useState(false)
@@ -185,10 +193,6 @@ function MyProfile() {
     setDegreeLevel(''); setDegreeField(''); setDegreeUniversity(''); setDegreeYear('')
     saveProfile({ has_degree: false, degree_level: null, degree_field: null, degree_university: null, degree_year: null })
   }
-
-  const filteredSkills = ALL_SKILLS.filter(s =>
-    s.toLowerCase().includes(skillSearch.toLowerCase()) && !skills.includes(s)
-  )
 
   const isLocked = trustLevel >= 2
 
@@ -426,15 +430,60 @@ function MyProfile() {
                 value={skillSearch}
                 onChange={e => { setSkillSearch(e.target.value); setShowSkillDropdown(true) }}
                 onFocus={() => setShowSkillDropdown(true)}
+                disabled={skills.length >= 4 && !showOtherInput}
               />
-              {showSkillDropdown && skillSearch && filteredSkills.length > 0 && (
+              {showSkillDropdown && (
                 <div className="mp-skill-dropdown">
-                  {filteredSkills.slice(0, 6).map(s => (
-                    <div key={s} className="mp-skill-option" onClick={() => toggleSkill(s)}>{s}</div>
-                  ))}
+                  {SKILL_GROUPS.map(group => {
+                    const filtered = group.skills.filter(s =>
+                      s.toLowerCase().includes(skillSearch.toLowerCase()) && !skills.includes(s)
+                    )
+                    if (filtered.length === 0) return null
+                    return (
+                      <div key={group.group}>
+                        <div className="mp-skill-group-label">{group.group}</div>
+                        {filtered.map(s => (
+                          <div key={s} className="mp-skill-option" onClick={() => toggleSkill(s)}>{s}</div>
+                        ))}
+                      </div>
+                    )
+                  })}
+                  {skills.length < 4 && (
+                    <div className="mp-skill-option mp-skill-other-opt" onClick={() => { setShowOtherInput(true); setShowSkillDropdown(false); setSkillSearch('') }}>
+                      ✏️ Other — type your own
+                    </div>
+                  )}
+                  {SKILL_GROUPS.flatMap(g => g.skills).filter(s => s.toLowerCase().includes(skillSearch.toLowerCase()) && !skills.includes(s)).length === 0 && !skillSearch && (
+                    <div className="mp-skill-empty">Start typing to search skills</div>
+                  )}
                 </div>
               )}
             </div>
+
+            {showOtherInput && (
+              <div className="mp-other-skill-wrap">
+                <input
+                  className="mp-field-input"
+                  placeholder="Type your skill..."
+                  value={otherSkill}
+                  onChange={e => setOtherSkill(e.target.value)}
+                  autoFocus
+                />
+                <div className="mp-form-actions" style={{ marginTop: 6 }}>
+                  <button className="mp-cancel-btn" onClick={() => { setShowOtherInput(false); setOtherSkill('') }}>Cancel</button>
+                  <button className="mp-save-btn" onClick={() => {
+                    if (otherSkill.trim() && skills.length < 4) {
+                      const updated = [...skills, otherSkill.trim()]
+                      setSkills(updated)
+                      saveProfile({ skills: updated })
+                    }
+                    setShowOtherInput(false)
+                    setOtherSkill('')
+                  }}>Add</button>
+                </div>
+              </div>
+            )}
+
             {skills.length > 0 && (
               <div className="mp-selected-skills">
                 {skills.map(s => (
@@ -444,7 +493,9 @@ function MyProfile() {
                 ))}
               </div>
             )}
-            <div className="mp-skill-count">{skills.length} of 4 selected{skills.length === 4 ? ' — maximum reached' : ''}</div>
+            <div className="mp-skill-count">
+              {skills.length} of 4 selected{skills.length === 4 ? ' — maximum reached' : ''}
+            </div>
           </div>
 
         </div>
