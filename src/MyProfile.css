@@ -280,3 +280,62 @@
   .mp-left { width: 100%; position: static; }
   .mp-two-col { grid-template-columns: 1fr; }
 }
+
+/* CHANGE PHOTO BUTTON */
+.mp-change-photo-btn {
+  background: transparent;
+  border: 2px solid #E8470F;
+  color: #E8470F;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  font-family: 'Segoe UI', sans-serif;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.mp-change-photo-btn:hover { background: #E8470F; color: white; }
+
+/* PHOTO PREVIEW MODAL */
+.mp-photo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mp-photo-modal {
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+}
+
+.mp-photo-modal-img {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.mp-photo-modal-close {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}

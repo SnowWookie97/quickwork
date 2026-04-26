@@ -41,6 +41,7 @@ function MyProfile() {
   // Profile photo
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [photoUploading, setPhotoUploading] = useState(false)
+  const [showPhotoModal, setShowPhotoModal] = useState(false)
 
   // Emergency contact
   const [emergencyName, setEmergencyName] = useState('')
@@ -208,6 +209,15 @@ function MyProfile() {
 
       {saveMsg && <div className="mp-save-toast">{saveMsg}</div>}
 
+      {showPhotoModal && (
+        <div className="mp-photo-modal-overlay" onClick={() => setShowPhotoModal(false)}>
+          <div className="mp-photo-modal" onClick={e => e.stopPropagation()}>
+            <img src={avatarUrl} alt="profile" className="mp-photo-modal-img" />
+            <button className="mp-photo-modal-close" onClick={() => setShowPhotoModal(false)}>✕</button>
+          </div>
+        </div>
+      )}
+
       <div className="mp-body">
 
         {/* LEFT */}
@@ -215,16 +225,16 @@ function MyProfile() {
 
           {/* PHOTO + NAME */}
           <div className="mp-card mp-card-center">
-            <div className="mp-avatar-wrap">
+            <div className="mp-avatar-wrap" onClick={() => avatarUrl && setShowPhotoModal(true)}>
               {avatarUrl
-                ? <img src={avatarUrl} alt="avatar" className="mp-avatar-img" />
+                ? <img src={avatarUrl} alt="avatar" className="mp-avatar-img" style={{ cursor: 'zoom-in' }} />
                 : <div className="mp-avatar-placeholder">👤</div>
               }
-              <label className="mp-avatar-edit">
-                {photoUploading ? '...' : '📷'}
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
-              </label>
             </div>
+            <label className="mp-change-photo-btn">
+              {photoUploading ? 'Uploading...' : '📷 Change Photo'}
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
+            </label>
             <h2 className="mp-name">{name}</h2>
             <span className="mp-role-badge">👷 Worker</span>
             <div className="mp-trust-row">
