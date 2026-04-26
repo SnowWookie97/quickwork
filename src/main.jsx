@@ -17,6 +17,7 @@ import Payments from './Payments.jsx'
 import FAQ from './FAQ.jsx'
 import Validation from './Validation.jsx'
 import Blacklisted from './Blacklisted.jsx'
+import MyProfile from './MyProfile.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -39,6 +40,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/faq" element={<FAQ />} />
         <Route path="/validation" element={<Validation />} />
         <Route path="/blacklisted" element={<Blacklisted />} />
+        <Route path="/my-profile" element={<MyProfile />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
