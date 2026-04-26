@@ -139,6 +139,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     else if (item === 'FAQ') navigate('/faq')
     else if (item === 'My Profile') navigate('/my-profile')
     else if (item === 'Validation') navigate('/validation')
+    else if (item === 'Settings') navigate('/settings')
     else if (item === 'Invite Friends') setShowInviteModal(true)
     else navigate('/under-construction')
   }
