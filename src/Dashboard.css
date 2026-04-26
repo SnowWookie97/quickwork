@@ -790,3 +790,108 @@
   .invite-modal { padding: 32px 24px; }
   .invite-code { font-size: 18px; }
 }
+/* ============================================
+   NUDGE PANEL — add to bottom of Dashboard.css
+   ============================================ */
+
+.wd-nudge-panel {
+  width: 160px;
+  flex-shrink: 0;
+  padding: 32px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wd-nudge-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+}
+
+.wd-nudge-card {
+  background: white;
+  border-radius: 14px;
+  border: 2px solid #f0e8e0;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wd-nudge-card:hover {
+  border-color: #E8470F;
+  box-shadow: 0 2px 12px rgba(232, 71, 15, 0.1);
+}
+
+.wd-donut-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.wd-donut-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1A2744;
+}
+
+.wd-shield-wrap {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0e8e0;
+  border-radius: 50%;
+}
+
+.wd-nudge-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1A2744;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.wd-nudge-sub {
+  font-size: 10px;
+  color: #888;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.wd-nudge-btn {
+  display: inline-block;
+  background: #E8470F;
+  color: white;
+  border-radius: 7px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.wd-nudge-btn-outline {
+  background: transparent;
+  border: 2px solid #378ADD;
+  color: #378ADD;
+}
+
+@media (max-width: 768px) {
+  .wd-nudge-panel { display: none; }
+}
