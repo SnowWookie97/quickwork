@@ -188,9 +188,9 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
       ))}
 
       <nav className="dashnav">
-        <div className="dashnav-logo" onClick={handleLogoClick}>
+        <div className="dashnav-logo" onClick={handleLogoClick} style={{ flexDirection: 'column', alignItems: 'center', gap: 0 }}>
           <img src={logoImg} alt="QuickWork" className="dashnav-logo-img" />
-          <span className="dashnav-logo-text">QuickWork</span>
+          <span className="dashnav-logo-text" style={{ fontSize: 11, textAlign: 'center', marginTop: 1 }}>QuickWork</span>
         </div>
 
         <div className="dashnav-right">

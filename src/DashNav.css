@@ -14,13 +14,14 @@
 
 .dashnav-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   cursor: pointer;
 }
 
 .dashnav-logo-img { height: 40px; width: auto; }
-.dashnav-logo-text { font-size: 16px; font-weight: 700; color: #E8470F; }
+.dashnav-logo-text { font-size: 11px; font-weight: 700; color: #E8470F; text-align: center; }
 
 .dashnav-right {
   display: flex;
@@ -221,6 +222,19 @@
   .dashnav-btn { font-size: 11px; padding: 6px 10px; gap: 4px; }
   .dashnav-avatar { display: none; }
   .dashnav-right { gap: 8px; }
+}
+
+/* ADMIN BUTTON */
+.admin-btn {
+  background: #8B0000 !important;
+  border-color: #8B0000 !important;
+  color: white !important;
+  font-weight: 700 !important;
+}
+.admin-btn:hover {
+  background: #6b0000 !important;
+  border-color: #6b0000 !important;
+  color: white !important;
 }
 
 /* NOTICE BANNER */
