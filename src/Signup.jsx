@@ -62,13 +62,13 @@ function Signup() {
 
     // Validate referral code if provided
     if (wasReferred && referralCode.trim()) {
-      const { data: refData } = await supabase
+      const { data: refData, error: refError } = await supabase
         .from('referrals')
         .select('referral_code')
         .eq('referral_code', referralCode.trim().toUpperCase())
-        .single()
+        .limit(1)
 
-      if (!refData) {
+      if (refError || !refData || refData.length === 0) {
         setError('Invalid referral code. Please check and try again.'); return
       }
     }
