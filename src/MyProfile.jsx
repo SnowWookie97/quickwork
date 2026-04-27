@@ -36,7 +36,10 @@ const DEGREE_FIELDS = [
 function MyProfile() {
   const navigate = useNavigate()
   const [userRole, setUserRole] = useState(null)
-  const [trustLevel, setTrustLevel] = useState(1)
+  const [trustLevel, setTrustLevel] = useState(() => {
+    const c = localStorage.getItem('qw_trust_level')
+    return c ? parseInt(c) : 1
+  })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
@@ -86,14 +89,20 @@ function MyProfile() {
       setAuthUser(user)
       setUserRole(user.user_metadata?.role)
 
-      const { data: profile } = await supabase.from('profiles').select('trust_level, avatar_url').eq('id', user.id).single()
+      // Run both queries in parallel
+      const [profileRes, wpRes] = await Promise.all([
+        supabase.from('profiles').select('trust_level, avatar_url').eq('id', user.id).single(),
+        supabase.from('worker_profiles').select('*').eq('user_id', user.id).single()
+      ])
+
+      const profile = profileRes.data
       if (profile) {
         setTrustLevel(profile.trust_level || 1)
         setAvatarUrl(profile.avatar_url || null)
         localStorage.setItem('qw_trust_level', profile.trust_level || 1)
       }
 
-      const { data: wp } = await supabase.from('worker_profiles').select('*').eq('user_id', user.id).single()
+      const wp = wpRes.data
       if (wp) {
         setEmergencyName(wp.emergency_contact_name || '')
         setEmergencyMobile(wp.emergency_contact_mobile || '')
