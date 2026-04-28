@@ -110,7 +110,7 @@ function WorkerDashboard() {
     setLoadingShifts(true)
     const { data, error } = await supabase
       .from('shifts')
-      .select('*, business:business_id(raw_user_meta_data), business_profile:business_id(avatar_url)')
+      .select('*')
       .eq('status', 'open')
       .order('date', { ascending: true })
     console.log('SHIFTS DATA:', data)
@@ -265,8 +265,8 @@ function WorkerDashboard() {
           ) : (
             <div className="wd-shift-cards">
               {filteredShifts.map(shift => {
-                const bizName = shift.business?.raw_user_meta_data?.name || 'Business'
-                const bizAvatar = shift.business_profile?.avatar_url
+                const bizName = shift.business_name || 'Business'
+                const bizAvatar = null
                 const initials = bizName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
                 const applied = appliedIds.includes(shift.id)
                 const eligible = trustLevel >= shift.min_trust_level

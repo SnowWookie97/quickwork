@@ -101,7 +101,7 @@ function BusinessDashboard() {
   const fetchApplications = async (uid) => {
     const { data } = await supabase
       .from('shift_applications')
-      .select('*, shifts!inner(title, business_id), profiles:worker_id(avatar_url), worker:worker_id(raw_user_meta_data)')
+      .select('*, shifts!inner(title, business_id)')
       .eq('shifts.business_id', uid)
       .eq('status', 'pending')
     setApplications(data || [])
@@ -124,6 +124,7 @@ function BusinessDashboard() {
     setFormLoading(true)
     const { error } = await supabase.from('shifts').insert({
       business_id: userId,
+      business_name: businessName,
       title: form.title,
       category: form.category,
       date: form.date,
@@ -352,9 +353,9 @@ function BusinessDashboard() {
             ) : (
               <div className="bd-app-list">
                 {applications.map(app => {
-                  const name = app.worker?.raw_user_meta_data?.name || 'Worker'
+                  const name = app.worker_name || 'Worker'
                   const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                  const avatar = app.profiles?.avatar_url
+                  const avatar = null
                   return (
                     <div className="bd-app-row" key={app.id}>
                       <div className="bd-app-avatar">
