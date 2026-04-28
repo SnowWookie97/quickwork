@@ -66,6 +66,8 @@ function BusinessDashboard() {
   const [businessName, setBusinessName] = useState('')
   const [userId, setUserId] = useState(null)
   const [showHomepageMsg, setShowHomepageMsg] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState(null)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [showPostShift, setShowPostShift] = useState(false)
   const [form, setForm] = useState(defaultForm)
   const [formError, setFormError] = useState('')
@@ -83,6 +85,9 @@ function BusinessDashboard() {
       setUserId(user.id)
       fetchShifts(user.id)
       fetchApplications(user.id)
+      // Fetch business photo
+      const { data: profileData } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single()
+      if (profileData?.avatar_url) setPhotoUrl(profileData.avatar_url)
     }
     getUser()
   }, [])
@@ -190,6 +195,24 @@ function BusinessDashboard() {
     await supabase.from('shifts').update({ status: 'cancelled' }).eq('id', cancelConfirm.id)
     setCancelConfirm(null)
     fetchShifts(userId)
+  }
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file || !userId) return
+    setUploadingPhoto(true)
+    const ext = file.name.split('.').pop()
+    const path = `avatars/${userId}.${ext}`
+    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+    if (!upErr) {
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path)
+      const url = urlData.publicUrl
+      await supabase.from('profiles').update({ avatar_url: url }).eq('id', userId)
+      setPhotoUrl(url)
+      // Update all shifts with new business photo
+      await supabase.from('shifts').update({ business_avatar: url }).eq('business_id', userId)
+    }
+    setUploadingPhoto(false)
   }
 
   const today = new Date().toISOString().split('T')[0]
@@ -419,7 +442,7 @@ function BusinessDashboard() {
           ))}
         </div>
 
-        <div className="bd-panels">
+        <div className="bd-panels bd-panels-three">
 
           {/* YOUR SHIFTS */}
           <div className="bd-panel">
@@ -492,6 +515,39 @@ function BusinessDashboard() {
                 })}
               </div>
             )}
+          </div>
+
+          {/* BUSINESS PHOTO */}
+          <div className="bd-panel bd-photo-panel">
+            <div className="bd-panel-title">YOUR BUSINESS PHOTO</div>
+            <label className="bd-photo-upload-area" htmlFor="biz-photo-input">
+              {photoUrl
+                ? <img src={photoUrl} alt="Business" className="bd-photo-preview" />
+                : (
+                  <>
+                    <div className="bd-photo-placeholder-icon">📷</div>
+                    <p className="bd-photo-placeholder-text">
+                      {uploadingPhoto ? 'Uploading...' : 'Click to upload photo'}
+                    </p>
+                  </>
+                )
+              }
+            </label>
+            <input
+              id="biz-photo-input"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handlePhotoUpload}
+            />
+            {photoUrl && (
+              <label htmlFor="biz-photo-input" className="bd-photo-change-btn">
+                {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
+              </label>
+            )}
+            <p className="bd-photo-note">
+              📌 Recommended: Upload a photo of your shop or business so workers can recognise and find you easily.
+            </p>
           </div>
 
         </div>

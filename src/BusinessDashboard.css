@@ -554,3 +554,78 @@
 }
 
 .bd-confirm-yes:hover { background: #c53030; }
+
+/* THREE COLUMN PANELS */
+.bd-panels-three {
+  grid-template-columns: 1fr 1fr 300px;
+}
+
+/* PHOTO PANEL */
+.bd-photo-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.bd-photo-upload-area {
+  width: 100%;
+  height: 200px;
+  border: 2.5px dashed #ddd;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.bd-photo-upload-area:hover {
+  border-color: #E8470F;
+  background: #fff8f5;
+}
+
+.bd-photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bd-photo-placeholder-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.bd-photo-placeholder-text {
+  font-size: 13px;
+  color: #aaa;
+  font-weight: 500;
+}
+
+.bd-photo-change-btn {
+  font-size: 13px;
+  color: #E8470F;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.bd-photo-note {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.6;
+  text-align: center;
+  padding: 0 4px;
+}
+
+@media (max-width: 1024px) {
+  .bd-panels-three {
+    grid-template-columns: 1fr 1fr;
+  }
+  .bd-photo-panel {
+    grid-column: span 2;
+  }
+}

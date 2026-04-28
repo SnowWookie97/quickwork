@@ -169,3 +169,145 @@
   }
   .ms-tab { font-size: 12px; padding: 8px 12px; }
 }
+
+/* ============================================
+   SHIFT CARDS — My Shifts page
+   ============================================ */
+
+.ms-tab-content {
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+.ms-shift-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+}
+
+.ms-tab-count {
+  display: inline-block;
+  background: #E8470F;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.ms-shift-card {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 0.5px solid #f0e8e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.ms-shift-banner {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ms-shift-banner-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+
+.ms-shift-banner-biz {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+}
+
+.ms-shift-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ms-shift-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ms-shift-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A2744;
+}
+
+.ms-shift-location {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.ms-shift-wage {
+  font-size: 17px;
+  font-weight: 800;
+  color: #E8470F;
+  white-space: nowrap;
+}
+
+.ms-shift-wage span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #aaa;
+}
+
+.ms-shift-est {
+  font-size: 11px;
+  color: #888;
+  text-align: right;
+}
+
+.ms-shift-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ms-shift-pill {
+  background: #f5f5f5;
+  color: #555;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.ms-shift-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 0.5px solid #f0e8e0;
+}
+
+.ms-shift-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
