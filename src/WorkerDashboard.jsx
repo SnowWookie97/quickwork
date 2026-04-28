@@ -55,7 +55,7 @@ function WorkerDashboard() {
   const [userId, setUserId] = useState(null)
   const [userRole, setUserRole] = useState(null)
   const [showHomepageMsg, setShowHomepageMsg] = useState(false)
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(null)
   const [selectedCity, setSelectedCity] = useState('Nashik')
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
   const [searchQuery, setSearchQuery] = useState('')
@@ -130,15 +130,36 @@ function WorkerDashboard() {
     setApplyingId(null)
   }
 
-  // Timezone-safe date filter
+  // Filter by category and search only — never hide by date
   const filteredShifts = shifts.filter(s => {
     const matchCategory = selectedCategory === 'All Categories' || s.category === selectedCategory
     const matchSearch = !searchQuery ||
       s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.location.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchDate = !selectedDate || s.date === localDateStr(selectedDate)
-    return matchCategory && matchSearch && matchDate
+    return matchCategory && matchSearch
   })
+
+  // Group shifts by date, selected date pinned first
+  const selectedDateStr = selectedDate ? localDateStr(selectedDate) : null
+  const groupShiftsByDate = (shiftList) => {
+    const groups = {}
+    shiftList.forEach(s => {
+      if (!groups[s.date]) groups[s.date] = []
+      groups[s.date].push(s)
+    })
+    const dates = Object.keys(groups).sort()
+    if (selectedDateStr && groups[selectedDateStr]) {
+      const rest = dates.filter(d => d !== selectedDateStr)
+      return [selectedDateStr, ...rest].filter(d => groups[d]).map(d => ({ date: d, shifts: groups[d] }))
+    }
+    return dates.map(d => ({ date: d, shifts: groups[d] }))
+  }
+  const groupedShifts = groupShiftsByDate(filteredShifts)
+
+  const formatGroupDate = (d) => {
+    const date = new Date(d + 'T00:00:00')
+    return date.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })
+  }
 
   // Calendar helpers
   const today = new Date()
@@ -258,58 +279,59 @@ function WorkerDashboard() {
               <div className="wd-empty-icon">📋</div>
               <h3 className="wd-empty-title">No shifts available yet</h3>
               <p className="wd-empty-sub">
-                {selectedDate ? `No shifts posted for ${formatSelectedDate()}.` : `No open shifts right now.`}
-                <br />Check back soon — businesses are joining every day!
+                No open shifts right now.<br />Check back soon — businesses are joining every day!
               </p>
             </div>
           ) : (
             <div className="wd-shift-cards">
-              {filteredShifts.map(shift => {
-                const bizName = shift.business_name || 'Business'
-                const bizAvatar = null
-                const initials = bizName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                const applied = appliedIds.includes(shift.id)
-                const eligible = trustLevel >= shift.min_trust_level
-                const applying = applyingId === shift.id
-
-                return (
-                  <div className="wd-shift-card" key={shift.id}>
-                    <div className="wd-shift-card-top">
-                      <div className="wd-biz-avatar">
-                        {bizAvatar
-                          ? <img src={bizAvatar} alt={bizName} />
-                          : <span>{initials}</span>
-                        }
-                      </div>
-                      <div className="wd-shift-card-info">
-                        <div className="wd-shift-card-title">{shift.title}</div>
-                        <div className="wd-shift-card-biz">{bizName}</div>
-                      </div>
-                      <div className="wd-shift-card-wage">
-                        ₹{shift.wage_amount}<span>/{shift.wage_type}</span>
-                      </div>
-                    </div>
-                    <div className="wd-shift-card-details">
-                      <span>📅 {formatDate(shift.date)}</span>
-                      <span>🕐 {formatTime(shift.start_time)}–{formatTime(shift.end_time)}</span>
-                      <span>📍 {shift.location}</span>
-                      <span>👥 {shift.workers_needed} needed</span>
-                    </div>
-                    <div className="wd-shift-card-footer">
-                      <TrustBadge level={shift.min_trust_level} />
-                      {applied ? (
-                        <button className="wd-apply-btn wd-applied" disabled>Applied ✓</button>
-                      ) : !eligible ? (
-                        <button className="wd-apply-btn wd-ineligible" disabled>Need Level {shift.min_trust_level}</button>
-                      ) : (
-                        <button className="wd-apply-btn" onClick={() => handleApply(shift.id, shift.min_trust_level)} disabled={applying}>
-                          {applying ? 'Applying...' : 'Apply Now →'}
-                        </button>
-                      )}
-                    </div>
+              {groupedShifts.map(group => (
+                <div key={group.date}>
+                  <div className={`wd-date-header ${selectedDateStr === group.date ? 'wd-date-header-selected' : ''}`}>
+                    {formatGroupDate(group.date)}
+                    {selectedDateStr === group.date && <span className="wd-date-pin">📌 Selected</span>}
                   </div>
-                )
-              })}
+                  {group.shifts.map(shift => {
+                    const bizName = shift.business_name || 'Business'
+                    const initials = bizName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                    const applied = appliedIds.includes(shift.id)
+                    const eligible = trustLevel >= shift.min_trust_level
+                    const applying = applyingId === shift.id
+                    return (
+                      <div className="wd-shift-card" key={shift.id}>
+                        <div className="wd-shift-card-top">
+                          <div className="wd-biz-avatar">
+                            <span>{initials}</span>
+                          </div>
+                          <div className="wd-shift-card-info">
+                            <div className="wd-shift-card-title">{shift.title}</div>
+                            <div className="wd-shift-card-biz">{bizName}</div>
+                          </div>
+                          <div className="wd-shift-card-wage">
+                            ₹{shift.wage_amount}<span>/{shift.wage_type}</span>
+                          </div>
+                        </div>
+                        <div className="wd-shift-card-details">
+                          <span>🕐 {formatTime(shift.start_time)}–{formatTime(shift.end_time)}</span>
+                          <span>📍 {shift.location}</span>
+                          <span>👥 {shift.workers_needed} needed</span>
+                        </div>
+                        <div className="wd-shift-card-footer">
+                          <TrustBadge level={shift.min_trust_level} />
+                          {applied ? (
+                            <button className="wd-apply-btn wd-applied" disabled>Applied ✓</button>
+                          ) : !eligible ? (
+                            <button className="wd-apply-btn wd-ineligible" disabled>Need Level {shift.min_trust_level}</button>
+                          ) : (
+                            <button className="wd-apply-btn" onClick={() => handleApply(shift.id, shift.min_trust_level)} disabled={applying}>
+                              {applying ? 'Applying...' : 'Apply Now →'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ))}
             </div>
           )}
         </div>

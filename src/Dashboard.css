@@ -1012,3 +1012,33 @@
   color: #aaa;
   cursor: default;
 }
+
+/* ============================================
+   SHIFT DATE GROUP HEADERS
+   ============================================ */
+
+.wd-date-header {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A2744;
+  padding: 16px 0 8px;
+  border-bottom: 2px solid #f0e8e0;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wd-date-header-selected {
+  color: #E8470F;
+  border-bottom-color: #E8470F;
+}
+
+.wd-date-pin {
+  font-size: 12px;
+  font-weight: 500;
+  color: #E8470F;
+  background: #fde8dc;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
