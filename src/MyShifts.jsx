@@ -33,11 +33,19 @@ function ShiftCard({ shift, app, status, onWithdraw, onCancel }) {
   const bizName = shift?.business_name || 'Business'
   const initials = bizName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 
+  // Determine cancel reason
+  const cancelReason = app?.status === 'cancelled_by_worker'
+    ? 'Cancelled by You'
+    : app?.shifts?.status === 'cancelled'
+    ? 'Cancelled by Business'
+    : null
+
   const statusColors = {
     pending: { bg: '#fff3e0', color: '#e65100', label: 'Pending' },
     accepted: { bg: '#e8f5e9', color: '#2e7d32', label: 'Accepted ✓' },
     rejected: { bg: '#fff5f5', color: '#c62828', label: 'Rejected' },
     cancelled: { bg: '#f5f5f5', color: '#888', label: 'Cancelled' },
+    cancelled_by_worker: { bg: '#f5f5f5', color: '#888', label: 'Cancelled by You' },
   }
   const st = statusColors[app?.status] || statusColors.pending
 
@@ -74,12 +82,18 @@ function ShiftCard({ shift, app, status, onWithdraw, onCancel }) {
           {hours && <span className="ms-shift-pill">{hours % 1 === 0 ? hours : hours.toFixed(1)} hrs</span>}
         </div>
         <div className="ms-shift-footer">
-          <span className="ms-shift-status" style={{ background: st.bg, color: st.color }}>{st.label}</span>
-          {app?.status === 'pending' && onWithdraw && (
-            <button className="ms-withdraw-btn" onClick={() => onWithdraw(app)}>Withdraw</button>
-          )}
-          {app?.status === 'accepted' && onCancel && (
-            <button className="ms-withdraw-btn ms-cancel-btn" onClick={() => onCancel(app)}>Cancel Shift</button>
+          {cancelReason ? (
+            <span className="ms-cancel-reason-badge">{cancelReason}</span>
+          ) : (
+            <>
+              <span className="ms-shift-status" style={{ background: st.bg, color: st.color }}>{st.label}</span>
+              {app?.status === 'pending' && onWithdraw && (
+                <button className="ms-withdraw-btn" onClick={() => onWithdraw(app)}>Withdraw</button>
+              )}
+              {app?.status === 'accepted' && onCancel && (
+                <button className="ms-withdraw-btn ms-cancel-btn" onClick={() => onCancel(app)}>Cancel Shift</button>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -177,7 +191,11 @@ function MyShifts() {
     'Upcoming Shifts': applications.filter(a => a.status === 'accepted' && a.shifts?.status !== 'cancelled'),
     'Applied Shifts': applications.filter(a => a.status === 'pending'),
     'Completed Shifts': applications.filter(a => a.shifts?.status === 'completed'),
-    'Cancelled Shifts': applications.filter(a => a.shifts?.status === 'cancelled' || a.status === 'rejected'),
+    'Cancelled Shifts': applications.filter(a =>
+      a.shifts?.status === 'cancelled' ||
+      a.status === 'rejected' ||
+      a.status === 'cancelled_by_worker'
+    ),
   }
 
   const emptyMessages = {
