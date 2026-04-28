@@ -38,8 +38,10 @@
 /* STATS */
 .bd-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  flex: 1;
+  align-content: start;
 }
 
 .bd-stat-card {
@@ -70,6 +72,22 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+}
+
+/* TOP ROW: photo + stats */
+.bd-top-row {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.bd-top-row .bd-photo-panel {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.bd-top-row .bd-stats {
+  flex: 1;
 }
 
 .bd-panel {
@@ -556,9 +574,7 @@
 .bd-confirm-yes:hover { background: #c53030; }
 
 /* THREE COLUMN PANELS */
-.bd-panels-three {
-  grid-template-columns: 1fr 1fr 300px;
-}
+
 
 /* PHOTO PANEL */
 .bd-photo-panel {

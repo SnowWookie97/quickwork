@@ -428,21 +428,56 @@ function BusinessDashboard() {
           </button>
         </div>
 
-        <div className="bd-stats">
-          {[
-            { label: 'Active Shifts', value: activeShifts },
-            { label: 'Open Applications', value: applications.length },
-            { label: 'Workers Hired', value: 0 },
-            { label: 'Shifts Completed', value: completedShifts },
-          ].map(s => (
-            <div className="bd-stat-card" key={s.label}>
-              <div className="bd-stat-label">{s.label}</div>
-              <div className={`bd-stat-val ${s.value > 0 ? 'orange' : ''}`}>{s.value}</div>
-            </div>
-          ))}
+        {/* TOP ROW: photo left, stats right */}
+        <div className="bd-top-row">
+          <div className="bd-photo-panel bd-panel">
+            <div className="bd-panel-title">YOUR BUSINESS PHOTO</div>
+            <label className="bd-photo-upload-area" htmlFor="biz-photo-input">
+              {photoUrl
+                ? <img src={photoUrl} alt="Business" className="bd-photo-preview" />
+                : (
+                  <>
+                    <div className="bd-photo-placeholder-icon">📷</div>
+                    <p className="bd-photo-placeholder-text">
+                      {uploadingPhoto ? 'Uploading...' : 'Click to upload photo'}
+                    </p>
+                  </>
+                )
+              }
+            </label>
+            <input
+              id="biz-photo-input"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handlePhotoUpload}
+            />
+            {photoUrl && (
+              <label htmlFor="biz-photo-input" className="bd-photo-change-btn">
+                {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
+              </label>
+            )}
+            <p className="bd-photo-note">
+              📌 Recommended: Upload a photo of your shop or business so workers can recognise and find you easily.
+            </p>
+          </div>
+
+          <div className="bd-stats">
+            {[
+              { label: 'Active Shifts', value: activeShifts },
+              { label: 'Open Applications', value: applications.length },
+              { label: 'Workers Hired', value: 0 },
+              { label: 'Shifts Completed', value: completedShifts },
+            ].map(s => (
+              <div className="bd-stat-card" key={s.label}>
+                <div className="bd-stat-label">{s.label}</div>
+                <div className={`bd-stat-val ${s.value > 0 ? 'orange' : ''}`}>{s.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="bd-panels bd-panels-three">
+        <div className="bd-panels">
 
           {/* YOUR SHIFTS */}
           <div className="bd-panel">
@@ -515,39 +550,6 @@ function BusinessDashboard() {
                 })}
               </div>
             )}
-          </div>
-
-          {/* BUSINESS PHOTO */}
-          <div className="bd-panel bd-photo-panel">
-            <div className="bd-panel-title">YOUR BUSINESS PHOTO</div>
-            <label className="bd-photo-upload-area" htmlFor="biz-photo-input">
-              {photoUrl
-                ? <img src={photoUrl} alt="Business" className="bd-photo-preview" />
-                : (
-                  <>
-                    <div className="bd-photo-placeholder-icon">📷</div>
-                    <p className="bd-photo-placeholder-text">
-                      {uploadingPhoto ? 'Uploading...' : 'Click to upload photo'}
-                    </p>
-                  </>
-                )
-              }
-            </label>
-            <input
-              id="biz-photo-input"
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handlePhotoUpload}
-            />
-            {photoUrl && (
-              <label htmlFor="biz-photo-input" className="bd-photo-change-btn">
-                {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
-              </label>
-            )}
-            <p className="bd-photo-note">
-              📌 Recommended: Upload a photo of your shop or business so workers can recognise and find you easily.
-            </p>
           </div>
 
         </div>
