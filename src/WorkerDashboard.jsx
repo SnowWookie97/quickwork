@@ -108,11 +108,13 @@ function WorkerDashboard() {
 
   const fetchShifts = async () => {
     setLoadingShifts(true)
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('shifts')
       .select('*, business:business_id(raw_user_meta_data), business_profile:business_id(avatar_url)')
       .eq('status', 'open')
       .order('date', { ascending: true })
+    console.log('SHIFTS DATA:', data)
+    console.log('SHIFTS ERROR:', error)
     setShifts(data || [])
     setLoadingShifts(false)
   }
