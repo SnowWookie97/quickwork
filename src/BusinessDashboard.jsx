@@ -434,6 +434,13 @@ function BusinessDashboard() {
           </button>
         </div>
 
+        {!photoUrl && (
+          <div className="bd-photo-notice-bar">
+            📌 Tip: Upload a photo of your shop or business so workers can recognise and find you easily.
+            <label htmlFor="biz-photo-input" className="bd-photo-notice-link">Upload now →</label>
+          </div>
+        )}
+
         {/* TOP ROW: photo left, stats right */}
         <div className="bd-top-row">
           <div className="bd-photo-panel bd-panel">
@@ -463,9 +470,7 @@ function BusinessDashboard() {
                 {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
               </label>
             )}
-            <p className="bd-photo-note">
-              📌 Recommended: Upload a photo of your shop or business so workers can recognise and find you easily.
-            </p>
+
           </div>
 
           <div className="bd-stats">
