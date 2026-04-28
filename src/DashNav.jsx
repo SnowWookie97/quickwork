@@ -123,13 +123,41 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const dashMenuItems = ['Homepage', 'My Shifts', 'Payments', 'Ratings']
+  const dismissNotice = async (id) => {
+    await supabase.from('notices').update({ is_read: true }).eq('id', id)
+    setNotices(notices.filter(n => n.id !== id))
+  }
 
-  const profileGroups = [
-    { label: 'ACCOUNT', items: ['My Profile', 'Validation', 'Settings'] },
-    { label: 'FROM QUICKWORK', items: ['Invite Friends', 'Contact Us', 'Insurance', 'FAQ', 'Feedback'] },
-    { label: 'LEGAL', items: ['Privacy Policy', 'Terms and Conditions'] }
-  ]
+  // --- ROLE-AWARE MENUS ---
+  const isBusiness = userRole === 'business'
+
+  const dashMenuItems = isBusiness
+    ? ['Homepage', 'My Shifts', 'Payments', 'Ratings']
+    : ['Homepage', 'My Shifts', 'Payments', 'Ratings']
+
+  const profileGroups = isBusiness
+    ? [
+        { label: 'ACCOUNT', items: ['My Business', 'Settings'] },
+        { label: 'FROM QUICKWORK', items: ['Invite Friends', 'Contact Us', 'FAQ', 'Feedback'] },
+        { label: 'LEGAL', items: ['Privacy Policy', 'Terms and Conditions'] }
+      ]
+    : [
+        { label: 'ACCOUNT', items: ['My Profile', 'Validation', 'Settings'] },
+        { label: 'FROM QUICKWORK', items: ['Invite Friends', 'Contact Us', 'Insurance', 'FAQ', 'Feedback'] },
+        { label: 'LEGAL', items: ['Privacy Policy', 'Terms and Conditions'] }
+      ]
+
+  const handleDashItem = (item) => {
+    setDashDropdown(false)
+    if (item === 'Homepage') {
+      if (onHomepage) onHomepage()
+      else navigate(isBusiness ? '/business/dashboard' : '/worker/dashboard')
+    }
+    else if (item === 'My Shifts') navigate('/my-shifts')
+    else if (item === 'Payments') navigate('/payments')
+    else if (item === 'Ratings') navigate('/ratings')
+    else navigate('/under-construction')
+  }
 
   const handleProfileItem = (item) => {
     setProfileDropdown(false)
@@ -138,6 +166,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     else if (item === 'Feedback') navigate('/feedback')
     else if (item === 'FAQ') navigate('/faq')
     else if (item === 'My Profile') navigate('/my-profile')
+    else if (item === 'My Business') navigate('/business/profile')
     else if (item === 'Validation') navigate('/validation')
     else if (item === 'Settings') navigate('/settings')
     else if (item === 'Invite Friends') setShowInviteModal(true)
@@ -148,11 +177,6 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     if (item === 'Invite Friends') return <><span>🎉 Invite Friends</span></>
     if (item === 'Validation') return <>{trustLevel && <MiniShield level={trustLevel} />}<span>Validation</span></>
     return <span>{item}</span>
-  }
-
-  const dismissNotice = async (id) => {
-    await supabase.from('notices').update({ is_read: true }).eq('id', id)
-    setNotices(notices.filter(n => n.id !== id))
   }
 
   return (
@@ -168,7 +192,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
               <span className="dashnav-invite-code">{referralCode || 'Loading...'}</span>
               <button className="dashnav-invite-copy-btn" onClick={handleCopy}>{copied ? '✅ Copied!' : 'Copy'}</button>
             </div>
-            <p className="dashnav-invite-note">Your friends can enter this code during signup under "Were you invited by a friend?"</p>
+            <p className="dashnav-invite-note">Your friends can enter this code during signup under "Were you invited by someone?"</p>
           </div>
         </div>
       )}
@@ -201,14 +225,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
             {dashDropdown && (
               <div className="dashnav-dropdown">
                 {dashMenuItems.map(item => (
-                  <div key={item} className="dashnav-dropdown-item" onClick={() => {
-                    setDashDropdown(false)
-                    if (item === 'Homepage') { if (onHomepage) onHomepage(); else navigate('/worker/dashboard') }
-                    else if (item === 'My Shifts') navigate('/my-shifts')
-                    else if (item === 'Payments') navigate('/payments')
-                    else if (item === 'Ratings') navigate('/ratings')
-                    else navigate('/under-construction')
-                  }}>
+                  <div key={item} className="dashnav-dropdown-item" onClick={() => handleDashItem(item)}>
                     {item}
                   </div>
                 ))}
@@ -219,7 +236,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
           <div className="dashnav-item" ref={profileRef}>
             <button className="dashnav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
               <span className="dashnav-avatar">👤</span>
-              My Account <span className="dashnav-chevron">{profileDropdown ? '▲' : '▼'}</span>
+              {isBusiness ? 'My Business' : 'My Account'} <span className="dashnav-chevron">{profileDropdown ? '▲' : '▼'}</span>
             </button>
             {profileDropdown && (
               <div className="dashnav-dropdown dashnav-dropdown-grouped">
