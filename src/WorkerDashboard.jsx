@@ -31,9 +31,13 @@ function formatDate(d) {
   return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 }
 
+// Timezone-safe: reads local date, not UTC
+function localDateStr(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
 function TrustBadge({ level }) {
   const colors = ['#888', '#3B6D11', '#378ADD', '#B8860B']
-  const labels = ['L1', 'L2', 'L3', 'L4']
   return (
     <span style={{
       fontSize: 11, padding: '2px 8px', borderRadius: 20,
@@ -91,7 +95,6 @@ function WorkerDashboard() {
         setProfilePct(score)
       }
 
-      // Fetch already applied shift IDs
       const { data: apps } = await supabase
         .from('shift_applications')
         .select('shift_id')
@@ -125,14 +128,13 @@ function WorkerDashboard() {
     setApplyingId(null)
   }
 
-  // Filter shifts
+  // Timezone-safe date filter
   const filteredShifts = shifts.filter(s => {
     const matchCategory = selectedCategory === 'All Categories' || s.category === selectedCategory
     const matchSearch = !searchQuery ||
       s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.location.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchDate = !selectedDate ||
-      s.date === selectedDate.toISOString().split('T')[0]
+    const matchDate = !selectedDate || s.date === localDateStr(selectedDate)
     return matchCategory && matchSearch && matchDate
   })
 
