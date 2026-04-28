@@ -164,7 +164,7 @@ function MyShifts() {
               ))}
             </div>
             <div className="ms-tab-divider" />
-            <div className="ms-tab-content">
+            <div className="ms-tab-content" style={{ alignItems: currentData.length > 0 ? 'flex-start' : 'center', justifyContent: currentData.length > 0 ? 'flex-start' : 'center' }}>
               {loading ? (
                 <div className="ms-empty"><p className="ms-empty-sub">Loading...</p></div>
               ) : currentData.length === 0 ? (

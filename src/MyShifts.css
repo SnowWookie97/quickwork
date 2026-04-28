@@ -324,3 +324,10 @@
   justify-content: center;
   min-height: 300px;
 }
+
+/* When there are shifts, start from top not center */
+.ms-tab-content > .ms-shift-list {
+  justify-content: flex-start;
+  align-self: flex-start;
+  width: 100%;
+}
