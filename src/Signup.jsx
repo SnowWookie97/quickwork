@@ -4,12 +4,34 @@ import { supabase } from './supabase'
 import logoImg from './assets/logo.png'
 import './AuthForm.css'
 
-const INDUSTRIES = [
+const WORKER_INDUSTRIES = [
   'Logistics', 'Retail', 'Hospitality', 'Office', 'Events', 'Delivery', 'Warehouse',
 ]
 
+const BUSINESS_TYPES = [
+  'Hotel / Hospitality',
+  'Restaurant',
+  'Construction',
+  'Farm / Agriculture',
+  'Retail / Shop',
+  'Logistics / Warehouse',
+  'Events',
+  'Healthcare',
+  'Other',
+]
+
+const CITIES = [
+  'Nashik',
+  'Mumbai',
+  'Pune',
+  'Nagpur',
+  'Aurangabad',
+  'Kolhapur',
+  'Solapur',
+  'Other',
+]
+
 function generateCode(userId) {
-  // Simple hash from userId to generate a code like QW-A3F9K2
   let hash = 0
   for (let i = 0; i < userId.length; i++) {
     hash = ((hash << 5) - hash) + userId.charCodeAt(i)
@@ -31,7 +53,10 @@ function Signup() {
   const role = location.state?.role || 'worker'
 
   const [form, setForm] = useState({
-    name: '', mobile: '', email: '', password: '', industry: '',
+    name: '', mobile: '', email: '', password: '',
+    industry: '',       // worker only
+    businessType: '',   // business only
+    city: '',           // business only
   })
   const [wasReferred, setWasReferred] = useState(false)
   const [referralCode, setReferralCode] = useState('')
@@ -53,14 +78,19 @@ function Signup() {
     if (form.password.length < 6) {
       setError('Password must be at least 6 characters.'); return
     }
-    if (role === 'business' && !form.industry) {
+    if (role === 'worker' && !form.industry) {
       setError('Please select your industry.'); return
+    }
+    if (role === 'business' && !form.businessType) {
+      setError('Please select your business type.'); return
+    }
+    if (role === 'business' && !form.city) {
+      setError('Please select your city.'); return
     }
     if (wasReferred && !referralCode.trim()) {
       setError('Please enter the referral code or switch to No.'); return
     }
 
-    // Validate referral code if provided
     if (wasReferred && referralCode.trim()) {
       const { data: refData, error: refError } = await supabase
         .from('referrals')
@@ -83,7 +113,11 @@ function Signup() {
           role,
           name: form.name,
           mobile: form.mobile,
-          ...(role === 'business' && { industry: form.industry }),
+          ...(role === 'worker' && { industry: form.industry }),
+          ...(role === 'business' && {
+            business_type: form.businessType,
+            city: form.city,
+          }),
         }
       }
     })
@@ -94,7 +128,6 @@ function Signup() {
       return
     }
 
-    // Create referral record in app (no trigger needed)
     if (data.user) {
       const newCode = generateCode(data.user.id)
       await supabase.from('referrals').insert({
@@ -135,6 +168,7 @@ function Signup() {
             </div>
           ) : (
             <div className="auth-form">
+
               <div className="form-group">
                 <label>{role === 'business' ? 'Business Name' : 'Full Name'}</label>
                 <input
@@ -144,6 +178,7 @@ function Signup() {
                   onChange={update('name')}
                 />
               </div>
+
               <div className="form-group">
                 <label>Mobile Number</label>
                 <div className="phone-input">
@@ -157,17 +192,43 @@ function Signup() {
                   />
                 </div>
               </div>
-              {role === 'business' && (
+
+              {role === 'worker' && (
                 <div className="form-group">
                   <label>Industry</label>
                   <select value={form.industry} onChange={update('industry')} className="form-select">
                     <option value="">Select your industry</option>
-                    {INDUSTRIES.map(ind => (
+                    {WORKER_INDUSTRIES.map(ind => (
                       <option key={ind} value={ind}>{ind}</option>
                     ))}
                   </select>
                 </div>
               )}
+
+              {role === 'business' && (
+                <>
+                  <div className="form-group">
+                    <label>Business Type</label>
+                    <select value={form.businessType} onChange={update('businessType')} className="form-select">
+                      <option value="">Select your business type</option>
+                      {BUSINESS_TYPES.map(bt => (
+                        <option key={bt} value={bt}>{bt}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>City</label>
+                    <select value={form.city} onChange={update('city')} className="form-select">
+                      <option value="">Select your city</option>
+                      {CITIES.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
               <div className="form-group">
                 <label>Email</label>
                 <input
@@ -177,6 +238,7 @@ function Signup() {
                   onChange={update('email')}
                 />
               </div>
+
               <div className="form-group">
                 <label>Password</label>
                 <input
@@ -187,7 +249,6 @@ function Signup() {
                 />
               </div>
 
-              {/* REFERRAL SECTION */}
               <div className="form-group">
                 <label>
                   {role === 'business' ? 'Were you invited by another business?' : 'Were you invited by a friend?'}
@@ -224,9 +285,11 @@ function Signup() {
               )}
 
               {error && <p className="auth-error">{error}</p>}
+
               <button className="auth-btn" onClick={handleSignup} disabled={loading}>
                 {loading ? 'Creating account...' : 'Create Account →'}
               </button>
+
             </div>
           )}
 
