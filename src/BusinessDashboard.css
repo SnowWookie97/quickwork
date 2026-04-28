@@ -46,8 +46,8 @@
 
 .bd-stat-card {
   background: white;
-  border-radius: 16px;
-  padding: 20px 24px;
+  border-radius: 14px;
+  padding: 14px 18px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
@@ -61,7 +61,7 @@
 }
 
 .bd-stat-val {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 800;
   color: #1A2744;
 }
@@ -77,12 +77,12 @@
 /* TOP ROW: photo + stats */
 .bd-top-row {
   display: flex;
-  gap: 20px;
-  align-items: stretch;
+  gap: 16px;
+  align-items: flex-start;
 }
 
 .bd-top-row .bd-photo-panel {
-  width: 260px;
+  width: 220px;
   flex-shrink: 0;
 }
 
@@ -586,7 +586,7 @@
 
 .bd-photo-upload-area {
   width: 100%;
-  height: 200px;
+  height: 150px;
   border: 2.5px dashed #ddd;
   border-radius: 14px;
   display: flex;
