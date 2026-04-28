@@ -68,6 +68,7 @@ function BusinessDashboard() {
   const [showHomepageMsg, setShowHomepageMsg] = useState(false)
   const [photoUrl, setPhotoUrl] = useState(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [showPhotoLarge, setShowPhotoLarge] = useState(false)
   const [showPostShift, setShowPostShift] = useState(false)
   const [form, setForm] = useState(defaultForm)
   const [formError, setFormError] = useState('')
@@ -343,6 +344,19 @@ function BusinessDashboard() {
         </div>
       )}
 
+      {/* LARGE PHOTO VIEW */}
+      {showPhotoLarge && photoUrl && (
+        <div className="bd-overlay-backdrop" onClick={() => setShowPhotoLarge(false)}>
+          <div className="bd-photo-large-overlay" onClick={e => e.stopPropagation()}>
+            <button className="bd-overlay-close" onClick={() => setShowPhotoLarge(false)}>✕</button>
+            <img src={photoUrl} alt="Business" className="bd-photo-large-img" />
+            <label htmlFor="biz-photo-input" className="bd-photo-action-btn" onClick={() => setShowPhotoLarge(false)}>
+              🔄 Change Photo
+            </label>
+          </div>
+        </div>
+      )}
+
       {/* CANCEL SHIFT CONFIRMATION */}
       {cancelConfirm && (
         <div className="bd-overlay-backdrop" onClick={() => setCancelConfirm(null)}>
@@ -445,19 +459,20 @@ function BusinessDashboard() {
         <div className="bd-top-row">
           <div className="bd-photo-panel bd-panel">
             <div className="bd-panel-title">YOUR BUSINESS PHOTO</div>
-            <label className="bd-photo-upload-area" htmlFor="biz-photo-input">
-              {photoUrl
-                ? <img src={photoUrl} alt="Business" className="bd-photo-preview" />
-                : (
-                  <>
-                    <div className="bd-photo-placeholder-icon">📷</div>
-                    <p className="bd-photo-placeholder-text">
-                      {uploadingPhoto ? 'Uploading...' : 'Click to upload photo'}
-                    </p>
-                  </>
-                )
-              }
-            </label>
+            {/* Photo frame — click to view large if photo exists */}
+            {photoUrl ? (
+              <div className="bd-photo-upload-area" onClick={() => setShowPhotoLarge(true)} style={{ cursor: 'zoom-in' }}>
+                <img src={photoUrl} alt="Business" className="bd-photo-preview" />
+              </div>
+            ) : (
+              <label className="bd-photo-upload-area" htmlFor="biz-photo-input">
+                <div className="bd-photo-placeholder-icon">📷</div>
+                <p className="bd-photo-placeholder-text">
+                  {uploadingPhoto ? 'Uploading...' : 'Click to upload photo'}
+                </p>
+              </label>
+            )}
+
             <input
               id="biz-photo-input"
               type="file"
@@ -465,11 +480,11 @@ function BusinessDashboard() {
               style={{ display: 'none' }}
               onChange={handlePhotoUpload}
             />
-            {photoUrl && (
-              <label htmlFor="biz-photo-input" className="bd-photo-change-btn">
-                {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
-              </label>
-            )}
+
+            {/* Upload / Change button always visible below */}
+            <label htmlFor="biz-photo-input" className="bd-photo-action-btn">
+              {uploadingPhoto ? 'Uploading...' : photoUrl ? '🔄 Change Photo' : '📷 Upload Photo'}
+            </label>
 
           </div>
 
