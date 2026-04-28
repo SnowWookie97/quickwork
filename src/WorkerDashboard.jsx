@@ -149,7 +149,19 @@ function WorkerDashboard() {
       worker_avatar: profileData?.avatar_url || null,
       worker_trust_level: profileData?.trust_level || 1,
     })
-    if (!error) setAppliedIds([...appliedIds, shiftId])
+    if (!error) {
+      setAppliedIds([...appliedIds, shiftId])
+      // Log activity
+      const shift = shifts.find(s => s.id === shiftId)
+      await supabase.from('activity_log').insert({
+        event_type: 'worker_applied',
+        shift_id: shiftId,
+        shift_title: shift?.title || '',
+        worker_id: userId,
+        business_id: shift?.business_id || null,
+        business_name: shift?.business_name || '',
+      })
+    }
     setApplyingId(null)
   }
 

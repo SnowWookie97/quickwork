@@ -175,6 +175,7 @@ function BusinessDashboard() {
 
     setFormSuccess(true)
     fetchShifts(userId)
+    await logActivity('shift_posted', { shift_title: form.title })
   }
 
   const handleCloseOverlay = () => {
@@ -184,15 +185,37 @@ function BusinessDashboard() {
     setFormSuccess(false)
   }
 
+  const logActivity = async (eventType, extra = {}) => {
+    await supabase.from('activity_log').insert({
+      event_type: eventType,
+      business_id: userId,
+      business_name: businessName,
+      ...extra
+    })
+  }
+
   const handleAccept = async (appId, shiftId) => {
+    const app = [...applications, ...acceptedApps].find(a => a.id === appId)
     await supabase.from('shift_applications').update({ status: 'accepted' }).eq('id', appId)
     fetchApplications(userId)
     fetchShifts(userId)
+    await logActivity('worker_accepted', {
+      shift_id: shiftId,
+      shift_title: app?.shifts?.title || '',
+      worker_id: app?.worker_id || null,
+      worker_name: app?.worker_name || '',
+    })
   }
 
   const handleReject = async (appId) => {
+    const app = [...applications, ...acceptedApps].find(a => a.id === appId)
     await supabase.from('shift_applications').update({ status: 'rejected' }).eq('id', appId)
     fetchApplications(userId)
+    await logActivity('worker_rejected', {
+      shift_title: app?.shifts?.title || '',
+      worker_id: app?.worker_id || null,
+      worker_name: app?.worker_name || '',
+    })
   }
 
   const [cancelConfirm, setCancelConfirm] = useState(null) // holds shift object
@@ -200,6 +223,10 @@ function BusinessDashboard() {
   const handleCancelShift = async () => {
     if (!cancelConfirm) return
     await supabase.from('shifts').update({ status: 'cancelled' }).eq('id', cancelConfirm.id)
+    await logActivity('shift_cancelled_by_business', {
+      shift_id: cancelConfirm.id,
+      shift_title: cancelConfirm.title,
+    })
     setCancelConfirm(null)
     fetchShifts(userId)
   }

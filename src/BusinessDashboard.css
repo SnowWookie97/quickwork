@@ -39,16 +39,19 @@
 .bd-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr 1fr;
   gap: 12px;
   flex: 1;
-  align-content: start;
 }
 
 .bd-stat-card {
   background: white;
   border-radius: 14px;
-  padding: 14px 18px;
+  padding: 16px 20px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .bd-stat-label {
@@ -78,17 +81,19 @@
 .bd-top-row {
   display: flex;
   gap: 16px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .bd-top-row .bd-photo-panel {
-  width: 200px;
+  width: 280px;
   flex-shrink: 0;
-  padding: 12px;
+  padding: 14px;
+  min-height: unset;
 }
 
 .bd-top-row .bd-stats {
   flex: 1;
+  align-content: stretch;
 }
 
 .bd-panel {
@@ -590,7 +595,7 @@
 
 .bd-photo-upload-area {
   width: 100%;
-  height: 150px;
+  height: 180px;
   border: 2.5px dashed #ddd;
   border-radius: 14px;
   display: flex;

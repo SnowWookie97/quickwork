@@ -138,11 +138,22 @@ function MyShifts() {
   const handleWithdraw = async () => {
     if (!withdrawConfirm) return
     setActionLoading(true)
-    await supabase.from('shift_applications').delete().eq('id', withdrawConfirm.id)
+    const app = withdrawConfirm
+    await supabase.from('shift_applications').delete().eq('id', app.id)
+    // Log activity
+    await supabase.from('activity_log').insert({
+      event_type: 'worker_withdrew',
+      shift_id: app.shift_id,
+      shift_title: app.shifts?.title || '',
+      worker_id: app.worker_id,
+      worker_name: app.worker_name || '',
+      business_id: app.shifts?.business_id || null,
+      business_name: app.shifts?.business_name || '',
+    })
+    // Remove from state immediately
+    setApplications(prev => prev.filter(a => a.id !== app.id))
     setWithdrawConfirm(null)
     setActionLoading(false)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) fetchApplications(user.id)
   }
 
   const handleCancelAccepted = async () => {
@@ -173,10 +184,20 @@ function MyShifts() {
       })
     }
 
+    // Log activity
+    await supabase.from('activity_log').insert({
+      event_type: 'worker_cancelled_accepted_shift',
+      shift_id: app.shift_id,
+      shift_title: shiftTitle,
+      worker_id: app.worker_id,
+      worker_name: app.worker_name || '',
+      business_id: businessId || null,
+      business_name: app.shifts?.business_name || '',
+    })
+    // Remove from state immediately
+    setApplications(prev => prev.filter(a => a.id !== app.id))
     setCancelAcceptedConfirm(null)
     setActionLoading(false)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) fetchApplications(user.id)
   }
 
   const getGreeting = () => {
