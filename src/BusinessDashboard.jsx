@@ -1,56 +1,97 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
-import logoImg from './assets/logo.png'
+import DashNav from './DashNav'
 import './Dashboard.css'
+import './BusinessDashboard.css'
 
 function BusinessDashboard() {
   const navigate = useNavigate()
+  const [businessName, setBusinessName] = useState('')
+  const [userRole, setUserRole] = useState('business')
+  const [showHomepageMsg, setShowHomepageMsg] = useState(false)
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/')
-  }
+  // Stats (all 0 until shifts system is built)
+  const stats = [
+    { label: 'Active Shifts', value: 0 },
+    { label: 'Open Applications', value: 0 },
+    { label: 'Workers Hired', value: 0 },
+    { label: 'Shifts Completed', value: 0 },
+  ]
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { navigate('/login'); return }
+      setBusinessName(user.user_metadata?.name || 'Business')
+    }
+    getUser()
+  }, [])
 
   return (
-    <div className="dashboard-page">
-      <nav className="dash-navbar">
-        {/* Logo does nothing — already on dashboard */}
-        <div className="nav-logo">
-          <img src={logoImg} alt="QuickWork" className="logo-img" />
-          <span className="logo-text">QuickWork</span>
+    <div className="wd-page">
+      <DashNav
+        userRole="business"
+        onHomepage={() => setShowHomepageMsg(true)}
+        currentPage="dashboard"
+      />
+
+      {showHomepageMsg && (
+        <div className="wd-homepage-msg" onClick={() => setShowHomepageMsg(false)}>
+          This is the homepage bro 🙌 <span className="wd-homepage-msg-close">✕</span>
         </div>
-        <button className="dash-logout" onClick={handleLogout}>Log Out</button>
-      </nav>
+      )}
 
-      <div className="dash-container">
-        <div className="dash-card">
-          <div className="dash-emoji">🏢</div>
-          <h1 className="dash-title">Under Construction,<br />Dear Entrepreneur!</h1>
-          <p className="dash-sub">Your business dashboard is being built with the same hustle you bring every day. We'll be ready before you know it!</p>
+      <div className="bd-main">
 
-          <div className="construction-scene business-scene">
-            <div className="building">
-              <div className="floor f5"></div>
-              <div className="floor f4"></div>
-              <div className="floor f3 active"></div>
-              <div className="floor f2 done"></div>
-              <div className="floor f1 done"></div>
-              <div className="ground"></div>
+        {/* TOP BAR */}
+        <div className="bd-topbar">
+          <div className="bd-greeting">
+            Welcome back, <span className="bd-name">{businessName}</span>! 🏢
+          </div>
+          <button className="bd-post-btn" onClick={() => navigate('/under-construction')}>
+            + Post a Shift
+          </button>
+        </div>
+
+        {/* STATS ROW */}
+        <div className="bd-stats">
+          {stats.map(s => (
+            <div className="bd-stat-card" key={s.label}>
+              <div className="bd-stat-label">{s.label}</div>
+              <div className={`bd-stat-val ${s.value > 0 ? 'orange' : ''}`}>{s.value}</div>
             </div>
-            <div className="crane">
-              <div className="crane-arm"></div>
-              <div className="crane-rope"></div>
-              <div className="crane-hook">🏗️</div>
-            </div>
-            <div className="workers">
-              <span className="worker w1">👔</span>
-              <span className="worker w2">📋</span>
-              <span className="worker w3">💼</span>
+          ))}
+        </div>
+
+        {/* TWO PANELS */}
+        <div className="bd-panels">
+
+          {/* LEFT — YOUR SHIFTS */}
+          <div className="bd-panel">
+            <div className="bd-panel-title">YOUR SHIFTS</div>
+            <div className="bd-empty">
+              <div className="bd-empty-icon">📋</div>
+              <p className="bd-empty-heading">No shifts posted yet</p>
+              <p className="bd-empty-sub">Post your first shift to start finding workers.</p>
+              <button className="bd-empty-btn" onClick={() => navigate('/under-construction')}>
+                + Post a Shift
+              </button>
             </div>
           </div>
 
-          <div className="dash-badge">🏢 Business Dashboard — Coming Soon</div>
+          {/* RIGHT — PENDING APPLICATIONS */}
+          <div className="bd-panel">
+            <div className="bd-panel-title">PENDING APPLICATIONS</div>
+            <div className="bd-empty">
+              <div className="bd-empty-icon">👥</div>
+              <p className="bd-empty-heading">No applications yet</p>
+              <p className="bd-empty-sub">Once workers apply to your shifts, they'll appear here.</p>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
   )
