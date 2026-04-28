@@ -46,6 +46,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
     return trustLevelProp || (c ? parseInt(c) : 1)
   })
   const [notices, setNotices] = useState([])
+  const [avatarUrl, setAvatarUrl] = useState(null)
   const dashRef = useRef(null)
   const profileRef = useRef(null)
 
@@ -72,7 +73,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
 
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('trust_level, is_blacklisted')
+        .select('trust_level, is_blacklisted, avatar_url')
         .eq('id', user.id)
         .single()
       if (profileData) {
@@ -82,6 +83,7 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
         }
         setTrustLevel(profileData.trust_level)
         localStorage.setItem('qw_trust_level', profileData.trust_level)
+        if (profileData.avatar_url) setAvatarUrl(profileData.avatar_url)
       }
     }
     fetchData()
@@ -235,7 +237,11 @@ function DashNav({ userRole, onHomepage, trustLevel: trustLevelProp, currentPage
 
           <div className="dashnav-item" ref={profileRef}>
             <button className="dashnav-btn profile-btn" onClick={() => { setProfileDropdown(!profileDropdown); setDashDropdown(false) }}>
-              <span className="dashnav-avatar">👤</span>
+              <span className="dashnav-avatar">
+                {avatarUrl
+                  ? <img src={avatarUrl} alt="avatar" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', verticalAlign: 'middle' }} />
+                  : '👤'}
+              </span>
               {isBusiness ? 'My Business' : 'My Account'} <span className="dashnav-chevron">{profileDropdown ? '▲' : '▼'}</span>
             </button>
             {profileDropdown && (
