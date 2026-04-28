@@ -177,7 +177,7 @@ function MyShifts() {
                   )}
                 </div>
               ) : (
-                <div className="ms-shift-list">
+                <div className="ms-shift-list" style={{ alignItems: 'stretch' }}>
                   {currentData.map(app => (
                     <ShiftCard key={app.id} shift={app.shifts} app={app} status={app.status} />
                   ))}
