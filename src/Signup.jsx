@@ -56,7 +56,7 @@ function Signup() {
     name: '', mobile: '', email: '', password: '',
     industry: '',       // worker only
     businessType: '',   // business only
-    city: '',           // business only
+    city: 'Nashik',     // business only, default to Nashik
   })
   const [wasReferred, setWasReferred] = useState(false)
   const [referralCode, setReferralCode] = useState('')
@@ -251,7 +251,7 @@ function Signup() {
 
               <div className="form-group">
                 <label>
-                  {role === 'business' ? 'Were you invited by another business?' : 'Were you invited by a friend?'}
+                  {role === 'business' ? 'Were you invited by someone?' : 'Were you invited by a friend?'}
                 </label>
                 <div className="referral-toggle">
                   <button
