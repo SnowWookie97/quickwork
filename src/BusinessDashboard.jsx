@@ -183,6 +183,15 @@ function BusinessDashboard() {
     fetchApplications(userId)
   }
 
+  const [cancelConfirm, setCancelConfirm] = useState(null) // holds shift object
+
+  const handleCancelShift = async () => {
+    if (!cancelConfirm) return
+    await supabase.from('shifts').update({ status: 'cancelled' }).eq('id', cancelConfirm.id)
+    setCancelConfirm(null)
+    fetchShifts(userId)
+  }
+
   const today = new Date().toISOString().split('T')[0]
 
   const activeShifts = shifts.filter(s => s.status === 'open' || s.status === 'filled').length
@@ -305,6 +314,24 @@ function BusinessDashboard() {
         </div>
       )}
 
+      {/* CANCEL SHIFT CONFIRMATION */}
+      {cancelConfirm && (
+        <div className="bd-overlay-backdrop" onClick={() => setCancelConfirm(null)}>
+          <div className="bd-overlay bd-confirm-overlay" onClick={e => e.stopPropagation()}>
+            <div className="bd-confirm-icon">⚠️</div>
+            <h3 className="bd-confirm-title">Cancel this shift?</h3>
+            <p className="bd-confirm-msg">
+              <strong>{cancelConfirm.title}</strong> on {formatDate(cancelConfirm.date)} will be cancelled.
+              Workers who applied will no longer be able to see it.
+            </p>
+            <div className="bd-confirm-actions">
+              <button className="bd-confirm-no" onClick={() => setCancelConfirm(null)}>Keep Shift</button>
+              <button className="bd-confirm-yes" onClick={handleCancelShift}>Yes, Cancel It</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* WORKER DETAIL OVERLAY */}
       {selectedWorker && (() => {
         const name = selectedWorker.worker_name || 'Worker'
@@ -417,7 +444,12 @@ function BusinessDashboard() {
                       </div>
                       <div className="bd-shift-meta">{shift.location} · ₹{shift.wage_amount}/{shift.wage_type}</div>
                     </div>
-                    <StatusBadge status={shift.status} />
+                    <div className="bd-shift-row-right">
+                      <StatusBadge status={shift.status} />
+                      {(shift.status === 'open' || shift.status === 'filled') && (
+                        <button className="bd-cancel-shift-btn" onClick={() => setCancelConfirm(shift)}>Cancel</button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
