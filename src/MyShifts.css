@@ -331,3 +331,87 @@
   align-self: flex-start;
   width: 100%;
 }
+
+/* WITHDRAW / CANCEL BUTTONS */
+.ms-withdraw-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  border: 1px solid #ddd;
+  background: white;
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ms-withdraw-btn:hover { border-color: #aaa; color: #555; }
+
+.ms-cancel-btn {
+  color: #e53e3e;
+  border-color: #e53e3e;
+}
+.ms-cancel-btn:hover { background: #fff5f5; }
+
+/* CONFIRMATION MODALS */
+.ms-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.ms-confirm-box {
+  background: white;
+  border-radius: 18px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ms-confirm-icon { font-size: 36px; }
+.ms-confirm-title { font-size: 18px; font-weight: 800; color: #1A2744; }
+.ms-confirm-msg { font-size: 13px; color: #666; line-height: 1.6; }
+
+.ms-confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.ms-confirm-no {
+  flex: 1;
+  padding: 11px;
+  border-radius: 9px;
+  border: 1.5px solid #eee;
+  background: white;
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ms-confirm-no:hover { background: #f5f5f5; }
+
+.ms-confirm-yes {
+  flex: 1;
+  padding: 11px;
+  border-radius: 9px;
+  border: none;
+  background: #888;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ms-confirm-danger {
+  background: #e53e3e;
+}
+.ms-confirm-danger:hover { background: #c53030; }

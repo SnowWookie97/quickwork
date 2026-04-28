@@ -21,7 +21,7 @@ function formatDate(d) {
   return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-function ShiftCard({ shift, app, status }) {
+function ShiftCard({ shift, app, status, onWithdraw, onCancel }) {
   const bannerColors = {
     'Hospitality': '#1A2744', 'Restaurant': '#1A2744',
     'Logistics': '#0F6E56', 'Warehouse': '#0F6E56',
@@ -75,6 +75,12 @@ function ShiftCard({ shift, app, status }) {
         </div>
         <div className="ms-shift-footer">
           <span className="ms-shift-status" style={{ background: st.bg, color: st.color }}>{st.label}</span>
+          {app?.status === 'pending' && onWithdraw && (
+            <button className="ms-withdraw-btn" onClick={() => onWithdraw(app)}>Withdraw</button>
+          )}
+          {app?.status === 'accepted' && onCancel && (
+            <button className="ms-withdraw-btn ms-cancel-btn" onClick={() => onCancel(app)}>Cancel Shift</button>
+          )}
         </div>
       </div>
     </div>
@@ -109,6 +115,54 @@ function MyShifts() {
       .order('created_at', { ascending: false })
     setApplications(data || [])
     setLoading(false)
+  }
+
+  const [withdrawConfirm, setWithdrawConfirm] = useState(null)
+  const [cancelAcceptedConfirm, setCancelAcceptedConfirm] = useState(null)
+  const [actionLoading, setActionLoading] = useState(false)
+
+  const handleWithdraw = async () => {
+    if (!withdrawConfirm) return
+    setActionLoading(true)
+    await supabase.from('shift_applications').delete().eq('id', withdrawConfirm.id)
+    setWithdrawConfirm(null)
+    setActionLoading(false)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) fetchApplications(user.id)
+  }
+
+  const handleCancelAccepted = async () => {
+    if (!cancelAcceptedConfirm) return
+    setActionLoading(true)
+    const app = cancelAcceptedConfirm
+    const workerName = app.worker_name || 'A worker'
+    const shiftTitle = app.shifts?.title || 'a shift'
+    const businessId = app.shifts?.business_id
+
+    // Update application status
+    await supabase.from('shift_applications')
+      .update({ status: 'cancelled_by_worker' })
+      .eq('id', app.id)
+
+    // Set shift back to open
+    await supabase.from('shifts')
+      .update({ status: 'open' })
+      .eq('id', app.shift_id)
+
+    // Send notice to business
+    if (businessId) {
+      await supabase.from('notices').insert({
+        user_id: businessId,
+        message: `${workerName} has cancelled their shift for "${shiftTitle}". Please review other applicants.`,
+        target_page: 'dashboard',
+        is_read: false,
+      })
+    }
+
+    setCancelAcceptedConfirm(null)
+    setActionLoading(false)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) fetchApplications(user.id)
   }
 
   const getGreeting = () => {
@@ -147,6 +201,40 @@ function MyShifts() {
     <div className="ms-page">
       <DashNav userRole={userRole} />
 
+      {/* WITHDRAW CONFIRMATION */}
+      {withdrawConfirm && (
+        <div className="ms-confirm-backdrop" onClick={() => setWithdrawConfirm(null)}>
+          <div className="ms-confirm-box" onClick={e => e.stopPropagation()}>
+            <div className="ms-confirm-icon">↩️</div>
+            <h3 className="ms-confirm-title">Withdraw application?</h3>
+            <p className="ms-confirm-msg">You'll withdraw your application for <strong>{withdrawConfirm.shifts?.title}</strong>. The business won't be notified.</p>
+            <div className="ms-confirm-actions">
+              <button className="ms-confirm-no" onClick={() => setWithdrawConfirm(null)}>Keep It</button>
+              <button className="ms-confirm-yes" onClick={handleWithdraw} disabled={actionLoading}>
+                {actionLoading ? 'Withdrawing...' : 'Withdraw'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CANCEL ACCEPTED SHIFT CONFIRMATION */}
+      {cancelAcceptedConfirm && (
+        <div className="ms-confirm-backdrop" onClick={() => setCancelAcceptedConfirm(null)}>
+          <div className="ms-confirm-box" onClick={e => e.stopPropagation()}>
+            <div className="ms-confirm-icon">⚠️</div>
+            <h3 className="ms-confirm-title">Cancel this shift?</h3>
+            <p className="ms-confirm-msg">You're cancelling <strong>{cancelAcceptedConfirm.shifts?.title}</strong>. The business will be notified and will need to find another worker.</p>
+            <div className="ms-confirm-actions">
+              <button className="ms-confirm-no" onClick={() => setCancelAcceptedConfirm(null)}>Keep It</button>
+              <button className="ms-confirm-yes ms-confirm-danger" onClick={handleCancelAccepted} disabled={actionLoading}>
+                {actionLoading ? 'Cancelling...' : 'Yes, Cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="ms-greeting-bar">
         <h1 className="ms-greeting">{getGreeting()}, <span className="ms-orange">{firstName || 'there'}</span>!</h1>
         <p className="ms-greeting-sub">Here you can find all your shifts.</p>
@@ -179,7 +267,14 @@ function MyShifts() {
               ) : (
                 <div className="ms-shift-list" style={{ alignItems: 'stretch' }}>
                   {currentData.map(app => (
-                    <ShiftCard key={app.id} shift={app.shifts} app={app} status={app.status} />
+                    <ShiftCard
+                      key={app.id}
+                      shift={app.shifts}
+                      app={app}
+                      status={app.status}
+                      onWithdraw={setWithdrawConfirm}
+                      onCancel={setCancelAcceptedConfirm}
+                    />
                   ))}
                 </div>
               )}

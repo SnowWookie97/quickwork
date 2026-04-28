@@ -108,9 +108,15 @@ function BusinessDashboard() {
       .from('shift_applications')
       .select('*, shifts!inner(title, business_id)')
       .eq('shifts.business_id', uid)
-      .eq('status', 'pending')
-    setApplications(data || [])
+      .neq('status', 'rejected')
+    if (data) {
+      setApplications(data.filter(a => a.status === 'pending'))
+      setAcceptedApps(data.filter(a => a.status === 'accepted'))
+    }
   }
+
+  const [acceptedApps, setAcceptedApps] = useState([])
+  const [appTab, setAppTab] = useState('pending')
 
   // Worker detail overlay
   const [selectedWorker, setSelectedWorker] = useState(null)
@@ -477,9 +483,9 @@ function BusinessDashboard() {
           </div>
         </div>
 
-        <div className="bd-panels">
+        <div className="bd-panels bd-panels-asymmetric">
 
-          {/* YOUR SHIFTS */}
+          {/* YOUR SHIFTS — wider */}
           <div className="bd-panel">
             <div className="bd-panel-title">YOUR SHIFTS</div>
             {loadingShifts ? (
@@ -514,41 +520,90 @@ function BusinessDashboard() {
             )}
           </div>
 
-          {/* PENDING APPLICATIONS */}
+          {/* APPLICATIONS — narrower, with tabs */}
           <div className="bd-panel">
-            <div className="bd-panel-title">PENDING APPLICATIONS</div>
-            {applications.length === 0 ? (
-              <div className="bd-empty">
-                <div className="bd-empty-icon">👥</div>
-                <p className="bd-empty-heading">No applications yet</p>
-                <p className="bd-empty-sub">Once workers apply to your shifts, they'll appear here.</p>
-              </div>
-            ) : (
-              <div className="bd-app-list">
-                {applications.map(app => {
-                  const name = app.worker_name || 'Worker'
-                  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                  const avatar = app.worker_avatar
-                  return (
-                    <div className="bd-app-row" key={app.id} onClick={() => setSelectedWorker(app)} style={{ cursor: 'pointer' }}>
-                      <div className="bd-app-avatar">
-                        {avatar
-                          ? <img src={avatar} alt={name} className="bd-avatar-img" />
-                          : <span>{initials}</span>
-                        }
+            <div className="bd-panel-title">APPLICATIONS</div>
+
+            {/* Tabs */}
+            <div className="bd-app-tabs">
+              <button
+                className={`bd-app-tab ${appTab === 'pending' ? 'active' : ''}`}
+                onClick={() => setAppTab('pending')}
+              >
+                Pending {applications.length > 0 && <span className="bd-app-tab-count">{applications.length}</span>}
+              </button>
+              <button
+                className={`bd-app-tab ${appTab === 'accepted' ? 'active' : ''}`}
+                onClick={() => setAppTab('accepted')}
+              >
+                Accepted {acceptedApps.length > 0 && <span className="bd-app-tab-count">{acceptedApps.length}</span>}
+              </button>
+            </div>
+
+            {appTab === 'pending' && (
+              applications.length === 0 ? (
+                <div className="bd-empty">
+                  <div className="bd-empty-icon">👥</div>
+                  <p className="bd-empty-heading">No pending applications</p>
+                  <p className="bd-empty-sub">Once workers apply to your shifts, they'll appear here.</p>
+                </div>
+              ) : (
+                <div className="bd-app-list">
+                  {applications.map(app => {
+                    const name = app.worker_name || 'Worker'
+                    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                    const avatar = app.worker_avatar
+                    return (
+                      <div className="bd-app-row" key={app.id} onClick={() => setSelectedWorker(app)} style={{ cursor: 'pointer' }}>
+                        <div className="bd-app-avatar">
+                          {avatar ? <img src={avatar} alt={name} className="bd-avatar-img" /> : <span>{initials}</span>}
+                        </div>
+                        <div className="bd-app-info">
+                          <div className="bd-app-name">{name}</div>
+                          <div className="bd-app-meta">{app.shifts?.title}</div>
+                        </div>
+                        <div className="bd-app-actions" onClick={e => e.stopPropagation()}>
+                          <button className="bd-btn-accept" onClick={() => handleAccept(app.id, app.shift_id)}>Accept</button>
+                          <button className="bd-btn-reject" onClick={() => handleReject(app.id)}>Reject</button>
+                        </div>
                       </div>
-                      <div className="bd-app-info">
-                        <div className="bd-app-name">{name}</div>
-                        <div className="bd-app-meta">{app.shifts?.title} · Tap to view profile</div>
+                    )
+                  })}
+                </div>
+              )
+            )}
+
+            {appTab === 'accepted' && (
+              acceptedApps.length === 0 ? (
+                <div className="bd-empty">
+                  <div className="bd-empty-icon">✅</div>
+                  <p className="bd-empty-heading">No accepted workers yet</p>
+                  <p className="bd-empty-sub">Accept a worker from the Pending tab to see them here.</p>
+                </div>
+              ) : (
+                <div className="bd-app-list">
+                  {acceptedApps.map(app => {
+                    const name = app.worker_name || 'Worker'
+                    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                    const avatar = app.worker_avatar
+                    return (
+                      <div className="bd-app-row" key={app.id} onClick={() => setSelectedWorker(app)} style={{ cursor: 'pointer' }}>
+                        <div className="bd-app-avatar" style={{ background: '#e8f5e9', color: '#2e7d32' }}>
+                          {avatar ? <img src={avatar} alt={name} className="bd-avatar-img" /> : <span>{initials}</span>}
+                        </div>
+                        <div className="bd-app-info">
+                          <div className="bd-app-name">{name}</div>
+                          <div className="bd-app-meta">{app.shifts?.title}</div>
+                        </div>
+                        <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                          <span className="bd-worker-found-badge">✅ Worker Found</span>
+                          <span className="bd-view-profile">View →</span>
+                        </div>
                       </div>
-                      <div className="bd-app-actions" onClick={e => e.stopPropagation()}>
-                        <button className="bd-btn-accept" onClick={() => handleAccept(app.id, app.shift_id)}>Accept</button>
-                        <button className="bd-btn-reject" onClick={() => handleReject(app.id)}>Reject</button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+                    )
+                  })}
+                </div>
+              )
             )}
           </div>
 

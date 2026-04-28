@@ -645,3 +645,68 @@
     grid-column: span 2;
   }
 }
+
+/* ASYMMETRIC PANELS */
+.bd-panels-asymmetric {
+  grid-template-columns: 3fr 2fr;
+}
+
+/* APPLICATION TABS */
+.bd-app-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bd-app-tab {
+  padding: 7px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #aaa;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bd-app-tab:hover { color: #E8470F; }
+.bd-app-tab.active { color: #E8470F; border-bottom-color: #E8470F; }
+
+.bd-app-tab-count {
+  background: #E8470F;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+
+/* WORKER FOUND */
+.bd-worker-found-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.bd-view-profile {
+  font-size: 11px;
+  color: #E8470F;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .bd-panels-asymmetric {
+    grid-template-columns: 1fr;
+  }
+}
