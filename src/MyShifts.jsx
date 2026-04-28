@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 import DashNav from './DashNav'
 import './MyShifts.css'
 
-const TABS = ['Upcoming Shifts', 'Applied Shifts', 'Completed Shifts', 'Cancelled Shifts']
+const TABS = ['Applied Shifts', 'Upcoming Shifts', 'Completed Shifts', 'Cancelled Shifts']
 
 function formatTime(t) {
   if (!t) return ''
@@ -85,7 +85,7 @@ function MyShifts() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
   const [userRole, setUserRole] = useState(null)
-  const [activeTab, setActiveTab] = useState('Upcoming Shifts')
+  const [activeTab, setActiveTab] = useState('Applied Shifts')
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
 
