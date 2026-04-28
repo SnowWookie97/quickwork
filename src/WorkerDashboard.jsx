@@ -16,9 +16,39 @@ const CATEGORIES = [
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+function formatTime(t) {
+  if (!t) return ''
+  const [h, m] = t.split(':')
+  const hour = parseInt(h)
+  const ampm = hour < 12 ? 'AM' : 'PM'
+  const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+  return `${hour12}:${m} ${ampm}`
+}
+
+function formatDate(d) {
+  if (!d) return ''
+  const date = new Date(d + 'T00:00:00')
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+}
+
+function TrustBadge({ level }) {
+  const colors = ['#888', '#3B6D11', '#378ADD', '#B8860B']
+  const labels = ['L1', 'L2', 'L3', 'L4']
+  return (
+    <span style={{
+      fontSize: 11, padding: '2px 8px', borderRadius: 20,
+      background: `${colors[level - 1]}18`, color: colors[level - 1],
+      fontWeight: 600, border: `1px solid ${colors[level - 1]}44`
+    }}>
+      Min Level {level}
+    </span>
+  )
+}
+
 function WorkerDashboard() {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState('')
+  const [userId, setUserId] = useState(null)
   const [userRole, setUserRole] = useState(null)
   const [showHomepageMsg, setShowHomepageMsg] = useState(false)
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -31,6 +61,10 @@ function WorkerDashboard() {
     return c ? parseInt(c) : 1
   })
   const [profilePct, setProfilePct] = useState(0)
+  const [shifts, setShifts] = useState([])
+  const [appliedIds, setAppliedIds] = useState([])
+  const [applyingId, setApplyingId] = useState(null)
+  const [loadingShifts, setLoadingShifts] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
@@ -38,6 +72,7 @@ function WorkerDashboard() {
       if (!user) { navigate('/login'); return }
       setUserRole(user.user_metadata?.role)
       setFirstName((user.user_metadata?.name || '').split(' ')[0])
+      setUserId(user.id)
 
       const { data: profile } = await supabase.from('profiles').select('trust_level').eq('id', user.id).single()
       if (profile) {
@@ -55,10 +90,53 @@ function WorkerDashboard() {
         if (wp.upi_id || wp.bank_account) score += 20
         setProfilePct(score)
       }
+
+      // Fetch already applied shift IDs
+      const { data: apps } = await supabase
+        .from('shift_applications')
+        .select('shift_id')
+        .eq('worker_id', user.id)
+      if (apps) setAppliedIds(apps.map(a => a.shift_id))
+
+      fetchShifts()
     }
     getUser()
   }, [])
 
+  const fetchShifts = async () => {
+    setLoadingShifts(true)
+    const { data } = await supabase
+      .from('shifts')
+      .select('*, business:business_id(raw_user_meta_data), business_profile:business_id(avatar_url)')
+      .eq('status', 'open')
+      .order('date', { ascending: true })
+    setShifts(data || [])
+    setLoadingShifts(false)
+  }
+
+  const handleApply = async (shiftId, minTrustLevel) => {
+    if (trustLevel < minTrustLevel) return
+    setApplyingId(shiftId)
+    const { error } = await supabase.from('shift_applications').insert({
+      shift_id: shiftId,
+      worker_id: userId,
+    })
+    if (!error) setAppliedIds([...appliedIds, shiftId])
+    setApplyingId(null)
+  }
+
+  // Filter shifts
+  const filteredShifts = shifts.filter(s => {
+    const matchCategory = selectedCategory === 'All Categories' || s.category === selectedCategory
+    const matchSearch = !searchQuery ||
+      s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.location.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchDate = !selectedDate ||
+      s.date === selectedDate.toISOString().split('T')[0]
+    return matchCategory && matchSearch && matchDate
+  })
+
+  // Calendar helpers
   const today = new Date()
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
   const isCurrentMonth = currentMonth.getMonth() === today.getMonth() && currentMonth.getFullYear() === today.getFullYear()
@@ -88,7 +166,6 @@ function WorkerDashboard() {
   const r = 18
   const circ = 2 * Math.PI * r
   const filled = (profilePct / 100) * circ
-
   const showProfileNudge = profilePct < 100
   const showTrustNudge = trustLevel < 4
 
@@ -167,14 +244,70 @@ function WorkerDashboard() {
               {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <div className="wd-empty-state">
-            <div className="wd-empty-icon">📋</div>
-            <h3 className="wd-empty-title">No shifts available yet</h3>
-            <p className="wd-empty-sub">
-              {selectedDate ? `No shifts posted for ${formatSelectedDate()} in ${selectedCity}.` : `No shifts available in ${selectedCity} right now.`}
-              <br />Check back soon — businesses are joining every day!
-            </p>
-          </div>
+
+          {loadingShifts ? (
+            <div className="wd-empty-state">
+              <p className="wd-empty-sub">Loading shifts...</p>
+            </div>
+          ) : filteredShifts.length === 0 ? (
+            <div className="wd-empty-state">
+              <div className="wd-empty-icon">📋</div>
+              <h3 className="wd-empty-title">No shifts available yet</h3>
+              <p className="wd-empty-sub">
+                {selectedDate ? `No shifts posted for ${formatSelectedDate()}.` : `No open shifts right now.`}
+                <br />Check back soon — businesses are joining every day!
+              </p>
+            </div>
+          ) : (
+            <div className="wd-shift-cards">
+              {filteredShifts.map(shift => {
+                const bizName = shift.business?.raw_user_meta_data?.name || 'Business'
+                const bizAvatar = shift.business_profile?.avatar_url
+                const initials = bizName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                const applied = appliedIds.includes(shift.id)
+                const eligible = trustLevel >= shift.min_trust_level
+                const applying = applyingId === shift.id
+
+                return (
+                  <div className="wd-shift-card" key={shift.id}>
+                    <div className="wd-shift-card-top">
+                      <div className="wd-biz-avatar">
+                        {bizAvatar
+                          ? <img src={bizAvatar} alt={bizName} />
+                          : <span>{initials}</span>
+                        }
+                      </div>
+                      <div className="wd-shift-card-info">
+                        <div className="wd-shift-card-title">{shift.title}</div>
+                        <div className="wd-shift-card-biz">{bizName}</div>
+                      </div>
+                      <div className="wd-shift-card-wage">
+                        ₹{shift.wage_amount}<span>/{shift.wage_type}</span>
+                      </div>
+                    </div>
+                    <div className="wd-shift-card-details">
+                      <span>📅 {formatDate(shift.date)}</span>
+                      <span>🕐 {formatTime(shift.start_time)}–{formatTime(shift.end_time)}</span>
+                      <span>📍 {shift.location}</span>
+                      <span>👥 {shift.workers_needed} needed</span>
+                    </div>
+                    <div className="wd-shift-card-footer">
+                      <TrustBadge level={shift.min_trust_level} />
+                      {applied ? (
+                        <button className="wd-apply-btn wd-applied" disabled>Applied ✓</button>
+                      ) : !eligible ? (
+                        <button className="wd-apply-btn wd-ineligible" disabled>Need Level {shift.min_trust_level}</button>
+                      ) : (
+                        <button className="wd-apply-btn" onClick={() => handleApply(shift.id, shift.min_trust_level)} disabled={applying}>
+                          {applying ? 'Applying...' : 'Apply Now →'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* FAR RIGHT — NUDGE CARDS */}
@@ -183,7 +316,6 @@ function WorkerDashboard() {
             <div className="wd-divider" />
             <div className="wd-nudge-panel">
               <p className="wd-nudge-label">For you</p>
-
               {showProfileNudge && (
                 <div className="wd-nudge-card" onClick={() => navigate('/my-profile')}>
                   <div className="wd-donut-wrap">
@@ -199,7 +331,6 @@ function WorkerDashboard() {
                   <span className="wd-nudge-btn">Complete →</span>
                 </div>
               )}
-
               {showTrustNudge && (
                 <div className="wd-nudge-card" onClick={() => navigate('/validation')}>
                   <div className="wd-shield-wrap">

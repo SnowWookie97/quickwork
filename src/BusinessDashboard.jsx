@@ -9,6 +9,18 @@ const CATEGORIES = [
   'Logistics', 'Retail', 'Hospitality', 'Office', 'Events', 'Delivery', 'Warehouse'
 ]
 
+// Generate 30-min time slots: 12:00 AM to 11:30 PM
+const TIME_SLOTS = []
+for (let h = 0; h < 24; h++) {
+  for (let m of [0, 30]) {
+    const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+    const ampm = h < 12 ? 'AM' : 'PM'
+    const label = `${hour12}:${m === 0 ? '00' : '30'} ${ampm}`
+    const value = `${String(h).padStart(2, '0')}:${m === 0 ? '00' : '30'}`
+    TIME_SLOTS.push({ label, value })
+  }
+}
+
 const defaultForm = {
   title: '',
   category: '',
@@ -23,6 +35,32 @@ const defaultForm = {
   min_trust_level: 1,
 }
 
+function formatTime(t) {
+  if (!t) return ''
+  const [h, m] = t.split(':')
+  const hour = parseInt(h)
+  const ampm = hour < 12 ? 'AM' : 'PM'
+  const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+  return `${hour12}:${m} ${ampm}`
+}
+
+function formatDate(d) {
+  if (!d) return ''
+  const date = new Date(d + 'T00:00:00')
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function StatusBadge({ status }) {
+  const map = {
+    open: { label: 'Open', cls: 'bd-badge-open' },
+    filled: { label: 'Filled', cls: 'bd-badge-filled' },
+    completed: { label: 'Done', cls: 'bd-badge-done' },
+    cancelled: { label: 'Cancelled', cls: 'bd-badge-cancelled' },
+  }
+  const s = map[status] || map.open
+  return <span className={`bd-badge ${s.cls}`}>{s.label}</span>
+}
+
 function BusinessDashboard() {
   const navigate = useNavigate()
   const [businessName, setBusinessName] = useState('')
@@ -33,13 +71,9 @@ function BusinessDashboard() {
   const [formError, setFormError] = useState('')
   const [formLoading, setFormLoading] = useState(false)
   const [formSuccess, setFormSuccess] = useState(false)
-
-  const stats = [
-    { label: 'Active Shifts', value: 0 },
-    { label: 'Open Applications', value: 0 },
-    { label: 'Workers Hired', value: 0 },
-    { label: 'Shifts Completed', value: 0 },
-  ]
+  const [shifts, setShifts] = useState([])
+  const [applications, setApplications] = useState([])
+  const [loadingShifts, setLoadingShifts] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
@@ -47,15 +81,36 @@ function BusinessDashboard() {
       if (!user) { navigate('/login'); return }
       setBusinessName(user.user_metadata?.name || 'Business')
       setUserId(user.id)
+      fetchShifts(user.id)
+      fetchApplications(user.id)
     }
     getUser()
   }, [])
+
+  const fetchShifts = async (uid) => {
+    setLoadingShifts(true)
+    const { data } = await supabase
+      .from('shifts')
+      .select('*')
+      .eq('business_id', uid)
+      .order('date', { ascending: true })
+    setShifts(data || [])
+    setLoadingShifts(false)
+  }
+
+  const fetchApplications = async (uid) => {
+    const { data } = await supabase
+      .from('shift_applications')
+      .select('*, shifts!inner(title, business_id), profiles:worker_id(avatar_url), worker:worker_id(raw_user_meta_data)')
+      .eq('shifts.business_id', uid)
+      .eq('status', 'pending')
+    setApplications(data || [])
+  }
 
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value })
 
   const handlePostShift = async () => {
     setFormError('')
-
     if (!form.title || !form.category || !form.date || !form.start_time || !form.end_time || !form.location || !form.wage_amount) {
       setFormError('Please fill in all required fields.'); return
     }
@@ -67,7 +122,6 @@ function BusinessDashboard() {
     }
 
     setFormLoading(true)
-
     const { error } = await supabase.from('shifts').insert({
       business_id: userId,
       title: form.title,
@@ -82,14 +136,12 @@ function BusinessDashboard() {
       description: form.description || null,
       min_trust_level: parseInt(form.min_trust_level),
     })
-
     setFormLoading(false)
 
-    if (error) {
-      setFormError('Something went wrong. Please try again.'); return
-    }
+    if (error) { setFormError('Something went wrong. Please try again.'); return }
 
     setFormSuccess(true)
+    fetchShifts(userId)
   }
 
   const handleCloseOverlay = () => {
@@ -99,7 +151,21 @@ function BusinessDashboard() {
     setFormSuccess(false)
   }
 
+  const handleAccept = async (appId, shiftId) => {
+    await supabase.from('shift_applications').update({ status: 'accepted' }).eq('id', appId)
+    fetchApplications(userId)
+    fetchShifts(userId)
+  }
+
+  const handleReject = async (appId) => {
+    await supabase.from('shift_applications').update({ status: 'rejected' }).eq('id', appId)
+    fetchApplications(userId)
+  }
+
   const today = new Date().toISOString().split('T')[0]
+
+  const activeShifts = shifts.filter(s => s.status === 'open' || s.status === 'filled').length
+  const completedShifts = shifts.filter(s => s.status === 'completed').length
 
   return (
     <div className="wd-page">
@@ -128,7 +194,7 @@ function BusinessDashboard() {
               <div className="bd-overlay-success">
                 <div className="bd-success-icon">✅</div>
                 <h3>Shift Posted!</h3>
-                <p>Your shift has been posted. Workers can now apply.</p>
+                <p>Your shift is now live. Workers can apply immediately.</p>
                 <button className="bd-post-btn" onClick={handleCloseOverlay}>Done</button>
               </div>
             ) : (
@@ -137,7 +203,7 @@ function BusinessDashboard() {
                 <div className="bd-form-row">
                   <div className="bd-form-group">
                     <label>Job Title <span className="bd-required">*</span></label>
-                    <input type="text" placeholder="e.g. Kitchen Helper, Warehouse Staff" value={form.title} onChange={update('title')} />
+                    <input type="text" placeholder="e.g. Kitchen Helper" value={form.title} onChange={update('title')} />
                   </div>
                   <div className="bd-form-group">
                     <label>Category <span className="bd-required">*</span></label>
@@ -155,11 +221,17 @@ function BusinessDashboard() {
                   </div>
                   <div className="bd-form-group">
                     <label>Start Time <span className="bd-required">*</span></label>
-                    <input type="time" value={form.start_time} onChange={update('start_time')} />
+                    <select value={form.start_time} onChange={update('start_time')}>
+                      <option value="">Select time</option>
+                      {TIME_SLOTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    </select>
                   </div>
                   <div className="bd-form-group">
                     <label>End Time <span className="bd-required">*</span></label>
-                    <input type="time" value={form.end_time} onChange={update('end_time')} />
+                    <select value={form.end_time} onChange={update('end_time')}>
+                      <option value="">Select time</option>
+                      {TIME_SLOTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    </select>
                   </div>
                 </div>
 
@@ -180,28 +252,15 @@ function BusinessDashboard() {
                   <div className="bd-form-group">
                     <label>Per</label>
                     <div className="bd-wage-toggle">
-                      <button
-                        type="button"
-                        className={`bd-toggle-btn ${form.wage_type === 'hour' ? 'active' : ''}`}
-                        onClick={() => setForm({ ...form, wage_type: 'hour' })}
-                      >Hour</button>
-                      <button
-                        type="button"
-                        className={`bd-toggle-btn ${form.wage_type === 'day' ? 'active' : ''}`}
-                        onClick={() => setForm({ ...form, wage_type: 'day' })}
-                      >Day</button>
+                      <button type="button" className={`bd-toggle-btn ${form.wage_type === 'hour' ? 'active' : ''}`} onClick={() => setForm({ ...form, wage_type: 'hour' })}>Hour</button>
+                      <button type="button" className={`bd-toggle-btn ${form.wage_type === 'day' ? 'active' : ''}`} onClick={() => setForm({ ...form, wage_type: 'day' })}>Day</button>
                     </div>
                   </div>
                 </div>
 
                 <div className="bd-form-group">
                   <label>Description / Requirements</label>
-                  <textarea
-                    placeholder="Any specific skills, dress code, experience needed..."
-                    value={form.description}
-                    onChange={update('description')}
-                    rows={3}
-                  />
+                  <textarea placeholder="Any specific skills, dress code, experience needed..." value={form.description} onChange={update('description')} rows={3} />
                 </div>
 
                 <div className="bd-form-group">
@@ -236,7 +295,12 @@ function BusinessDashboard() {
         </div>
 
         <div className="bd-stats">
-          {stats.map(s => (
+          {[
+            { label: 'Active Shifts', value: activeShifts },
+            { label: 'Open Applications', value: applications.length },
+            { label: 'Workers Hired', value: 0 },
+            { label: 'Shifts Completed', value: completedShifts },
+          ].map(s => (
             <div className="bd-stat-card" key={s.label}>
               <div className="bd-stat-label">{s.label}</div>
               <div className={`bd-stat-val ${s.value > 0 ? 'orange' : ''}`}>{s.value}</div>
@@ -245,26 +309,75 @@ function BusinessDashboard() {
         </div>
 
         <div className="bd-panels">
+
+          {/* YOUR SHIFTS */}
           <div className="bd-panel">
             <div className="bd-panel-title">YOUR SHIFTS</div>
-            <div className="bd-empty">
-              <div className="bd-empty-icon">📋</div>
-              <p className="bd-empty-heading">No shifts posted yet</p>
-              <p className="bd-empty-sub">Post your first shift to start finding workers.</p>
-              <button className="bd-empty-btn" onClick={() => setShowPostShift(true)}>
-                + Post a Shift
-              </button>
-            </div>
+            {loadingShifts ? (
+              <div className="bd-empty"><p className="bd-empty-sub">Loading...</p></div>
+            ) : shifts.length === 0 ? (
+              <div className="bd-empty">
+                <div className="bd-empty-icon">📋</div>
+                <p className="bd-empty-heading">No shifts posted yet</p>
+                <p className="bd-empty-sub">Post your first shift to start finding workers.</p>
+                <button className="bd-empty-btn" onClick={() => setShowPostShift(true)}>+ Post a Shift</button>
+              </div>
+            ) : (
+              <div className="bd-shift-list">
+                {shifts.map(shift => (
+                  <div className="bd-shift-row" key={shift.id}>
+                    <div className="bd-shift-info">
+                      <div className="bd-shift-title">{shift.title}</div>
+                      <div className="bd-shift-meta">
+                        {formatDate(shift.date)} · {formatTime(shift.start_time)}–{formatTime(shift.end_time)} · {shift.workers_needed} worker{shift.workers_needed > 1 ? 's' : ''}
+                      </div>
+                      <div className="bd-shift-meta">{shift.location} · ₹{shift.wage_amount}/{shift.wage_type}</div>
+                    </div>
+                    <StatusBadge status={shift.status} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
+          {/* PENDING APPLICATIONS */}
           <div className="bd-panel">
             <div className="bd-panel-title">PENDING APPLICATIONS</div>
-            <div className="bd-empty">
-              <div className="bd-empty-icon">👥</div>
-              <p className="bd-empty-heading">No applications yet</p>
-              <p className="bd-empty-sub">Once workers apply to your shifts, they'll appear here.</p>
-            </div>
+            {applications.length === 0 ? (
+              <div className="bd-empty">
+                <div className="bd-empty-icon">👥</div>
+                <p className="bd-empty-heading">No applications yet</p>
+                <p className="bd-empty-sub">Once workers apply to your shifts, they'll appear here.</p>
+              </div>
+            ) : (
+              <div className="bd-app-list">
+                {applications.map(app => {
+                  const name = app.worker?.raw_user_meta_data?.name || 'Worker'
+                  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                  const avatar = app.profiles?.avatar_url
+                  return (
+                    <div className="bd-app-row" key={app.id}>
+                      <div className="bd-app-avatar">
+                        {avatar
+                          ? <img src={avatar} alt={name} className="bd-avatar-img" />
+                          : <span>{initials}</span>
+                        }
+                      </div>
+                      <div className="bd-app-info">
+                        <div className="bd-app-name">{name}</div>
+                        <div className="bd-app-meta">{app.shifts?.title}</div>
+                      </div>
+                      <div className="bd-app-actions">
+                        <button className="bd-btn-accept" onClick={() => handleAccept(app.id, app.shift_id)}>Accept</button>
+                        <button className="bd-btn-reject" onClick={() => handleReject(app.id)}>Reject</button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
+
         </div>
       </div>
     </div>
