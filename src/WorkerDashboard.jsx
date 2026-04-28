@@ -37,15 +37,25 @@ function localDateStr(date) {
 }
 
 function TrustBadge({ level }) {
-  const colors = ['#888', '#3B6D11', '#378ADD', '#B8860B']
+  const SHIELD_DATA = [
+    { fill: "#e8e8e8", stroke: "#bbb", stroke2: "#ddd", numColor: "#777" },
+    { fill: "#C0DD97", stroke: "#3B6D11", stroke2: "#639922", numColor: "#173404" },
+    { fill: "#c8e6f8", stroke: "#378ADD", stroke2: "#85B7EB", numColor: "#0C447C" },
+    { fill: "#FFD700", stroke: "#B8860B", stroke2: "#FFE55C", numColor: "#5a3e00" }
+  ]
+  const colors = ['#777', '#3B6D11', '#378ADD', '#B8860B']
+  const d = SHIELD_DATA[level - 1]
   return (
-    <span style={{
-      fontSize: 11, padding: '2px 8px', borderRadius: 20,
-      background: `${colors[level - 1]}18`, color: colors[level - 1],
-      fontWeight: 600, border: `1px solid ${colors[level - 1]}44`
-    }}>
-      Min Level {level}
-    </span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <svg width="18" height="20" viewBox="0 0 44 48" style={{ flexShrink: 0 }}>
+        <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z" fill={d.fill} stroke={d.stroke} strokeWidth="2"/>
+        <path d="M22 8 L34 13 L34 25 C34 33.5 22 40 22 40 C22 40 10 33.5 10 25 L10 13 Z" fill="none" stroke={d.stroke2} strokeWidth="1" opacity="0.6"/>
+        <text x="22" y="30" textAnchor="middle" fontSize="16" fill={d.numColor} fontWeight="700" fontFamily="sans-serif">{level}</text>
+      </svg>
+      <span style={{ fontSize: 12, fontWeight: 600, color: colors[level - 1] }}>
+        Validation Level {level} required
+      </span>
+    </div>
   )
 }
 
@@ -296,36 +306,66 @@ function WorkerDashboard() {
                     const applied = appliedIds.includes(shift.id)
                     const eligible = trustLevel >= shift.min_trust_level
                     const applying = applyingId === shift.id
+                    // Calculate total hours and estimated pay
+                    const calcHours = () => {
+                      if (!shift.start_time || !shift.end_time) return null
+                      const [sh, sm] = shift.start_time.split(':').map(Number)
+                      const [eh, em] = shift.end_time.split(':').map(Number)
+                      const mins = (eh * 60 + em) - (sh * 60 + sm)
+                      return mins > 0 ? mins / 60 : null
+                    }
+                    const hours = calcHours()
+                    const estPay = shift.wage_type === 'hour' && hours
+                      ? Math.round(shift.wage_amount * hours)
+                      : null
+
+                    // Banner color based on category
+                    const bannerColors = {
+                      'Hospitality': '#1A2744', 'Restaurant': '#1A2744',
+                      'Logistics': '#0F6E56', 'Warehouse': '#0F6E56',
+                      'Events': '#534AB7', 'Retail': '#185FA5',
+                      'Office': '#185FA5', 'Delivery': '#854F0B',
+                      'Construction': '#854F0B', 'Healthcare': '#0F6E56',
+                    }
+                    const bannerBg = bannerColors[shift.category] || '#1A2744'
+
                     return (
                       <div className="wd-shift-card" key={shift.id}>
-                        <div className="wd-shift-card-top">
-                          <div className="wd-biz-avatar">
-                            <span>{initials}</span>
-                          </div>
-                          <div className="wd-shift-card-info">
-                            <div className="wd-shift-card-title">{shift.title}</div>
-                            <div className="wd-shift-card-biz">{bizName}</div>
-                          </div>
-                          <div className="wd-shift-card-wage">
-                            ₹{shift.wage_amount}<span>/{shift.wage_type}</span>
-                          </div>
+                        <div className="wd-shift-banner" style={{ background: bannerBg }}>
+                          <div className="wd-shift-banner-initials">{initials}</div>
+                          <span className="wd-shift-banner-biz">{bizName}</span>
                         </div>
-                        <div className="wd-shift-card-details">
-                          <span>🕐 {formatTime(shift.start_time)}–{formatTime(shift.end_time)}</span>
-                          <span>📍 {shift.location}</span>
-                          <span>👥 {shift.workers_needed} needed</span>
-                        </div>
-                        <div className="wd-shift-card-footer">
-                          <TrustBadge level={shift.min_trust_level} />
-                          {applied ? (
-                            <button className="wd-apply-btn wd-applied" disabled>Applied ✓</button>
-                          ) : !eligible ? (
-                            <button className="wd-apply-btn wd-ineligible" disabled>Need Level {shift.min_trust_level}</button>
-                          ) : (
-                            <button className="wd-apply-btn" onClick={() => handleApply(shift.id, shift.min_trust_level)} disabled={applying}>
-                              {applying ? 'Applying...' : 'Apply Now →'}
-                            </button>
-                          )}
+                        <div className="wd-shift-card-body">
+                          <div className="wd-shift-card-top">
+                            <div className="wd-shift-card-info">
+                              <div className="wd-shift-card-title">{shift.title}</div>
+                              <div className="wd-shift-card-biz">{shift.location}</div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div className="wd-shift-card-wage">
+                                ₹{shift.wage_amount}<span>/{shift.wage_type}</span>
+                              </div>
+                              {estPay && <div className="wd-shift-est-pay">Est. ₹{estPay} total</div>}
+                              {shift.wage_type === 'day' && <div className="wd-shift-est-pay">Full day rate</div>}
+                            </div>
+                          </div>
+                          <div className="wd-shift-card-details">
+                            <span className="wd-shift-pill">{formatTime(shift.start_time)} – {formatTime(shift.end_time)}</span>
+                            {hours && <span className="wd-shift-pill">{hours % 1 === 0 ? hours : hours.toFixed(1)} hrs</span>}
+                            <span className="wd-shift-pill">{shift.workers_needed} worker{shift.workers_needed > 1 ? 's' : ''} needed</span>
+                          </div>
+                          <div className="wd-shift-card-footer">
+                            <TrustBadge level={shift.min_trust_level} />
+                            {applied ? (
+                              <button className="wd-apply-btn wd-applied" disabled>Applied ✓</button>
+                            ) : !eligible ? (
+                              <button className="wd-apply-btn wd-ineligible" disabled>Need Level {shift.min_trust_level}</button>
+                            ) : (
+                              <button className="wd-apply-btn" onClick={() => handleApply(shift.id, shift.min_trust_level)} disabled={applying}>
+                                {applying ? 'Applying...' : 'Apply Now →'}
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )

@@ -903,15 +903,51 @@
 .wd-shift-cards {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   margin-top: 4px;
 }
 
 .wd-shift-card {
   background: white;
-  border-radius: 14px;
-  padding: 16px 18px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 0.5px solid #f0e8e0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.wd-shift-banner {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.wd-shift-banner-initials {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+
+.wd-shift-banner-biz {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.03em;
+}
+
+.wd-shift-card-body {
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -919,48 +955,27 @@
 
 .wd-shift-card-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
-}
-
-.wd-biz-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: #fde8dc;
-  color: #E8470F;
-  font-size: 14px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.wd-biz-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px;
 }
 
 .wd-shift-card-info { flex: 1; min-width: 0; }
 
 .wd-shift-card-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #1A2744;
 }
 
 .wd-shift-card-biz {
-  font-size: 13px;
+  font-size: 12px;
   color: #888;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .wd-shift-card-wage {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   color: #E8470F;
   white-space: nowrap;
@@ -972,31 +987,49 @@
   color: #aaa;
 }
 
+.wd-shift-est-pay {
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  margin-top: 2px;
+}
+
 .wd-shift-card-details {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: 6px;
+}
+
+.wd-shift-pill {
+  background: #f5f5f5;
+  color: #555;
   font-size: 12px;
-  color: #666;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 500;
 }
 
 .wd-shift-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 0.5px solid #f0e8e0;
+  gap: 8px;
 }
 
 .wd-apply-btn {
   background: #E8470F;
   color: white;
   border: none;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .wd-apply-btn:hover:not(:disabled) { background: #c93a0a; }
