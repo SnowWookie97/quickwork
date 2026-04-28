@@ -107,6 +107,26 @@ function BusinessDashboard() {
     setApplications(data || [])
   }
 
+  // Worker detail overlay
+  const [selectedWorker, setSelectedWorker] = useState(null)
+
+  const calcAge = (dob) => {
+    if (!dob) return null
+    const birth = new Date(dob)
+    const today = new Date()
+    let age = today.getFullYear() - birth.getFullYear()
+    const m = today.getMonth() - birth.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+    return age
+  }
+
+  const SHIELD_DATA = [
+    { fill: "#e8e8e8", stroke: "#bbb", numColor: "#777" },
+    { fill: "#C0DD97", stroke: "#3B6D11", numColor: "#173404" },
+    { fill: "#c8e6f8", stroke: "#378ADD", numColor: "#0C447C" },
+    { fill: "#FFD700", stroke: "#B8860B", numColor: "#5a3e00" }
+  ]
+
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value })
 
   const handlePostShift = async () => {
@@ -285,6 +305,69 @@ function BusinessDashboard() {
         </div>
       )}
 
+      {/* WORKER DETAIL OVERLAY */}
+      {selectedWorker && (() => {
+        const name = selectedWorker.worker_name || 'Worker'
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+        const avatar = selectedWorker.worker_avatar
+        const age = calcAge(selectedWorker.worker_dob)
+        const trust = selectedWorker.worker_trust_level || 1
+        const sd = SHIELD_DATA[trust - 1]
+        const trustLabels = ['Signed Up', 'Aadhaar Verified', 'Address Verified', 'Police Cleared']
+        return (
+          <div className="bd-overlay-backdrop" onClick={() => setSelectedWorker(null)}>
+            <div className="bd-overlay bd-worker-overlay" onClick={e => e.stopPropagation()}>
+              <div className="bd-overlay-header">
+                <h2 className="bd-overlay-title">Worker Profile</h2>
+                <button className="bd-overlay-close" onClick={() => setSelectedWorker(null)}>✕</button>
+              </div>
+              <div className="bd-worker-profile">
+                <div className="bd-worker-avatar-lg">
+                  {avatar
+                    ? <img src={avatar} alt={name} className="bd-worker-avatar-img" />
+                    : <span>{initials}</span>
+                  }
+                </div>
+                <h3 className="bd-worker-name">{name}</h3>
+                <p className="bd-worker-shift">Applied for: <strong>{selectedWorker.shifts?.title}</strong></p>
+
+                <div className="bd-worker-stats">
+                  <div className="bd-worker-stat">
+                    <div className="bd-worker-stat-val">{age || '—'}</div>
+                    <div className="bd-worker-stat-label">Age</div>
+                  </div>
+                  <div className="bd-worker-stat">
+                    <div className="bd-worker-stat-val">
+                      <svg width="28" height="30" viewBox="0 0 44 48" style={{ display: 'block', margin: '0 auto' }}>
+                        <path d="M22 3 L39 9.5 L39 26 C39 37 22 45 22 45 C22 45 5 37 5 26 L5 9.5 Z" fill={sd.fill} stroke={sd.stroke} strokeWidth="2"/>
+                        <text x="22" y="30" textAnchor="middle" fontSize="16" fill={sd.numColor} fontWeight="700" fontFamily="sans-serif">{trust}</text>
+                      </svg>
+                    </div>
+                    <div className="bd-worker-stat-label">Level {trust}</div>
+                  </div>
+                  <div className="bd-worker-stat">
+                    <div className="bd-worker-stat-val" style={{ fontSize: 13 }}>{trustLabels[trust - 1]}</div>
+                    <div className="bd-worker-stat-label">Validation</div>
+                  </div>
+                </div>
+
+                {selectedWorker.worker_dob && (
+                  <div className="bd-worker-detail-row">
+                    <span className="bd-worker-detail-label">Date of Birth</span>
+                    <span className="bd-worker-detail-val">{new Date(selectedWorker.worker_dob).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  </div>
+                )}
+
+                <div className="bd-worker-actions">
+                  <button className="bd-btn-reject bd-worker-action-btn" onClick={() => { handleReject(selectedWorker.id); setSelectedWorker(null) }}>Reject</button>
+                  <button className="bd-btn-accept bd-worker-action-btn" onClick={() => { handleAccept(selectedWorker.id, selectedWorker.shift_id); setSelectedWorker(null) }}>Accept Worker →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
       <div className="bd-main">
         <div className="bd-topbar">
           <div className="bd-greeting">
@@ -355,9 +438,9 @@ function BusinessDashboard() {
                 {applications.map(app => {
                   const name = app.worker_name || 'Worker'
                   const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                  const avatar = null
+                  const avatar = app.worker_avatar
                   return (
-                    <div className="bd-app-row" key={app.id}>
+                    <div className="bd-app-row" key={app.id} onClick={() => setSelectedWorker(app)} style={{ cursor: 'pointer' }}>
                       <div className="bd-app-avatar">
                         {avatar
                           ? <img src={avatar} alt={name} className="bd-avatar-img" />
@@ -366,9 +449,9 @@ function BusinessDashboard() {
                       </div>
                       <div className="bd-app-info">
                         <div className="bd-app-name">{name}</div>
-                        <div className="bd-app-meta">{app.shifts?.title}</div>
+                        <div className="bd-app-meta">{app.shifts?.title} · Tap to view profile</div>
                       </div>
-                      <div className="bd-app-actions">
+                      <div className="bd-app-actions" onClick={e => e.stopPropagation()}>
                         <button className="bd-btn-accept" onClick={() => handleAccept(app.id, app.shift_id)}>Accept</button>
                         <button className="bd-btn-reject" onClick={() => handleReject(app.id)}>Reject</button>
                       </div>

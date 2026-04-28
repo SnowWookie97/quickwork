@@ -132,9 +132,22 @@ function WorkerDashboard() {
   const handleApply = async (shiftId, minTrustLevel) => {
     if (trustLevel < minTrustLevel) return
     setApplyingId(shiftId)
+
+    // Fetch worker profile for storing on application
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('avatar_url, trust_level')
+      .eq('id', userId)
+      .single()
+
     const { error } = await supabase.from('shift_applications').insert({
       shift_id: shiftId,
       worker_id: userId,
+      worker_name: user?.user_metadata?.name || '',
+      worker_dob: user?.user_metadata?.dob || null,
+      worker_avatar: profileData?.avatar_url || null,
+      worker_trust_level: profileData?.trust_level || 1,
     })
     if (!error) setAppliedIds([...appliedIds, shiftId])
     setApplyingId(null)
